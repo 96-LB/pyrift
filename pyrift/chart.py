@@ -32,6 +32,7 @@ class Chart:
         }
     
     def to_chart_dict(self, name: str) -> ChartDict:
+        self.events.sort(key=lambda e: e.start_beat)
         return {
             'beatDivisions': self.subdivisions,
             'bpm': self.bpm,
@@ -47,4 +48,3 @@ class Chart:
             'playbackOffsetTime': self.offset,
             'shouldSetBossStanceOnBeatmapStart': False
         }
-            

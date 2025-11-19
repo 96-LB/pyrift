@@ -1,14 +1,9 @@
 from dataclasses import dataclass
 
-from .typeddicts import EventDict, EventDataPairDict
+from .datapairs import DataPairs
+from .typeddicts import EventDict
 
 from typing import Literal
-
-
-class DataPairs:
-    # TODO: actually implement this class to basically be a multidict
-    def to_list(self) -> list[EventDataPairDict]:
-        return []
 
 
 @dataclass
