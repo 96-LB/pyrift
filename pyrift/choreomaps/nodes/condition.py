@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from typing import TYPE_CHECKING, ClassVar
+
+from util import snake_to_camel
 
 from .enum import ComparisonMode, EntityPredicate, SystemPredicate
 
 if TYPE_CHECKING:
-    from .types import Condition, Value
+    from .value import BaseValue
 
 
 @dataclass(frozen=True)
@@ -21,7 +23,10 @@ class BaseCondition:
     def __init_subclass__(cls, type: str):
         super().__init_subclass__()
         cls.TYPE = type
-
+    
+    def to_dict(self):
+        field_values = {snake_to_camel(f.name): getattr(self, f.name) for f in fields(self) if getattr(self, f.name) is not None}
+        return {**field_values, 'type': self.TYPE}
 
 @dataclass(frozen=True)
 class ConstantCondition(BaseCondition, type='Constant'):
@@ -31,6 +36,9 @@ class ConstantCondition(BaseCondition, type='Constant'):
     '''
     
     value: bool
+    
+    def to_obj(self):
+        return self.value
 
 
 @dataclass(frozen=True)
@@ -40,7 +48,7 @@ class AndCondition(BaseCondition, type='And'):
         conditions: Conditions that must all be fulfilled
     '''
     
-    conditions: list[Condition]
+    conditions: tuple[BaseCondition, ...]
 
 
 @dataclass(frozen=True)
@@ -50,17 +58,17 @@ class OrCondition(BaseCondition, type='Or'):
         conditions: Conditions of which at least one must be fulfilled
     '''
     
-    conditions: list[Condition]
+    conditions: tuple[BaseCondition, ...]
 
 
 @dataclass(frozen=True)
 class NotCondition(BaseCondition, type='Not'):
     '''
     Attributes:
-        condition: Condition that must not be fulfilled
+        condition: BaseCondition that must not be fulfilled
     '''
     
-    condition: Condition
+    condition: BaseCondition
 
 
 @dataclass(frozen=True)
@@ -72,8 +80,8 @@ class CompareCondition(BaseCondition, type='Compare'):
         mode: Comparison operator to apply
     '''
     
-    value1: Value
-    value2: Value
+    value1: BaseValue
+    value2: BaseValue
     mode: ComparisonMode
 
 
@@ -85,7 +93,7 @@ class EntityCondition(BaseCondition, type='Entity'):
         predicate: Predicate to check for this entity
     '''
     
-    id: Value
+    id: BaseValue
     predicate: EntityPredicate
 
 

@@ -1,7 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from typing import TYPE_CHECKING, ClassVar
+
+from util import snake_to_camel
 
 from .enum import (
     BinaryOperator,
@@ -13,7 +15,7 @@ from .enum import (
 )
 
 if TYPE_CHECKING:
-    from .types import Condition, Value
+    from .condition import BaseCondition
 
 
 @dataclass(frozen=True)
@@ -28,7 +30,10 @@ class BaseValue:
     def __init_subclass__(cls, type: str):
         super().__init_subclass__()
         cls.TYPE = type
-
+    
+    def to_dict(self):
+        field_values = {snake_to_camel(f.name): getattr(self, f.name) for f in fields(self) if getattr(self, f.name) is not None}
+        return {**field_values, 'type': self.TYPE}
 
 @dataclass(frozen=True)
 class ConstantValue(BaseValue, type='Constant'):
@@ -38,6 +43,9 @@ class ConstantValue(BaseValue, type='Constant'):
     '''
     
     value: float
+    
+    def to_obj(self):
+        return self.value
 
 
 @dataclass(frozen=True)
@@ -49,8 +57,8 @@ class MathValue(BaseValue, type='Math'):
         operator: Math operation to apply.
     """
     
-    value1: Value
-    value2: Value
+    value1: BaseValue
+    value2: BaseValue
     operator: BinaryOperator
 
 
@@ -62,7 +70,7 @@ class UnaryValue(BaseValue, type='Unary'):
         operator: Math operation to apply.
     """
     
-    value: Value
+    value: BaseValue
     operator: UnaryOperator
 
 
@@ -75,9 +83,9 @@ class IfValue(BaseValue, type='If'):
         no: Value if the condition is false.
     """
     
-    condition: Condition
-    yes: Value
-    no: Value
+    condition: BaseCondition
+    yes: BaseValue
+    no: BaseValue
 
 
 @dataclass(frozen=True)
@@ -110,7 +118,7 @@ class EntityValue(BaseValue, type='Entity'):
         attribute: Entity attribute to read.
     """
     
-    id: Value
+    id: BaseValue
     attribute: EntityAttribute
 
 
@@ -146,7 +154,7 @@ class SpriteFindIDValue(BaseValue, type='SpriteFindID'):
         path: Name of the object to locate (uses Unity GameObject names). If nil, returns the specified object (or scene root) directly if it exists, and 0 if destroyed.
     """
     
-    id: Value
+    id: BaseValue
     path: str | None = None
 
 
@@ -159,6 +167,6 @@ class SpriteAttributeValue(BaseValue, type='SpriteAttribute'):
         index: Component index to read (0 = X, 1 = Y, 2 = Z, 3 = W). Defaults to X.
     """
     
-    id: Value
+    id: BaseValue
     attribute: SpriteAttribute
-    index: Value | None = None
+    index: BaseValue | None = None

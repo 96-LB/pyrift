@@ -3,13 +3,15 @@ __all__ = (
     'AnimateEvent',
     'AnimationType',
     'ArrayValue',
+    'BaseCondition',
+    'BaseEvent',
+    'BaseValue',
     'BinaryOperator',
     'ButtonMask',
     'ComboAddEvent',
     'ComboDropEvent',
     'CompareCondition',
     'ComparisonMode',
-    'Condition',
     'ConstantCondition',
     'ConstantValue',
     'DespawnEvent',
@@ -18,7 +20,6 @@ __all__ = (
     'EntityCondition',
     'EntityPredicate',
     'EntityValue',
-    'Event',
     'FinishLevelEvent',
     'GraphicCreateEvent',
     'GraphicDestroyEvent',
@@ -36,10 +37,13 @@ __all__ = (
     'NotCondition',
     'OrCondition',
     'PlayerHealthEvent',
+    'RatingDefinition',
+    'RatingStep',
     'ScoreEvent',
     'ScoreType',
     'SetArrayEvent',
     'SetVariableEvent',
+    'Sound',
     'SoundCancelEvent',
     'SoundEvent',
     'SoundPrediction',
@@ -56,6 +60,7 @@ __all__ = (
     'StatusAddEvent',
     'StatusRemoveEvent',
     'StopStreamEvent',
+    'Stream',
     'SystemAttribute',
     'SystemCondition',
     'SystemEvent',
@@ -64,7 +69,6 @@ __all__ = (
     'TimingMode',
     'UnaryOperator',
     'UnaryValue',
-    'Value',
     'VariableValue',
     'VisualType',
     'WaitEvent',
@@ -73,6 +77,7 @@ __all__ = (
 
 from .condition import (
     AndCondition,
+    BaseCondition,
     CompareCondition,
     ConstantCondition,
     EntityCondition,
@@ -102,6 +107,7 @@ from .enum import (
 )
 from .event import (
     AnimateEvent,
+    BaseEvent,
     ComboAddEvent,
     ComboDropEvent,
     DespawnEvent,
@@ -132,9 +138,12 @@ from .event import (
     SystemEvent,
     WaitEvent,
 )
-from .types import Condition, Event, Value
+from .rating import RatingDefinition, RatingStep
+from .sound import Sound
+from .stream import Stream
 from .value import (
     ArrayValue,
+    BaseValue,
     ConstantValue,
     EntityValue,
     IfValue,

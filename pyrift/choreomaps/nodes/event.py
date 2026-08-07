@@ -1,7 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from typing import TYPE_CHECKING, ClassVar
+
+from util import snake_to_camel
 
 from .enum import (
     AnimationType,
@@ -17,7 +19,8 @@ from .enum import (
 )
 
 if TYPE_CHECKING:
-    from .types import Condition, Event, Value
+    from .condition import BaseCondition
+    from .value import BaseValue
 
 
 @dataclass(frozen=True)
@@ -34,6 +37,10 @@ class BaseEvent:
     def __init_subclass__(cls, type: str):
         super().__init_subclass__()
         cls.TYPE = type
+    
+    def to_dict(self):
+        field_values = {snake_to_camel(f.name): getattr(self, f.name) for f in fields(self) if getattr(self, f.name) is not None}
+        return {**field_values, 'ev': self.TYPE}
 
 
 
@@ -48,11 +55,11 @@ class SpawnEvent(BaseEvent, type='Spawn'):
         facing_x: Facing direction to spawn the entity in
     '''
     
-    type: Value
-    id: Value
-    x: Value
-    y: Value
-    facing_x: Value
+    type: BaseValue
+    id: BaseValue
+    x: BaseValue
+    y: BaseValue
+    facing_x: BaseValue
 
 
 @dataclass(frozen=True)
@@ -62,7 +69,7 @@ class DespawnEvent(BaseEvent, type='Despawn'):
         id: ID of the entity to despawn
     '''
     
-    id: Value
+    id: BaseValue
 
 
 @dataclass(frozen=True)
@@ -74,9 +81,9 @@ class EntityAttributeEvent(BaseEvent, type='EntityAttribute'):
         value: Value to set the attribute to
     '''
     
-    id: Value
+    id: BaseValue
     attribute: EntityAttribute
-    value: Value
+    value: BaseValue
 
 
 @dataclass(frozen=True)
@@ -91,12 +98,12 @@ class MoveEvent(BaseEvent, type='Move'):
         lerp: Interpolation mode for this move
     '''
     
-    id: Value
-    delay: Value
-    x: Value | None = None
-    y: Value | None = None
-    facing_x: Value | None = None
-    lerp: Value | None = None
+    id: BaseValue
+    delay: BaseValue
+    x: BaseValue | None = None
+    y: BaseValue | None = None
+    facing_x: BaseValue | None = None
+    lerp: BaseValue | None = None
 
 
 @dataclass(frozen=True)
@@ -107,7 +114,7 @@ class StatusAddEvent(BaseEvent, type='StatusAdd'):
         status: Status effect to apply
     '''
     
-    id: Value
+    id: BaseValue
     status: Status
 
 
@@ -119,8 +126,8 @@ class StatusRemoveEvent(BaseEvent, type='StatusRemove'):
         status: Status effect to remove
     '''
     
-    id: Value
-    status: Value
+    id: BaseValue
+    status: BaseValue
 
 
 @dataclass(frozen=True)
@@ -138,15 +145,15 @@ class HitVfxEvent(BaseEvent, type='HitVfx'):
         lockout: Is this a lockout hit? This produces a miss-like animation on the action row
     '''
     
-    x: Value | None = None
-    y: Value | None = None
-    rating: Value | None = None
-    timing: Value | None = None
-    true_perfect: Condition | None = None
-    kill: Condition | None = None
-    health_item: Condition | None = None
-    final_hit: Condition | None = None
-    lockout: Condition | None = None
+    x: BaseValue | None = None
+    y: BaseValue | None = None
+    rating: BaseValue | None = None
+    timing: BaseValue | None = None
+    true_perfect: BaseCondition | None = None
+    kill: BaseCondition | None = None
+    health_item: BaseCondition | None = None
+    final_hit: BaseCondition | None = None
+    lockout: BaseCondition | None = None
 
 
 @dataclass(frozen=True)
@@ -163,14 +170,14 @@ class SoundEvent(BaseEvent, type='Sound'):
         pitch: Pitch to play the sound effect at (defaults to 1)
     '''
     
-    sound: Value | None = None
-    id: Value | None = None
-    delay: Value | None = None
-    apply_latency: Value | None = None
-    fade_in: Value | None = None
-    lane: Value | None = None
-    volume: Value | None = None
-    pitch: Value | None = None
+    sound: BaseValue | None = None
+    id: BaseValue | None = None
+    delay: BaseValue | None = None
+    apply_latency: BaseValue | None = None
+    fade_in: BaseValue | None = None
+    lane: BaseValue | None = None
+    volume: BaseValue | None = None
+    pitch: BaseValue | None = None
 
 
 @dataclass(frozen=True)
@@ -180,7 +187,7 @@ class SoundCancelEvent(BaseEvent, type='SoundCancel'):
         ids: List of sound effect IDs to cancel
     '''
     
-    ids: list[Value]
+    ids: tuple[BaseValue, ...]
 
 
 @dataclass(frozen=True)
@@ -191,7 +198,7 @@ class AnimateEvent(BaseEvent, type='Animate'):
         type: Name of the animation type to play
     '''
     
-    id: Value
+    id: BaseValue
     type: AnimationType
 
 
@@ -208,13 +215,13 @@ class SpriteEvent(BaseEvent, type='Sprite'):
         w: W component of the attribute value to assign to the sprite. If nil, preserves the old value
     '''
     
-    id: Value
+    id: BaseValue
     attribute: SpriteAttribute
     operator: BinaryOperator
-    x: Value | None = None
-    y: Value | None = None
-    z: Value | None = None
-    w: Value | None = None
+    x: BaseValue | None = None
+    y: BaseValue | None = None
+    z: BaseValue | None = None
+    w: BaseValue | None = None
 
 
 @dataclass(frozen=True)
@@ -226,8 +233,8 @@ class GraphicCreateEvent(BaseEvent, type='GraphicCreate'):
         type: Subtype of the graphic object to instantiate
     '''
     
-    id: Value
-    parent: Value | None = None
+    id: BaseValue
+    parent: BaseValue | None = None
     type: GraphicType | None = None
 
 
@@ -238,7 +245,7 @@ class GraphicDestroyEvent(BaseEvent, type='GraphicDestroy'):
         id: Reference ID of the graphic to destroy
     '''
     
-    id: Value
+    id: BaseValue
 
 
 @dataclass(frozen=True)
@@ -249,8 +256,8 @@ class PlayerHealthEvent(BaseEvent, type='PlayerHealth'):
         diff: Amount of health to add (positive) or remove (negative)
     '''
     
-    id: Value
-    diff: Value
+    id: BaseValue
+    diff: BaseValue
 
 
 @dataclass(frozen=True)
@@ -302,7 +309,7 @@ class SystemEvent(BaseEvent, type='System'):
     '''
     
     attribute: SystemAttribute
-    value: Value
+    value: BaseValue
 
 
 @dataclass(frozen=True)
@@ -312,7 +319,7 @@ class FinishLevelEvent(BaseEvent, type='FinishLevel'):
         win: If true, the completion counts as a victory
     '''
     
-    win: Condition
+    win: BaseCondition
 
 
 @dataclass(frozen=True)
@@ -331,16 +338,16 @@ class InputOpenEvent(BaseEvent, type='InputOpen'):
         on_miss: Stream to start when this input window is missed
     '''
     
-    id: Value
+    id: BaseValue
     mask: ButtonMask
     rating_id: int
-    offset: Value | None = None
-    release_offset: Value | None = None
-    priority: Value | None = None
-    force_split: Condition | None = None
-    on_hit: Event | None = None
-    on_release: Event | None = None
-    on_miss: Event | None = None
+    offset: BaseValue | None = None
+    release_offset: BaseValue | None = None
+    priority: BaseValue | None = None
+    force_split: BaseCondition | None = None
+    on_hit: BaseEvent | None = None
+    on_release: BaseEvent | None = None
+    on_miss: BaseEvent | None = None
 
 
 @dataclass(frozen=True)
@@ -350,7 +357,7 @@ class InputCloseEvent(BaseEvent, type='InputClose'):
         id: Unique ID of the input window to close
     '''
     
-    id: Value
+    id: BaseValue
 
 
 @dataclass(frozen=True)
@@ -363,10 +370,10 @@ class StartStreamEvent(BaseEvent, type='StartStream'):
         locals: Optional list of local variables to initialize the stream with
     '''
     
-    id: Value
-    ref_id: Value
-    immediate: Condition
-    locals: list[Value] | None = None
+    id: BaseValue
+    ref_id: BaseValue
+    immediate: BaseCondition
+    locals: tuple[BaseValue, ...] | None = None
 
 
 @dataclass(frozen=True)
@@ -376,7 +383,7 @@ class StopStreamEvent(BaseEvent, type='StopStream'):
         ref_id: Reference ID of the event stream to stop (or nil to stop own stream)
     '''
     
-    ref_id: Value | None = None
+    ref_id: BaseValue | None = None
 
 
 @dataclass(frozen=True)
@@ -388,9 +395,9 @@ class IfEvent(BaseEvent, type='If'):
         no: Event to execute if condition is not met
     '''
     
-    condition: Condition
-    yes: Event
-    no: Event
+    condition: BaseCondition
+    yes: BaseEvent | None
+    no: BaseEvent | None
 
 
 @dataclass(frozen=True)
@@ -400,7 +407,7 @@ class JumpEvent(BaseEvent, type='Jump'):
         target: Instruction index to jump to
     '''
     
-    target: Value
+    target: BaseValue
 
 
 @dataclass(frozen=True)
@@ -410,7 +417,7 @@ class WaitEvent(BaseEvent, type='Wait'):
         condition: Waits until this condition is true. If nil, waits for one tick instead
     '''
     
-    condition: Condition | None = None
+    condition: BaseCondition | None = None
 
 
 @dataclass(frozen=True)
@@ -423,8 +430,8 @@ class SetArrayEvent(BaseEvent, type='SetArray'):
     '''
     
     name: str | None = None
-    index: Value | None = None
-    value: Value | None = None
+    index: BaseValue | None = None
+    value: BaseValue | None = None
 
 
 @dataclass(frozen=True)
@@ -436,7 +443,7 @@ class SetVariableEvent(BaseEvent, type='SetVariable'):
     '''
     
     name: str
-    value: Value
+    value: BaseValue
 
 
 @dataclass(frozen=True)
@@ -448,4 +455,4 @@ class LogEvent(BaseEvent, type='Log'):
     '''
     
     text: str
-    args: list[Value] | None = None
+    args: tuple[BaseValue, ...] | None = None

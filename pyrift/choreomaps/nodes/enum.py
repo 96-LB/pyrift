@@ -224,3 +224,15 @@ class VisualType(Enum):
     HUD_PLAYER_VIBE_BOLT_B = "HudPlayerVibeBoltB"
     GRAPHIC = "Graphic"
     GRAPHIC_MASK = "GraphicMask"
+
+class InputRating(Enum):
+    MISS = "Miss"
+    OK = "Ok"
+    GOOD = "Good"
+    GREAT = "Great"
+    PERFECT = "Perfect"
+
+class InputTiming(Enum):
+    EARLY = "Early"
+    FLAWLESS = "TrueFlawless"
+    LATE = "Late"
