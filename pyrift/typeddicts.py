@@ -25,22 +25,6 @@ class ChartInfoDict(TypedDict):
     Version: int
     VideoFileName: str
 
-
-class EventDataPairDict(TypedDict):
-    _eventDataKey: str
-    _eventDataValue: str
-
-
-class EventDict(TypedDict):
-    clipin: int
-    dataPairs: list[EventDataPairDict]
-    endBeatNumber: float
-    group: int
-    startBeatNumber: float
-    track: Literal[1, 2, 3]
-    type: str
-
-
 class ChartDict(TypedDict):
     beatDivisions: int
     bpm: float
@@ -49,7 +33,7 @@ class ChartDict(TypedDict):
     countdownBpm: float
     countdownTicks: int
     defaultBossStance: int
-    events: list[EventDict]
+    #events: list[EventDict]
     inputMappingOverrideJson: str
     name: str
     playbackOffset: int

@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-from .events import Event
 from .difficulty import Difficulty
 from .typeddicts import ChartDict, DifficultyInfoDict
 
@@ -19,8 +18,6 @@ class Chart:
     countdown: int
     offset: float
     
-    events: list[Event]
-    
     def to_info_dict(self, name: str, index: int) -> DifficultyInfoDict:
         return {
             'BeatCount': self.beat_count,
@@ -32,7 +29,6 @@ class Chart:
         }
     
     def to_chart_dict(self, name: str) -> ChartDict:
-        self.events.sort(key=lambda e: e.start_beat)
         return {
             'beatDivisions': self.subdivisions,
             'bpm': self.bpm,
@@ -41,7 +37,6 @@ class Chart:
             'countdownBpm': self.bpm,
             'countdownTicks': self.countdown,
             'defaultBossStance': 0,
-            'events': [e.to_dict() for e in self.events],
             'inputMappingOverrideJson': '',
             'name': name,
             'playbackOffset': -4,

@@ -24,3 +24,7 @@ Issues = "https://github.com/96-LB/pyrift/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["pyrift"]
+
+[tool.pyright]
+venv = ".venv"
+typeCheckingMode = "strict"
