@@ -43,7 +43,7 @@ class ChoreomapBuilder(ast.NodeVisitor):
     def __init__(self):
         self.refs: int = 0
         self.func_map: dict[str, int] = {}
-        self.streams: dict[int, Stream] = {}
+        self.streams: list[Stream] = []
         self.scopes: list[Scope] = []
         self.t: float = 0
     
@@ -75,12 +75,12 @@ class ChoreomapBuilder(ast.NodeVisitor):
                 case _:
                     raise NotImplementedError(f'Unsupported statement: {type(child).__name__}')
         stream = Stream(
-            id=self.make_id(),
+            id=len(self.streams) + 1,
             events=tuple(events),
             _vars=self.scopes[-1].list_vars()
         )
         print(f'Found stream {stream.id} in node {'::'.join(type(n).__name__ for n in nodes)}')
-        self.streams[stream.id] = stream
+        self.streams.append(stream)
         
         return stream
     
@@ -101,18 +101,30 @@ class ChoreomapBuilder(ast.NodeVisitor):
     def visit_Module(self, node: ast.Module):
         with self.new_scope():
             stream = self.visit_stream(node.body)
-        # TODO: actually set these properly
+        event = StartStreamEvent(
+            t=self.t,
+            id=ConstantValue(stream.id),
+            ref_id=self.make_ref(),
+            immediate=ConstantCondition(True),
+            locals=stream.pad_locals(())
+        )
+        main = Stream(
+            id=len(self.streams) + 1,
+            events=(event,),
+        )
+        self.streams.append(main)
+        # TODO: actually set the properties properly
         return Choreomap(
-            streams=tuple(self.streams.values()),
+            streams=tuple(self.streams),
             input_rating_definitions=(),
-            main_id=stream.id
+            main_id=main.id
         )
     
     @override
     def visit_FunctionDef(self, node: ast.FunctionDef):
         with self.new_scope(node.args):
             stream = self.visit_stream(node.body)
-        self.func_map[node.name] = stream.id
+        self.func_map[node.name] = stream.id - 1
         return stream
     
     @override
@@ -122,7 +134,7 @@ class ChoreomapBuilder(ast.NodeVisitor):
             case BaseCondition():
                 condition = test
             case BaseValue():
-                condition = CompareCondition(test, ConstantValue(0), ComparisonMode.EQUAL)
+                condition = CompareCondition(test, ConstantValue(0), ComparisonMode.NOT_EQUAL)
             case _:
                 raise NotImplementedError(f'Unsupported child as condition in if statement: {type(test).__name__}')
         
@@ -130,7 +142,7 @@ class ChoreomapBuilder(ast.NodeVisitor):
         
         body = self.visit_stream(node.body)
         orself = self.visit_stream(node.orelse)
-
+        
         yes = self.start_stream(body, immediate=True, args=scope.get_locals())
         no = self.start_stream(orself, immediate=True, args=scope.get_locals()) if node.orelse else None
         
@@ -152,11 +164,11 @@ class ChoreomapBuilder(ast.NodeVisitor):
         name = target.id
         scope = self.scopes[-1]
         index = scope.get(name)
-        if not index:
+        if index is None:
             scope.set(name)
-            index = len(scope.vars)
+            index = len(scope.vars) - 1
         
-        event = SetArrayEvent(t=self.t, value=ConstantValue(index))
+        event = SetArrayEvent(t=self.t, index=ConstantValue(index), value=value)
         return event
     
     @override
@@ -220,7 +232,7 @@ class ChoreomapBuilder(ast.NodeVisitor):
             case BaseCondition():
                 condition = test
             case BaseValue():
-                condition = CompareCondition(test, ConstantValue(0), ComparisonMode.EQUAL)
+                condition = CompareCondition(test, ConstantValue(0), ComparisonMode.NOT_EQUAL)
             case _:
                 raise NotImplementedError(f'Unsupported child as condition in if expression: {type(test).__name__}')
         
@@ -288,5 +300,5 @@ class ChoreomapBuilder(ast.NodeVisitor):
         name = node.id
         scope = self.scopes[-1]
         index = scope.get(name)
-        if index:
+        if index is not None:
             return ArrayValue(index=ConstantValue(index))

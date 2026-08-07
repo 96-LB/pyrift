@@ -1,148 +1,267 @@
 {
-    "streams": [
-        {
-            "id": 1,
-            "events": [
-                {
-                    "t": 0,
-                    "text": "inner called with {0} and {1}",
-                    "args": [
-                        {
-                            "index": 1,
-                            "type": "Array"
-                        },
-                        {
-                            "index": 2,
-                            "type": "Array"
-                        }
-                    ],
-                    "ev": "Log"
-                }
-            ],
-            "timingMode": "SongStart",
-            "_vars": [
-                "x",
-                "y"
-            ]
-        },
-        {
-            "id": 3,
-            "events": [
-                {
-                    "t": 0,
-                    "id": 1,
-                    "refId": 2,
-                    "immediate": false,
-                    "locals": [
-                        {
-                            "index": 1,
-                            "type": "Array"
-                        },
-                        4
-                    ],
-                    "ev": "StartStream"
-                }
-            ],
-            "timingMode": "SongStart",
-            "_vars": [
-                "a"
-            ]
-        },
-        {
-            "id": 5,
-            "events": [
-                {
-                    "t": 0,
-                    "id": 1,
-                    "refId": 4,
-                    "immediate": false,
-                    "locals": [
-                        96,
-                        {
-                            "index": 1,
-                            "type": "Array"
-                        }
-                    ],
-                    "ev": "StartStream"
-                }
-            ],
-            "timingMode": "SongStart",
-            "_vars": [
-                "a"
-            ]
-        },
-        {
-            "id": 8,
-            "events": [
-                {
-                    "t": 0,
-                    "value": 1,
-                    "ev": "SetArray"
-                },
-                {
-                    "t": 0,
-                    "condition": {
-                        "value1": {
-                            "index": 1,
-                            "type": "Array"
-                        },
-                        "value2": 0,
-                        "mode": "Equal",
-                        "type": "Compare"
-                    },
-                    "yes": {
+    "bpm": 200,
+    "beatDivisions": 2,
+    "name": "_test2_",
+    "coalTrapSpeedUpFactorOverride": 2,
+    "countdownTicks": 4,
+    "countdownBpm": 200,
+    "playbackOffset": -4,
+    "playbackOffsetTime": 0,
+    "choreomap": {
+        "streams": [
+            {
+                "id": 1,
+                "events": [
+                    {
                         "t": 0,
-                        "id": 3,
-                        "refId": 6,
-                        "immediate": true,
-                        "locals": [
+                        "text": "inner called with {0} and {1}",
+                        "args": [
+                            {
+                                "index": 0,
+                                "type": "Array"
+                            },
                             {
                                 "index": 1,
                                 "type": "Array"
                             }
                         ],
-                        "ev": "StartStream"
-                    },
-                    "no": {
+                        "ev": "Log"
+                    }
+                ],
+                "timingMode": "SongStart",
+                "_vars": [
+                    "x",
+                    "y"
+                ]
+            },
+            {
+                "id": 2,
+                "events": [
+                    {
                         "t": 0,
-                        "id": 5,
-                        "refId": 7,
-                        "immediate": true,
-                        "locals": [
+                        "text": "{0} {1}",
+                        "args": [
+                            {
+                                "index": 0,
+                                "type": "Array"
+                            },
                             {
                                 "index": 1,
                                 "type": "Array"
                             }
                         ],
-                        "ev": "StartStream"
+                        "ev": "Log"
                     },
-                    "ev": "If"
-                },
-                {
-                    "t": 0,
-                    "value": 2,
-                    "ev": "SetArray"
-                },
-                {
-                    "t": 0,
-                    "text": "b = {0}",
-                    "args": [
-                        {
-                            "index": 2,
-                            "type": "Array"
-                        }
-                    ],
-                    "ev": "Log"
-                }
-            ],
-            "timingMode": "SongStart",
-            "_vars": [
-                "a",
-                "b"
-            ]
-        }
-    ],
-    "inputRatingDefinitions": [],
-    "mainId": 8,
-    "sounds": []
+                    {
+                        "t": 0,
+                        "id": 1,
+                        "immediate": false,
+                        "locals": [
+                            {
+                                "index": 1,
+                                "type": "Array"
+                            },
+                            4
+                        ],
+                        "ev": "StartStream",
+                        "refID": 1
+                    }
+                ],
+                "timingMode": "SongStart",
+                "_vars": [
+                    "x",
+                    "a"
+                ]
+            },
+            {
+                "id": 3,
+                "events": [
+                    {
+                        "t": 0,
+                        "text": "{0}{0}{0} {1}{1}{1}",
+                        "args": [
+                            {
+                                "index": 0,
+                                "type": "Array"
+                            },
+                            {
+                                "index": 1,
+                                "type": "Array"
+                            }
+                        ],
+                        "ev": "Log"
+                    },
+                    {
+                        "t": 0,
+                        "id": 1,
+                        "immediate": false,
+                        "locals": [
+                            96,
+                            {
+                                "index": 1,
+                                "type": "Array"
+                            }
+                        ],
+                        "ev": "StartStream",
+                        "refID": 2
+                    }
+                ],
+                "timingMode": "SongStart",
+                "_vars": [
+                    "x",
+                    "a"
+                ]
+            },
+            {
+                "id": 4,
+                "events": [
+                    {
+                        "t": 0,
+                        "index": 0,
+                        "value": {
+                            "value1": 2,
+                            "value2": 3,
+                            "operator": "Add",
+                            "type": "Math"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "text": "Hello World! {0}",
+                        "args": [
+                            {
+                                "index": 0,
+                                "type": "Array"
+                            }
+                        ],
+                        "ev": "Log"
+                    },
+                    {
+                        "t": 0,
+                        "index": 1,
+                        "value": {
+                            "value1": 2,
+                            "value2": 3,
+                            "operator": "Multiply",
+                            "type": "Math"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "text": "Hello World! {0} {1}",
+                        "args": [
+                            {
+                                "index": 0,
+                                "type": "Array"
+                            },
+                            {
+                                "index": 1,
+                                "type": "Array"
+                            }
+                        ],
+                        "ev": "Log"
+                    },
+                    {
+                        "t": 0,
+                        "condition": {
+                            "value1": {
+                                "index": 1,
+                                "type": "Array"
+                            },
+                            "value2": 0,
+                            "mode": "NotEqual",
+                            "type": "Compare"
+                        },
+                        "yes": {
+                            "t": 0,
+                            "id": 2,
+                            "immediate": true,
+                            "locals": [
+                                {
+                                    "index": 0,
+                                    "type": "Array"
+                                },
+                                {
+                                    "index": 1,
+                                    "type": "Array"
+                                }
+                            ],
+                            "ev": "StartStream",
+                            "refID": 3
+                        },
+                        "no": {
+                            "t": 0,
+                            "id": 3,
+                            "immediate": true,
+                            "locals": [
+                                {
+                                    "index": 0,
+                                    "type": "Array"
+                                },
+                                {
+                                    "index": 1,
+                                    "type": "Array"
+                                }
+                            ],
+                            "ev": "StartStream",
+                            "refID": 4
+                        },
+                        "ev": "If"
+                    },
+                    {
+                        "t": 0,
+                        "index": 2,
+                        "value": {
+                            "condition": false,
+                            "yes": 2,
+                            "no": 3,
+                            "type": "If"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "text": "b = {0}",
+                        "args": [
+                            {
+                                "index": 2,
+                                "type": "Array"
+                            }
+                        ],
+                        "ev": "Log"
+                    }
+                ],
+                "timingMode": "SongStart",
+                "_vars": [
+                    "x",
+                    "a",
+                    "b"
+                ]
+            },
+            {
+                "id": 5,
+                "events": [
+                    {
+                        "t": 0,
+                        "id": 4,
+                        "immediate": true,
+                        "locals": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "ev": "StartStream",
+                        "refID": 5
+                    }
+                ],
+                "timingMode": "SongStart",
+                "_vars": []
+            }
+        ],
+        "inputRatingDefinitions": [],
+        "mainId": 5,
+        "sounds": []
+    }
 }

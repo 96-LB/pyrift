@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, fields
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, ClassVar, override
 
 from util import snake_to_camel
 
@@ -374,6 +374,12 @@ class StartStreamEvent(BaseEvent, type='StartStream'):
     ref_id: BaseValue
     immediate: BaseCondition
     locals: tuple[BaseValue, ...] | None = None
+    
+    def to_obj(self):
+        dict = self.to_dict()
+        ref_id = dict.pop('refId')
+        dict['refID'] = ref_id
+        return dict
 
 
 @dataclass(frozen=True)
@@ -384,7 +390,12 @@ class StopStreamEvent(BaseEvent, type='StopStream'):
     '''
     
     ref_id: BaseValue | None = None
-
+    
+    def to_obj(self):
+        dict = self.to_dict()
+        ref_id = dict.pop('refId')
+        dict['refID'] = ref_id
+        return dict
 
 @dataclass(frozen=True)
 class IfEvent(BaseEvent, type='If'):
