@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
+from .events import Event
 from .difficulty import Difficulty
-from .event import Event
 from .typeddicts import ChartDict, DifficultyInfoDict
 
 
