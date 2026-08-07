@@ -3,7 +3,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar
 
-from .enum import BinaryOperator, EntityAttribute, SpriteAttribute, SystemAttribute, UnaryOperator, VisualType
+from .enum import (
+    BinaryOperator,
+    EntityAttribute,
+    SpriteAttribute,
+    SystemAttribute,
+    UnaryOperator,
+    VisualType,
+)
 
 if TYPE_CHECKING:
     from .types import Condition, Value

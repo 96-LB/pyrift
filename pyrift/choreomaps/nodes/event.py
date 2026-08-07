@@ -1,7 +1,20 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar
 
-from .enum import AnimationType, BinaryOperator, ButtonMask, GraphicType, EntityAttribute, ScoreType, SpriteAttribute, Statistic, Status, SystemAttribute
+from .enum import (
+    AnimationType,
+    BinaryOperator,
+    ButtonMask,
+    EntityAttribute,
+    GraphicType,
+    ScoreType,
+    SpriteAttribute,
+    Statistic,
+    Status,
+    SystemAttribute,
+)
 
 if TYPE_CHECKING:
     from .types import Condition, Event, Value
@@ -257,8 +270,6 @@ class ComboAddEvent(BaseEvent, type='ComboAdd'):
     '''
     Attributes:
     '''
-    
-    pass
 
 
 @dataclass(frozen=True)
@@ -266,8 +277,6 @@ class ComboDropEvent(BaseEvent, type='ComboDrop'):
     '''
     Attributes:
     '''
-    
-    pass
 
 
 @dataclass(frozen=True)
