@@ -8,6 +8,7 @@ from typing import override
 from . import globals
 from .choreomap import Choreomap
 from .nodes import (
+    AndCondition,
     ArrayValue,
     BaseCondition,
     BaseEvent,
@@ -21,6 +22,8 @@ from .nodes import (
     IfValue,
     LogEvent,
     MathValue,
+    NotCondition,
+    OrCondition,
     SetArrayEvent,
     StartStreamEvent,
     Stream,
@@ -62,6 +65,16 @@ class ChoreomapBuilder(ast.NodeVisitor):
         self.scopes.append(Scope([arg.arg for arg in args.args] if args else []))
         yield
         self.scopes.pop()
+    
+    def visit_condition(self, node: ast.expr):
+        value = self.visit(node)
+        match value:
+            case BaseCondition():
+                return value
+            case BaseValue():
+                return CompareCondition(value, ConstantValue(0), ComparisonMode.NOT_EQUAL)
+            case _:
+                raise NotImplementedError(f'Unsupported condition: {type(value).__name__}')
     
     def visit_stream(self, nodes: Sequence[ast.AST]):
         events: list[BaseEvent] = []
@@ -108,6 +121,7 @@ class ChoreomapBuilder(ast.NodeVisitor):
             immediate=ConstantCondition(True),
             locals=stream.pad_locals(())
         )
+        
         main = Stream(
             id=len(self.streams) + 1,
             events=(event,),
@@ -129,20 +143,12 @@ class ChoreomapBuilder(ast.NodeVisitor):
     
     @override
     def visit_If(self, node: ast.If):
-        test = self.visit(node.test)
-        match test:
-            case BaseCondition():
-                condition = test
-            case BaseValue():
-                condition = CompareCondition(test, ConstantValue(0), ComparisonMode.NOT_EQUAL)
-            case _:
-                raise NotImplementedError(f'Unsupported child as condition in if statement: {type(test).__name__}')
-        
-        scope = self.scopes[-1]
+        condition = self.visit_condition(node.test)
         
         body = self.visit_stream(node.body)
         orself = self.visit_stream(node.orelse)
         
+        scope = self.scopes[-1]
         yes = self.start_stream(body, immediate=True, args=scope.get_locals())
         no = self.start_stream(orself, immediate=True, args=scope.get_locals()) if node.orelse else None
         
@@ -180,6 +186,18 @@ class ChoreomapBuilder(ast.NodeVisitor):
         return self.visit(node.value)
     
     @override
+    def visit_BoolOp(self, node: ast.BoolOp):
+        conditions = tuple(self.visit_condition(value) for value in node.values)
+        
+        match node.op:
+            case ast.And():
+                return AndCondition(conditions)
+            case ast.Or():
+                return OrCondition(conditions)
+            case _:
+                raise NotImplementedError(f'Unsupported boolean operator: {type(node.op)}')
+    
+    @override
     def visit_BinOp(self, node: ast.BinOp):
         left = self.visit(node.left)
         if not isinstance(left, BaseValue):
@@ -211,6 +229,9 @@ class ChoreomapBuilder(ast.NodeVisitor):
     
     @override
     def visit_UnaryOp(self, node: ast.UnaryOp):
+        if isinstance(node.op, ast.Not):
+            return NotCondition(self.visit_condition(node.operand))
+        
         value = self.visit(node.operand)
         if not isinstance(value, BaseValue):
             raise NotImplementedError(f'Unsupported operand in unary operation: {type(value).__name__}')
@@ -227,14 +248,7 @@ class ChoreomapBuilder(ast.NodeVisitor):
     
     @override
     def visit_IfExp(self, node: ast.IfExp):
-        test = self.visit(node.test) # TODO: DRY with visit_If
-        match test:
-            case BaseCondition():
-                condition = test
-            case BaseValue():
-                condition = CompareCondition(test, ConstantValue(0), ComparisonMode.NOT_EQUAL)
-            case _:
-                raise NotImplementedError(f'Unsupported child as condition in if expression: {type(test).__name__}')
+        condition = self.visit_condition(node.test)
         
         yes = self.visit(node.body)
         if not isinstance(yes, BaseValue):

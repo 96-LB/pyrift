@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, fields
-from typing import TYPE_CHECKING, ClassVar, override
+from typing import TYPE_CHECKING, ClassVar
 
 from util import snake_to_camel
 
@@ -41,7 +41,6 @@ class BaseEvent:
     def to_dict(self):
         field_values = {snake_to_camel(f.name): getattr(self, f.name) for f in fields(self) if getattr(self, f.name) is not None}
         return {**field_values, 'ev': self.TYPE}
-
 
 
 @dataclass(frozen=True)
