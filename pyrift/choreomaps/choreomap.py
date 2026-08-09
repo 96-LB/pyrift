@@ -1,12 +1,9 @@
-from dataclasses import dataclass, fields
-
-from util import snake_to_camel
+from pyrift.jobj import JObj
 
 from .nodes import RatingDefinition, Sound, Stream
 
 
-@dataclass(frozen=True)
-class Choreomap:
+class Choreomap(JObj):
     '''
     Attributes:
         streams: List of all streams contained in the Choreomap
@@ -21,7 +18,3 @@ class Choreomap:
     main_id: int
     miss_id: int | None = None
     sounds: tuple[Sound, ...] = ()
-    
-    def to_dict(self):
-        field_values = {snake_to_camel(f.name): getattr(self, f.name) for f in fields(self) if getattr(self, f.name) is not None}
-        return field_values

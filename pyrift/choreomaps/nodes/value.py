@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, fields
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, ClassVar, override
 
-from util import snake_to_camel
+from pyrift.jobj import JObj
 
 from .enum import (
     BinaryOperator,
@@ -18,8 +17,7 @@ if TYPE_CHECKING:
     from .condition import BaseCondition
 
 
-@dataclass(frozen=True)
-class BaseValue:
+class BaseValue(JObj):
     '''
     Attributes:
         TYPE: Value type
@@ -31,11 +29,11 @@ class BaseValue:
         super().__init_subclass__()
         cls.TYPE = type
     
+    @override
     def to_dict(self):
-        field_values = {snake_to_camel(f.name): getattr(self, f.name) for f in fields(self) if getattr(self, f.name) is not None}
-        return {**field_values, 'type': self.TYPE}
+        return {**super().to_dict(), 'type': self.TYPE}
 
-@dataclass(frozen=True)
+
 class ConstantValue(BaseValue, type='Constant'):
     '''
     Attributes:
@@ -44,11 +42,11 @@ class ConstantValue(BaseValue, type='Constant'):
     
     value: float
     
-    def to_obj(self):
+    @override
+    def to_json_obj(self):
         return self.value
 
 
-@dataclass(frozen=True)
 class MathValue(BaseValue, type='Math'):
     """
     Attributes:
@@ -62,7 +60,6 @@ class MathValue(BaseValue, type='Math'):
     operator: BinaryOperator
 
 
-@dataclass(frozen=True)
 class UnaryValue(BaseValue, type='Unary'):
     """
     Attributes:
@@ -74,7 +71,6 @@ class UnaryValue(BaseValue, type='Unary'):
     operator: UnaryOperator
 
 
-@dataclass(frozen=True)
 class IfValue(BaseValue, type='If'):
     """
     Attributes:
@@ -88,7 +84,6 @@ class IfValue(BaseValue, type='If'):
     no: BaseValue
 
 
-@dataclass(frozen=True)
 class VariableValue(BaseValue, type='Variable'):
     """
     Attributes:
@@ -98,7 +93,6 @@ class VariableValue(BaseValue, type='Variable'):
     name: str
 
 
-@dataclass(frozen=True)
 class ArrayValue(BaseValue, type='Array'):
     """
     Attributes:
@@ -110,7 +104,6 @@ class ArrayValue(BaseValue, type='Array'):
     index: BaseValue | None = None
 
 
-@dataclass(frozen=True)
 class EntityValue(BaseValue, type='Entity'):
     """
     Attributes:
@@ -122,7 +115,6 @@ class EntityValue(BaseValue, type='Entity'):
     attribute: EntityAttribute
 
 
-@dataclass(frozen=True)
 class SystemValue(BaseValue, type='System'):
     """
     Attributes:
@@ -132,7 +124,6 @@ class SystemValue(BaseValue, type='System'):
     attribute: SystemAttribute
 
 
-@dataclass(frozen=True)
 class SpriteIDValue(BaseValue, type='SpriteID'):
     """
     Attributes:
@@ -146,7 +137,6 @@ class SpriteIDValue(BaseValue, type='SpriteID'):
     y: BaseValue | None = None
 
 
-@dataclass(frozen=True)
 class SpriteFindIDValue(BaseValue, type='SpriteFindID'):
     """
     Attributes:
@@ -158,7 +148,6 @@ class SpriteFindIDValue(BaseValue, type='SpriteFindID'):
     path: str | None = None
 
 
-@dataclass(frozen=True)
 class SpriteAttributeValue(BaseValue, type='SpriteAttribute'):
     """
     Attributes:

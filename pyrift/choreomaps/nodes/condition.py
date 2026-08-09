@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, fields
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, ClassVar, override
 
-from util import snake_to_camel
+from pyrift.jobj import JObj, JList
 
 from .enum import ComparisonMode, EntityPredicate, SystemPredicate
 
@@ -11,8 +10,7 @@ if TYPE_CHECKING:
     from .value import BaseValue
 
 
-@dataclass(frozen=True)
-class BaseCondition:
+class BaseCondition(JObj):
     '''
     Attributes:
         TYPE: Condition type
@@ -24,11 +22,10 @@ class BaseCondition:
         super().__init_subclass__()
         cls.TYPE = type
     
+    @override
     def to_dict(self):
-        field_values = {snake_to_camel(f.name): getattr(self, f.name) for f in fields(self) if getattr(self, f.name) is not None}
-        return {**field_values, 'type': self.TYPE}
+        return {**super().to_dict(), 'type': self.TYPE}
 
-@dataclass(frozen=True)
 class ConstantCondition(BaseCondition, type='Constant'):
     '''
     Attributes:
@@ -37,31 +34,29 @@ class ConstantCondition(BaseCondition, type='Constant'):
     
     value: bool
     
-    def to_obj(self):
+    @override
+    def to_json_obj(self):
         return self.value
 
 
-@dataclass(frozen=True)
 class AndCondition(BaseCondition, type='And'):
     '''
     Attributes:
         conditions: Conditions that must all be fulfilled
     '''
     
-    conditions: tuple[BaseCondition, ...]
+    conditions: JList[BaseCondition]
 
 
-@dataclass(frozen=True)
 class OrCondition(BaseCondition, type='Or'):
     '''
     Attributes:
         conditions: Conditions of which at least one must be fulfilled
     '''
     
-    conditions: tuple[BaseCondition, ...]
+    conditions: JList[BaseCondition]
 
 
-@dataclass(frozen=True)
 class NotCondition(BaseCondition, type='Not'):
     '''
     Attributes:
@@ -71,7 +66,6 @@ class NotCondition(BaseCondition, type='Not'):
     condition: BaseCondition
 
 
-@dataclass(frozen=True)
 class CompareCondition(BaseCondition, type='Compare'):
     '''
     Attributes:
@@ -85,7 +79,6 @@ class CompareCondition(BaseCondition, type='Compare'):
     mode: ComparisonMode
 
 
-@dataclass(frozen=True)
 class EntityCondition(BaseCondition, type='Entity'):
     '''
     Attributes:
@@ -97,7 +90,6 @@ class EntityCondition(BaseCondition, type='Entity'):
     predicate: EntityPredicate
 
 
-@dataclass(frozen=True)
 class SystemCondition(BaseCondition, type='System'):
     '''
     Attributes:

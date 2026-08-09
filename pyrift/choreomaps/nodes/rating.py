@@ -1,10 +1,9 @@
-from dataclasses import dataclass
+from pyrift.jobj import JObj, JList
 
 from .enum import InputRating, InputTiming
 
 
-@dataclass(frozen=True)
-class RatingStep:
+class RatingStep(JObj):
     '''
     Attributes:
         threshold: Relative time offset since the start of the input window
@@ -21,11 +20,10 @@ class RatingStep:
     timing: InputTiming
 
 
-@dataclass(frozen=True)
-class RatingDefinition:
+class RatingDefinition(JObj):
     '''
     Attributes:
         steps: List of rating steps
     '''
     
-    steps: tuple[RatingStep, ...]
+    steps: JList[RatingStep]

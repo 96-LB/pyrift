@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, fields
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, ClassVar, override
 
-from util import snake_to_camel
+from pyrift.jobj import JObj, JList
 
 from .enum import (
     AnimationType,
@@ -23,8 +22,7 @@ if TYPE_CHECKING:
     from .value import BaseValue
 
 
-@dataclass(frozen=True)
-class BaseEvent:
+class BaseEvent(JObj):
     '''
     Attributes:
         TYPE: Event type
@@ -38,12 +36,11 @@ class BaseEvent:
         super().__init_subclass__()
         cls.TYPE = type
     
+    @override
     def to_dict(self):
-        field_values = {snake_to_camel(f.name): getattr(self, f.name) for f in fields(self) if getattr(self, f.name) is not None}
-        return {**field_values, 'ev': self.TYPE}
+        return {**super().to_dict(), 'ev': self.TYPE}
 
 
-@dataclass(frozen=True)
 class SpawnEvent(BaseEvent, type='Spawn'):
     '''
     Attributes:
@@ -61,7 +58,6 @@ class SpawnEvent(BaseEvent, type='Spawn'):
     facing_x: BaseValue
 
 
-@dataclass(frozen=True)
 class DespawnEvent(BaseEvent, type='Despawn'):
     '''
     Attributes:
@@ -71,7 +67,6 @@ class DespawnEvent(BaseEvent, type='Despawn'):
     id: BaseValue
 
 
-@dataclass(frozen=True)
 class EntityAttributeEvent(BaseEvent, type='EntityAttribute'):
     '''
     Attributes:
@@ -85,7 +80,6 @@ class EntityAttributeEvent(BaseEvent, type='EntityAttribute'):
     value: BaseValue
 
 
-@dataclass(frozen=True)
 class MoveEvent(BaseEvent, type='Move'):
     '''
     Attributes:
@@ -105,7 +99,6 @@ class MoveEvent(BaseEvent, type='Move'):
     lerp: BaseValue | None = None
 
 
-@dataclass(frozen=True)
 class StatusAddEvent(BaseEvent, type='StatusAdd'):
     '''
     Attributes:
@@ -117,7 +110,6 @@ class StatusAddEvent(BaseEvent, type='StatusAdd'):
     status: Status
 
 
-@dataclass(frozen=True)
 class StatusRemoveEvent(BaseEvent, type='StatusRemove'):
     '''
     Attributes:
@@ -129,7 +121,6 @@ class StatusRemoveEvent(BaseEvent, type='StatusRemove'):
     status: BaseValue
 
 
-@dataclass(frozen=True)
 class HitVfxEvent(BaseEvent, type='HitVfx'):
     '''
     Attributes:
@@ -155,7 +146,6 @@ class HitVfxEvent(BaseEvent, type='HitVfx'):
     lockout: BaseCondition | None = None
 
 
-@dataclass(frozen=True)
 class SoundEvent(BaseEvent, type='Sound'):
     '''
     Attributes:
@@ -179,17 +169,15 @@ class SoundEvent(BaseEvent, type='Sound'):
     pitch: BaseValue | None = None
 
 
-@dataclass(frozen=True)
 class SoundCancelEvent(BaseEvent, type='SoundCancel'):
     '''
     Attributes:
         ids: List of sound effect IDs to cancel
     '''
     
-    ids: tuple[BaseValue, ...]
+    ids: JList[BaseValue]
 
 
-@dataclass(frozen=True)
 class AnimateEvent(BaseEvent, type='Animate'):
     '''
     Attributes:
@@ -201,7 +189,6 @@ class AnimateEvent(BaseEvent, type='Animate'):
     type: AnimationType
 
 
-@dataclass(frozen=True)
 class SpriteEvent(BaseEvent, type='Sprite'):
     '''
     Attributes:
@@ -223,7 +210,6 @@ class SpriteEvent(BaseEvent, type='Sprite'):
     w: BaseValue | None = None
 
 
-@dataclass(frozen=True)
 class GraphicCreateEvent(BaseEvent, type='GraphicCreate'):
     '''
     Attributes:
@@ -237,7 +223,6 @@ class GraphicCreateEvent(BaseEvent, type='GraphicCreate'):
     type: GraphicType | None = None
 
 
-@dataclass(frozen=True)
 class GraphicDestroyEvent(BaseEvent, type='GraphicDestroy'):
     '''
     Attributes:
@@ -247,7 +232,6 @@ class GraphicDestroyEvent(BaseEvent, type='GraphicDestroy'):
     id: BaseValue
 
 
-@dataclass(frozen=True)
 class PlayerHealthEvent(BaseEvent, type='PlayerHealth'):
     '''
     Attributes:
@@ -259,7 +243,6 @@ class PlayerHealthEvent(BaseEvent, type='PlayerHealth'):
     diff: BaseValue
 
 
-@dataclass(frozen=True)
 class ScoreEvent(BaseEvent, type='Score'):
     '''
     Attributes:
@@ -271,21 +254,18 @@ class ScoreEvent(BaseEvent, type='Score'):
     amount: int | None = None
 
 
-@dataclass(frozen=True)
 class ComboAddEvent(BaseEvent, type='ComboAdd'):
     '''
     Attributes:
     '''
 
 
-@dataclass(frozen=True)
 class ComboDropEvent(BaseEvent, type='ComboDrop'):
     '''
     Attributes:
     '''
 
 
-@dataclass(frozen=True)
 class StatEvent(BaseEvent, type='Stat'):
     '''
     Attributes:
@@ -299,7 +279,6 @@ class StatEvent(BaseEvent, type='Stat'):
     amount: int | None = None
 
 
-@dataclass(frozen=True)
 class SystemEvent(BaseEvent, type='System'):
     '''
     Attributes:
@@ -311,7 +290,6 @@ class SystemEvent(BaseEvent, type='System'):
     value: BaseValue
 
 
-@dataclass(frozen=True)
 class FinishLevelEvent(BaseEvent, type='FinishLevel'):
     '''
     Attributes:
@@ -321,7 +299,6 @@ class FinishLevelEvent(BaseEvent, type='FinishLevel'):
     win: BaseCondition
 
 
-@dataclass(frozen=True)
 class InputOpenEvent(BaseEvent, type='InputOpen'):
     '''
     Attributes:
@@ -349,7 +326,6 @@ class InputOpenEvent(BaseEvent, type='InputOpen'):
     on_miss: BaseEvent | None = None
 
 
-@dataclass(frozen=True)
 class InputCloseEvent(BaseEvent, type='InputClose'):
     '''
     Attributes:
@@ -359,7 +335,6 @@ class InputCloseEvent(BaseEvent, type='InputClose'):
     id: BaseValue
 
 
-@dataclass(frozen=True)
 class StartStreamEvent(BaseEvent, type='StartStream'):
     '''
     Attributes:
@@ -372,16 +347,16 @@ class StartStreamEvent(BaseEvent, type='StartStream'):
     id: BaseValue
     ref_id: BaseValue
     immediate: BaseCondition
-    locals: tuple[BaseValue, ...] | None = None
+    locals: JList[BaseValue] | None = None
     
-    def to_obj(self):
+    @override
+    def to_json_obj(self):
         dict = self.to_dict()
         ref_id = dict.pop('refId')
         dict['refID'] = ref_id
         return dict
 
 
-@dataclass(frozen=True)
 class StopStreamEvent(BaseEvent, type='StopStream'):
     '''
     Attributes:
@@ -390,13 +365,13 @@ class StopStreamEvent(BaseEvent, type='StopStream'):
     
     ref_id: BaseValue | None = None
     
-    def to_obj(self):
+    @override
+    def to_json_obj(self):
         dict = self.to_dict()
         ref_id = dict.pop('refId')
         dict['refID'] = ref_id
         return dict
 
-@dataclass(frozen=True)
 class IfEvent(BaseEvent, type='If'):
     '''
     Attributes:
@@ -410,7 +385,6 @@ class IfEvent(BaseEvent, type='If'):
     no: BaseEvent | None
 
 
-@dataclass(frozen=True)
 class JumpEvent(BaseEvent, type='Jump'):
     '''
     Attributes:
@@ -420,7 +394,6 @@ class JumpEvent(BaseEvent, type='Jump'):
     target: BaseValue
 
 
-@dataclass(frozen=True)
 class WaitEvent(BaseEvent, type='Wait'):
     '''
     Attributes:
@@ -430,7 +403,6 @@ class WaitEvent(BaseEvent, type='Wait'):
     condition: BaseCondition | None = None
 
 
-@dataclass(frozen=True)
 class SetArrayEvent(BaseEvent, type='SetArray'):
     '''
     Attributes:
@@ -444,7 +416,6 @@ class SetArrayEvent(BaseEvent, type='SetArray'):
     value: BaseValue | None = None
 
 
-@dataclass(frozen=True)
 class SetVariableEvent(BaseEvent, type='SetVariable'):
     '''
     Attributes:
@@ -456,7 +427,6 @@ class SetVariableEvent(BaseEvent, type='SetVariable'):
     value: BaseValue
 
 
-@dataclass(frozen=True)
 class LogEvent(BaseEvent, type='Log'):
     '''
     Attributes:
@@ -465,4 +435,4 @@ class LogEvent(BaseEvent, type='Log'):
     '''
     
     text: str
-    args: tuple[BaseValue, ...] | None = None
+    args: JList[BaseValue] | None = None

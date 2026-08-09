@@ -1,8 +1,7 @@
-from dataclasses import dataclass
+from pyrift.jobj import JObj
 
 
-@dataclass(frozen=True)
-class Sound:
+class Sound(JObj):
     '''
     Attributes:
         id: FMOD sound event ID (prefixed with "$fmod$") for built-in sound events
