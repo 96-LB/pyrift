@@ -1,16 +1,17 @@
 import ast
-import inspect
-from types import ModuleType
 from typing import override
 
+from pyrift.choreomaps.enum import ComparisonMode
 from pyrift.choreomaps.ir.expression import (
     AndExpression,
     BaseExpression,
     BinaryExpression,
     BooleanExpression,
     CallExpression,
+    CompareExpression,
     FunctionExpression,
     IfExpression,
+    NotExpression,
     NullExpression,
     NumberExpression,
     OrExpression,
@@ -21,6 +22,7 @@ from pyrift.choreomaps.ir.expression import (
 from pyrift.choreomaps.ir.instruction import (
     BaseInstruction,
     IfInstruction,
+    NullInstruction,
     ReturnInstruction,
     SetVariableInstruction,
 )
@@ -31,15 +33,6 @@ from .nodes import (
     UnaryOperator,
 )
 
-
-def build(mod: ModuleType):
-    '''Reads a function as a choreomap stream by converting its AST to the choreomap DSL.'''
-    
-    source = inspect.getsource(mod)
-    tree = ast.parse(source)
-    builder = ChoreomapParser()
-    print(ast.dump(tree, indent=2))
-    return builder.visit_Module(tree)
 
 class ChoreomapParser(ast.NodeVisitor):
     @override
@@ -96,6 +89,7 @@ class ChoreomapParser(ast.NodeVisitor):
     @override
     def visit_ImportFrom(self, node: ast.ImportFrom):
         print(f'Ignored import {', '.join(name.name for name in node.names)} from {node.module}')
+        return NullInstruction()
     
     @override
     def visit_Expr(self, node: ast.Expr):
@@ -115,9 +109,6 @@ class ChoreomapParser(ast.NodeVisitor):
     
     @override
     def visit_BinOp(self, node: ast.BinOp):
-        left = self.visit_expr(node.left)
-        right = self.visit_expr(node.right)
-        
         MAPPING: dict[type[ast.operator], BinaryOperator] = {
             ast.Add: BinaryOperator.ADD,
             ast.Sub: BinaryOperator.SUBTRACT,
@@ -132,15 +123,17 @@ class ChoreomapParser(ast.NodeVisitor):
             ast.RShift: BinaryOperator.R_SHIFT
         }
         
-        op = MAPPING.get(type(node.op))
-        if not op:
+        left = self.visit_expr(node.left)
+        right = self.visit_expr(node.right)
+        operator = MAPPING.get(type(node.op))
+        if not operator:
             raise NotImplementedError(f'Unsupported binary operator: {type(node.op)}')
         
-        return BinaryExpression(left, op, right)
+        return BinaryExpression(left, operator, right)
     
     @override
     def visit_UnaryOp(self, node: ast.UnaryOp):
-        expr = self.visit_expr(node)
+        expr = self.visit_expr(node.operand)
         match node.op:
             case ast.UAdd():
                 return expr
@@ -148,6 +141,8 @@ class ChoreomapParser(ast.NodeVisitor):
                 return BinaryExpression(NumberExpression(0), BinaryOperator.SUBTRACT, expr)
             case ast.Invert():
                 operator = UnaryOperator.NOT
+            case ast.Not():
+                return NotExpression(expr)
             case _:
                 raise NotImplementedError(f'Unsupported unary operator: {type(node.op)}')
         return UnaryExpression(expr, operator)
@@ -158,6 +153,27 @@ class ChoreomapParser(ast.NodeVisitor):
         yes = self.visit_expr(node.body)
         no = self.visit_expr(node.orelse)
         return IfExpression(condition, yes, no)
+    
+    @override
+    def visit_Compare(self, node: ast.Compare):
+        MAPPING: dict[type[ast.cmpop], ComparisonMode] = {
+            ast.Eq: ComparisonMode.EQUAL,
+            ast.NotEq: ComparisonMode.NOT_EQUAL,
+            ast.Lt: ComparisonMode.LESS,
+            ast.LtE: ComparisonMode.LESS_EQUAL,
+            ast.Gt: ComparisonMode.GREATER,
+            ast.GtE: ComparisonMode.GREATER_EQUAL
+        }
+        
+        operands = tuple(self.visit_expr(comp) for comp in node.comparators)
+        operators: list[ComparisonMode] = []
+        for op in node.ops:
+            operator = MAPPING.get(type(op))
+            if not operator:
+                raise NotImplementedError(f'Unsupported comparison operator: {type(op)}')
+            operators.append(operator)
+        
+        return CompareExpression(operands, tuple(operators))
     
     @override
     def visit_Call(self, node: ast.Call):

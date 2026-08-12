@@ -1,3 +1,3 @@
-__all__ = ('build',)
+__all__ = ('compile',)
 
-from .parser import build
+from .compile import compile

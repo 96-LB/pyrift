@@ -1,6 +1,5 @@
 
 from collections.abc import Sequence
-from dataclasses import field
 
 from pyrift.choreomaps.nodes.event import BaseEvent, SetArrayEvent, SetVariableEvent
 from pyrift.choreomaps.nodes.stream import Stream
@@ -14,7 +13,7 @@ class Scope:
         self.id: int = id
         self.argc: int = len(args)
         self.vars: list[str] = list(args)
-        self.events: list[BaseEvent] = field(default_factory=list[BaseEvent])
+        self.events: list[BaseEvent] = []
         self.tempc: int = 0
     
     def get(self, name: str):

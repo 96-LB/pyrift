@@ -20,6 +20,7 @@ from pyrift.choreomaps.ir.expression import (
 from pyrift.choreomaps.ir.instruction import (
     BaseInstruction,
     IfInstruction,
+    NullInstruction,
     SetVariableInstruction,
 )
 from pyrift.choreomaps.ir.script import Script
@@ -50,12 +51,13 @@ from .nodes import ConstantValue
 from .scope import Scope
 
 
-class Compiler:
+class ChoreomapCompiler:
     def __init__(self):
         self.refs: int = 0
         self.func_map: dict[str, int] = {}
         self.streams: list[Scope] = []
         self.scopes: list[Scope] = []
+        
     
     def make_id(self):
         self.refs += 1
@@ -83,8 +85,11 @@ class Compiler:
         self.scopes.pop()
     
     
-    def compile(self, node: Script):
-        self.visit_stream(node.instructions)
+    def compile(self, script: Script, global_code: Sequence[BaseInstruction] = ()):
+        with self.new_scope():
+            for inst in global_code:
+                self.visit_inst(inst)
+            self.visit_stream(script.instructions)
         
         # TODO: actually set the properties properly
         return Choreomap(
@@ -104,6 +109,12 @@ class Compiler:
     
     def visit_inst(self, node: BaseInstruction) -> None:
         match node:
+            case NullInstruction():
+                pass
+            
+            case BaseExpression():
+                self.visit_expr(node)
+            
             case SetVariableInstruction(name, expr):
                 scope = self.current_scope
                 index = scope.get(name)

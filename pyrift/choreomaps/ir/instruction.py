@@ -1,9 +1,15 @@
+from typing import TYPE_CHECKING
+
 from pyrift.jobj import JList, JObj
 
-from .expression import BaseExpression
+if TYPE_CHECKING:
+    from .expression import BaseExpression
 
 
 class BaseInstruction(JObj):
+    pass
+
+class NullInstruction(BaseInstruction):
     pass
 
 class IfInstruction(BaseInstruction):
@@ -26,3 +32,6 @@ class SetAttributeInstruction(BaseInstruction):
 
 class ReturnInstruction(BaseInstruction):
     expr: BaseExpression
+
+class LogInstruction(BaseInstruction):
+    text: BaseExpression

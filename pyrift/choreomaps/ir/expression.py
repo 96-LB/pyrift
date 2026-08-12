@@ -1,13 +1,10 @@
-from typing import TYPE_CHECKING
+from pyrift.choreomaps.enum import BinaryOperator, ComparisonMode, UnaryOperator
+from pyrift.jobj import JList
 
-from pyrift.choreomaps.enum import BinaryOperator, UnaryOperator
-from pyrift.jobj import JList, JObj
-
-if TYPE_CHECKING:
-    from .instruction import BaseInstruction
+from .instruction import BaseInstruction
 
 
-class BaseExpression(JObj):
+class BaseExpression(BaseInstruction):
     pass
 
 class NullExpression(BaseExpression):
@@ -24,8 +21,7 @@ class StringExpression(BaseExpression):
 
 class FunctionExpression(BaseExpression):
     args: JList[str]
-    instructions: JList[BaseInstruction]
-
+    body: JList[BaseInstruction]
 
 class VariableExpression(BaseExpression):
     name: str
@@ -38,6 +34,9 @@ class IfExpression(BaseExpression):
 class CallExpression(BaseExpression):
     func: BaseExpression
     args: JList[BaseExpression]
+
+class NotExpression(BaseExpression):
+    condition: BaseExpression
 
 class AndExpression(BaseExpression):
     conditions: JList[BaseExpression]
@@ -57,3 +56,7 @@ class BinaryExpression(BaseExpression):
     left: BaseExpression
     operator: BinaryOperator
     right: BaseExpression
+
+class CompareExpression(BaseExpression):
+    operands: JList[BaseExpression]
+    operators: JList[ComparisonMode]
