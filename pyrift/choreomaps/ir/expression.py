@@ -20,6 +20,7 @@ class StringExpression(BaseExpression):
     value: str
 
 class FunctionExpression(BaseExpression):
+    id: int
     args: JList[str]
     body: JList[BaseInstruction]
 

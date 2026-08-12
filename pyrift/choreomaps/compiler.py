@@ -70,7 +70,6 @@ from .scope import Scope
 class ChoreomapCompiler:
     def __init__(self):
         self.refs: int = 0
-        self.func_map: dict[str, int] = {}
         self.streams: list[Scope] = []
         self.scopes: list[Scope] = []
     
@@ -181,7 +180,7 @@ class ChoreomapCompiler:
             case StringExpression(value):
                 return ConstantString(value)
             
-            case FunctionExpression(args, instructions):
+            case FunctionExpression(id, args, instructions):
                 stream = self.visit_stream(args, instructions)
                 return ConstantValue(stream.id) # TODO: closures...
             

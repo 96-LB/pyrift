@@ -8,7 +8,6 @@ from .nodes import ArrayValue, ConstantValue
 
 
 class Scope:
-    
     def __init__(self, id: int, args: Sequence[str]):
         self.id: int = id
         self.argc: int = len(args)
