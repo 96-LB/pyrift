@@ -1,8 +1,16 @@
+from typing import TYPE_CHECKING
+
 from pyrift.choreomaps.enum import BinaryOperator, UnaryOperator
 from pyrift.jobj import JList, JObj
 
+if TYPE_CHECKING:
+    from .instruction import BaseInstruction
+
 
 class BaseExpression(JObj):
+    pass
+
+class NullExpression(BaseExpression):
     pass
 
 class NumberExpression(BaseExpression):
@@ -14,8 +22,10 @@ class BooleanExpression(BaseExpression):
 class StringExpression(BaseExpression):
     value: str
 
-class NullExpression(BaseExpression):
-    pass
+class FunctionExpression(BaseExpression):
+    args: JList[str]
+    instructions: JList[BaseInstruction]
+
 
 class VariableExpression(BaseExpression):
     name: str

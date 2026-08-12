@@ -9,6 +9,7 @@ from pyrift.choreomaps.ir.expression import (
     BinaryExpression,
     BooleanExpression,
     CallExpression,
+    FunctionExpression,
     IfExpression,
     NullExpression,
     NumberExpression,
@@ -19,11 +20,11 @@ from pyrift.choreomaps.ir.expression import (
 )
 from pyrift.choreomaps.ir.instruction import (
     BaseInstruction,
-    FunctionInstruction,
     IfInstruction,
     ReturnInstruction,
     SetVariableInstruction,
 )
+from pyrift.choreomaps.ir.script import Script
 
 from .nodes import (
     BinaryOperator,
@@ -57,19 +58,20 @@ class ChoreomapParser(ast.NodeVisitor):
     
     @override
     def visit_Module(self, node: ast.Module):
-        return tuple(self.visit_stmt(stmt) for stmt in node.body)
+        instructions = tuple(self.visit_stmt(stmt) for stmt in node.body)
+        return Script(instructions)
     
     @override
     def visit_FunctionDef(self, node: ast.FunctionDef):
         name = node.name
         args = tuple(arg.arg for arg in node.args.args)
         instructions = tuple(self.visit_stmt(stmt) for stmt in node.body)
-        return FunctionInstruction(name, args, instructions)
-        
+        return SetVariableInstruction(name, FunctionExpression(args, instructions))
+    
     @override
     def visit_Return(self, node: ast.Return):
-        value = self.visit_expr(node.value) if node.value else NullExpression()
-        return ReturnInstruction(value)
+        expr = self.visit_expr(node.value) if node.value else NullExpression()
+        return ReturnInstruction(expr)
     
     @override
     def visit_If(self, node: ast.If):
@@ -84,9 +86,12 @@ class ChoreomapParser(ast.NodeVisitor):
         if len(node.targets) != 1:
             raise NotImplementedError('Only single-variable assignments are supported')
         
-        var = self.visit_expr(node.targets[0])
-        value = self.visit_expr(node.value)
-        return SetVariableInstruction(var, value)
+        expr = self.visit_expr(node.value)
+        match node.targets[0]:
+            case ast.Name(var):
+                return SetVariableInstruction(var, expr)
+            case _:
+                raise NotImplementedError(f'Unsupported assignment target: {type(node.targets[0]).__name__}')
     
     @override
     def visit_ImportFrom(self, node: ast.ImportFrom):

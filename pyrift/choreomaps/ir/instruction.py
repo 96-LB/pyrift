@@ -12,13 +12,8 @@ class IfInstruction(BaseInstruction):
     no: JList[BaseInstruction]
 
 class SetVariableInstruction(BaseInstruction):
-    var: BaseExpression
-    value: BaseExpression
-
-class FunctionInstruction(BaseInstruction):
     name: str
-    args: JList[str]
-    instructions: JList[BaseInstruction]
+    expr: BaseExpression
 
 class CreateObjectInstruction(BaseInstruction):
     pass
@@ -30,4 +25,4 @@ class SetAttributeInstruction(BaseInstruction):
     pass
 
 class ReturnInstruction(BaseInstruction):
-    value: BaseExpression
+    expr: BaseExpression
