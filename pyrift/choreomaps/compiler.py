@@ -2,6 +2,8 @@ import itertools
 from collections.abc import Generator, Iterable
 from contextlib import contextmanager
 
+from pyrift.choreomaps import analysis
+from pyrift.choreomaps.analysis import Analysis, ChoreomapAnalyzer, ScopeAnalyzer
 from pyrift.choreomaps.choreomap import Choreomap
 from pyrift.choreomaps.enum import ComparisonMode
 from pyrift.choreomaps.ir.expression import (
@@ -72,6 +74,8 @@ class ChoreomapCompiler:
         self.refs: int = 0
         self.streams: list[Scope] = []
         self.scopes: list[Scope] = []
+        self.analysis: Analysis = Analysis(())
+        self.scope = 0
     
     def make_id(self):
         self.refs += 1
@@ -91,19 +95,18 @@ class ChoreomapCompiler:
         self.current_scope.events.append(event)
     
     @contextmanager
-    def new_scope(self, args: Iterable[str] = ()) -> Generator[Scope]:
-        scope = Scope(
-            id=len(self.streams) + 1, # streams are 1-indexed by position
-            args=list(args) if args else []
-        )
-        self.streams.append(scope)
-        self.scopes.append(scope)
-        yield scope
-        self.scopes.pop()
+    def new_scope(self, id: int) -> Generator[int]:
+        old, self.scope = self.scope, id
+        yield id
+        self.scope = old
     
     
     def compile(self, script: Script, global_code: Iterable[BaseInstruction] = ()):
-        self.visit_stream((), itertools.chain(global_code, script.instructions))
+        analysis = ChoreomapAnalyzer().analyze(script)
+        self.analysis = analysis
+        
+        with self.new_scope(1):
+            self.visit_stream((), itertools.chain(global_code, script.instructions))
         
         # TODO: actually set the properties properly
         return Choreomap(
@@ -183,7 +186,7 @@ class ChoreomapCompiler:
             case FunctionExpression(_, args, instructions):
                 stream = self.visit_stream(args, instructions)
                 return ConstantValue(stream.id) # TODO: closures...
-            
+                
             case VariableExpression(name):
                 scope = self.current_scope
                 index = scope.get(name) # TODO: recursion fails because of bad scoping rules
