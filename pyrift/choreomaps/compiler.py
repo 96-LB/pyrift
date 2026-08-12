@@ -1,48 +1,12 @@
-import ast
-import inspect
-from collections.abc import Sequence
-from contextlib import contextmanager
-from types import ModuleType
-from typing import override
 
-from . import globals
-from .choreomap import Choreomap
-from .nodes import (
-    AndCondition,
-    ArrayValue,
-    BaseCondition,
-    BaseEvent,
-    BaseValue,
-    BinaryOperator,
-    CompareCondition,
-    ComparisonMode,
-    ConstantCondition,
-    ConstantValue,
-    IfEvent,
-    IfValue,
-    LogEvent,
-    MathValue,
-    NotCondition,
-    OrCondition,
-    SetArrayEvent,
-    StartStreamEvent,
-    Stream,
-    UnaryOperator,
-    UnaryValue,
-)
+import ast
+from contextlib import contextmanager
+
+from .nodes import ConstantValue, Stream
 from .scope import Scope
 
 
-def build(mod: ModuleType):
-    '''Reads a function as a choreomap stream by converting its AST to the choreomap DSL.'''
-    
-    source = inspect.getsource(mod)
-    tree = ast.parse(source)
-    builder = ChoreomapBuilder()
-    print(ast.dump(tree, indent=2))
-    return builder.visit_Module(tree)
-
-class ChoreomapBuilder(ast.NodeVisitor):
+class Compiler:
     def __init__(self):
         self.refs: int = 0
         self.func_map: dict[str, int] = {}

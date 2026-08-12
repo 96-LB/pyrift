@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, ClassVar, override
 
 from pyrift.jobj import JObj, JList
 
-from .enum import (
+from ..enum import (
     AnimationType,
     BinaryOperator,
     ButtonMask,

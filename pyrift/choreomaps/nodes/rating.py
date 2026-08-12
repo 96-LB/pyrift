@@ -1,6 +1,6 @@
 from pyrift.jobj import JObj, JList
 
-from .enum import InputRating, InputTiming
+from ..enum import InputRating, InputTiming
 
 
 class RatingStep(JObj):

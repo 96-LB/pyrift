@@ -28,3 +28,6 @@ packages = ["pyrift"]
 [tool.pyright]
 venv = ".venv"
 typeCheckingMode = "strict"
+
+[tool.isort]
+profile = "black"

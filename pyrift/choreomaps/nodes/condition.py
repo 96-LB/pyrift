@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, ClassVar, override
 
 from pyrift.jobj import JObj, JList
 
-from .enum import ComparisonMode, EntityPredicate, SystemPredicate
+from ..enum import ComparisonMode, EntityPredicate, SystemPredicate
 
 if TYPE_CHECKING:
     from .value import BaseValue

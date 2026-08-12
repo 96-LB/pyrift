@@ -5,6 +5,7 @@ __all__ = (
     'ArrayValue',
     'BaseCondition',
     'BaseEvent',
+    'BaseString',
     'BaseValue',
     'BinaryOperator',
     'ButtonMask',
@@ -13,6 +14,7 @@ __all__ = (
     'CompareCondition',
     'ComparisonMode',
     'ConstantCondition',
+    'ConstantString',
     'ConstantValue',
     'DespawnEvent',
     'EntityAttribute',
@@ -75,17 +77,7 @@ __all__ = (
 )
 
 
-from .condition import (
-    AndCondition,
-    BaseCondition,
-    CompareCondition,
-    ConstantCondition,
-    EntityCondition,
-    NotCondition,
-    OrCondition,
-    SystemCondition,
-)
-from .enum import (
+from ..enum import (
     AnimationType,
     BinaryOperator,
     ButtonMask,
@@ -104,6 +96,16 @@ from .enum import (
     TimingMode,
     UnaryOperator,
     VisualType,
+)
+from .condition import (
+    AndCondition,
+    BaseCondition,
+    CompareCondition,
+    ConstantCondition,
+    EntityCondition,
+    NotCondition,
+    OrCondition,
+    SystemCondition,
 )
 from .event import (
     AnimateEvent,
@@ -141,6 +143,7 @@ from .event import (
 from .rating import RatingDefinition, RatingStep
 from .sound import Sound
 from .stream import Stream
+from .string import BaseString, ConstantString
 from .value import (
     ArrayValue,
     BaseValue,

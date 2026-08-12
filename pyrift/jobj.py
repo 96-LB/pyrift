@@ -4,7 +4,6 @@ from typing import Any, Self, dataclass_transform
 
 from pyrift.util import snake_to_camel
 
-
 type JsonT = str | int | float | bool | list[JsonT] | dict[str, JsonT] | None
 type JList[T] = tuple[T, ...]
 

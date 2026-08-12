@@ -2,7 +2,7 @@ from collections.abc import Sequence
 
 from pyrift.jobj import JObj, JList
 
-from .enum import TimingMode
+from ..enum import TimingMode
 from .event import BaseEvent
 from .value import BaseValue, ConstantValue
 

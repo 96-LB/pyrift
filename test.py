@@ -14,7 +14,6 @@ with open('test.json', 'w') as f:
             "countdownBpm": 200,
             "playbackOffset": -4,
             "playbackOffsetTime": 0,
-            "name": "_test2_",
             "choreomap": build(test_choreomap)
         },
         f,
