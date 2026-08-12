@@ -11,6 +11,7 @@ from pyrift.choreomaps.ir.expression import (
     CompareExpression,
     FunctionExpression,
     IfExpression,
+    JoinExpression,
     NotExpression,
     NullExpression,
     NumberExpression,
@@ -165,6 +166,7 @@ class ChoreomapParser(ast.NodeVisitor):
             ast.GtE: ComparisonMode.GREATER_EQUAL
         }
         
+        first = self.visit_expr(node.left)
         operands = tuple(self.visit_expr(comp) for comp in node.comparators)
         operators: list[ComparisonMode] = []
         for op in node.ops:
@@ -173,7 +175,7 @@ class ChoreomapParser(ast.NodeVisitor):
                 raise NotImplementedError(f'Unsupported comparison operator: {type(op)}')
             operators.append(operator)
         
-        return CompareExpression(operands, tuple(operators))
+        return CompareExpression(first, operands, tuple(operators))
     
     @override
     def visit_Call(self, node: ast.Call):
@@ -181,6 +183,15 @@ class ChoreomapParser(ast.NodeVisitor):
         args = tuple(self.visit_expr(arg) for arg in node.args)
         return CallExpression(func, args)
     
+    @override
+    def visit_FormattedValue(self, node: ast.FormattedValue):
+        return self.visit_expr(node.value) # TODO: support actual formatting
+    
+    @override
+    def visit_JoinedStr(self, node: ast.JoinedStr):
+        strings = tuple(self.visit_expr(value) for value in node.values)
+        return JoinExpression(strings)
+
     @override
     def visit_Constant(self, node: ast.Constant):
         match node.value:

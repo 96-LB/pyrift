@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar, override
 
-from pyrift.jobj import JObj, JList
+from pyrift.jobj import JList, JObj
 
 from ..enum import ComparisonMode, EntityPredicate, SystemPredicate
 

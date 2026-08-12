@@ -17,6 +17,6 @@ with open('test.json', 'w') as f:
             "choreomap": compile(test_choreomap)
         },
         f,
-        default=lambda x: x.to_obj() if hasattr(x, 'to_obj') else x.to_dict() if hasattr(x, 'to_dict') else str(x.value),
+        default=lambda x: x.to_json_obj() if hasattr(x, 'to_json_obj') else str(x.value),
         indent=4
     )

@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 
-from pyrift.jobj import JObj, JList
+from pyrift.jobj import JList, JObj
 
 from ..enum import TimingMode
 from .event import BaseEvent

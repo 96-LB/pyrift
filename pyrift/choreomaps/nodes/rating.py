@@ -1,4 +1,4 @@
-from pyrift.jobj import JObj, JList
+from pyrift.jobj import JList, JObj
 
 from ..enum import InputRating, InputTiming
 

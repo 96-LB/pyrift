@@ -58,5 +58,9 @@ class BinaryExpression(BaseExpression):
     right: BaseExpression
 
 class CompareExpression(BaseExpression):
+    first: BaseExpression
     operands: JList[BaseExpression]
     operators: JList[ComparisonMode]
+
+class JoinExpression(BaseExpression):
+    strings: JList[BaseExpression]

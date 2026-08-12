@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar, override
 
-from pyrift.jobj import JObj, JList
+from pyrift.choreomaps.nodes.string import BaseString
+from pyrift.jobj import JList, JObj
 
 from ..enum import (
     AnimationType,
@@ -368,8 +369,9 @@ class StopStreamEvent(BaseEvent, type='StopStream'):
     @override
     def to_json_obj(self):
         dict = self.to_dict()
-        ref_id = dict.pop('refId')
-        dict['refID'] = ref_id
+        if 'refId' in dict:
+            ref_id = dict.pop('refId')
+            dict['refID'] = ref_id
         return dict
 
 class IfEvent(BaseEvent, type='If'):
@@ -434,5 +436,10 @@ class LogEvent(BaseEvent, type='Log'):
         args: Optional list of values to populate placeholders
     '''
     
-    text: str
-    args: JList[BaseValue] | None = None
+    text: BaseString
+
+class SetArrayStringEvent(BaseEvent, type='SetArrayString'):
+    # TODO
+    
+    name: BaseString | None = None
+    string: BaseString | None = None

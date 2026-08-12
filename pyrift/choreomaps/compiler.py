@@ -1,16 +1,19 @@
-from collections.abc import Generator, Sequence
+import itertools
+from collections.abc import Generator, Iterable
 from contextlib import contextmanager
 
 from pyrift.choreomaps.choreomap import Choreomap
-from pyrift.choreomaps.enum import ComparisonMode
+from pyrift.choreomaps.enum import BinaryOperator, ComparisonMode
 from pyrift.choreomaps.ir.expression import (
     AndExpression,
     BaseExpression,
     BinaryExpression,
     BooleanExpression,
     CallExpression,
+    CompareExpression,
     FunctionExpression,
     IfExpression,
+    JoinExpression,
     NumberExpression,
     OrExpression,
     StringExpression,
@@ -20,7 +23,9 @@ from pyrift.choreomaps.ir.expression import (
 from pyrift.choreomaps.ir.instruction import (
     BaseInstruction,
     IfInstruction,
+    LogInstruction,
     NullInstruction,
+    ReturnInstruction,
     SetVariableInstruction,
 )
 from pyrift.choreomaps.ir.script import Script
@@ -33,11 +38,22 @@ from pyrift.choreomaps.nodes.condition import (
 )
 from pyrift.choreomaps.nodes.event import (
     BaseEvent,
+    IfEvent,
     JumpEvent,
+    LogEvent,
     SetArrayEvent,
+    SetArrayStringEvent,
+    SetVariableEvent,
     StartStreamEvent,
+    StopStreamEvent,
 )
-from pyrift.choreomaps.nodes.string import BaseString, ConstantString
+from pyrift.choreomaps.nodes.string import (
+    ArrayString,
+    BaseString,
+    ConstantString,
+    JoinString,
+    NumberString,
+)
 from pyrift.choreomaps.nodes.value import (
     ArrayValue,
     BaseValue,
@@ -57,14 +73,16 @@ class ChoreomapCompiler:
         self.func_map: dict[str, int] = {}
         self.streams: list[Scope] = []
         self.scopes: list[Scope] = []
-        
     
     def make_id(self):
         self.refs += 1
         return self.refs
     
     def make_ref(self):
-        return ConstantValue(self.make_id())
+        return ConstantValue(10 ** 12 + self.make_id())
+    
+    def make_string_ref(self):
+        return NumberString(self.make_ref())
     
     @property
     def current_scope(self):
@@ -74,7 +92,7 @@ class ChoreomapCompiler:
         self.current_scope.events.append(event)
     
     @contextmanager
-    def new_scope(self, args: Sequence[str] | None = None) -> Generator[Scope, None, None]:
+    def new_scope(self, args: Iterable[str] = ()) -> Generator[Scope, None, None]:
         scope = Scope(
             id=len(self.streams) + 1, # streams are 1-indexed by position
             args=list(args) if args else []
@@ -85,22 +103,19 @@ class ChoreomapCompiler:
         self.scopes.pop()
     
     
-    def compile(self, script: Script, global_code: Sequence[BaseInstruction] = ()):
-        with self.new_scope():
-            for inst in global_code:
-                self.visit_inst(inst)
-            self.visit_stream(script.instructions)
+    def compile(self, script: Script, global_code: Iterable[BaseInstruction] = ()):
+        self.visit_stream((), itertools.chain(global_code, script.instructions))
         
         # TODO: actually set the properties properly
         return Choreomap(
             streams=tuple(stream.to_stream() for stream in self.streams),
             input_rating_definitions=(),
-            main_id=0
+            main_id=1
         )
     
     
-    def visit_stream(self, nodes: Sequence[BaseInstruction]):
-        with self.new_scope() as scope:
+    def visit_stream(self, args: Iterable[str], nodes: Iterable[BaseInstruction]):
+        with self.new_scope(args) as scope:
             for node in nodes:
                 self.visit_inst(node)
             print(f'Found stream {scope.id} in node {'::'.join(type(n).__name__ for n in nodes)}')
@@ -141,7 +156,16 @@ class ChoreomapCompiler:
                 
                 end_index = len(self.current_scope.events)
                 self.current_scope.events[yes_index - 1] = JumpEvent(0, IfValue(condition, ConstantValue(yes_index), ConstantValue(no_index)))
-                self.current_scope.events[no_index] = JumpEvent(0, ConstantValue(end_index))
+                self.current_scope.events[no_index - 1] = JumpEvent(0, ConstantValue(end_index))
+            
+            case ReturnInstruction(expr):
+                value = self.visit_value(expr)
+                self.add_event(SetVariableEvent(0, "$RETURN", value))
+                self.add_event(StopStreamEvent(0))
+            
+            case LogInstruction(text):
+                text = self.visit_str(text)
+                self.add_event(LogEvent(0, text))
             
             case _:
                 raise NotImplementedError(f'Unsupported instruction: {type(node).__name__}')
@@ -158,12 +182,12 @@ class ChoreomapCompiler:
                 return ConstantString(value)
             
             case FunctionExpression(args, instructions):
-                stream = self.visit_stream(instructions)
+                stream = self.visit_stream(args, instructions)
                 return ConstantValue(stream.id) # TODO: closures...
             
             case VariableExpression(name):
                 scope = self.current_scope
-                index = scope.get(name)
+                index = scope.get(name) # TODO: recursion fails because of bad scoping rules
                 if index is not None:
                     return ArrayValue(index=ConstantValue(index))
                 raise ValueError(f'Undefined variable: {name}')
@@ -203,6 +227,25 @@ class ChoreomapCompiler:
                 self.add_event(SetArrayEvent(0, index=index, value=VariableValue("$RETURN")))
                 return ArrayValue(index=index)
             
+            case JoinExpression(strings):
+                strings = tuple(self.visit_str(string) for string in strings)
+                return JoinString(strings)
+            
+            case CompareExpression(first, operands, operators):
+                first = self.visit_value(first)
+                operands = tuple(self.visit_value(operand) for operand in operands)
+                assert 0 < len(operands)
+                assert len(operands) == len(operators)
+                
+                if len(operators) == 1:
+                    return CompareCondition(first, operands[0], operators[0])
+                else:
+                    conditions = tuple(
+                        CompareCondition(first if i == 0 else operands[i - 1], operands[i], operators[i])
+                        for i in range(len(operators))
+                    )
+                    return AndCondition(conditions)
+            
             case _:
                 raise NotImplementedError(f'Unsupported expression: {type(node).__name__}')
     
@@ -214,6 +257,9 @@ class ChoreomapCompiler:
             case BaseValue():
                 return value
             case BaseString():
+                ref = self.make_ref()
+                self.add_event(SetArrayStringEvent(0, NumberString(ref), value)) # TODO: THIS IS REALLY BAD
+                return ref
                 raise NotImplementedError(f'#TODO: implement strings')
     
     def visit_condition(self, node: BaseExpression):
@@ -225,3 +271,18 @@ class ChoreomapCompiler:
                 return CompareCondition(value, ConstantValue(0), ComparisonMode.NOT_EQUAL)
             case BaseString():
                 raise NotImplementedError(f'#TODO: implement strings')
+    
+    def visit_str(self, node: BaseExpression):
+        value = self.visit_expr(node)
+        match value:
+            case BaseCondition():
+                return NumberString(IfValue(value, ConstantValue(1), ConstantValue(0))) # TODO: should print booleans
+            case BaseValue():
+                self.add_event(IfEvent(0,
+                    CompareCondition(value, ConstantValue(10 ** 12), ComparisonMode.LESS_EQUAL),
+                    SetArrayStringEvent(0, ConstantString("$STR"), NumberString(value)),
+                    SetArrayStringEvent(0, ConstantString("$STR"), ArrayString(NumberString(MathValue(ConstantValue(10**12), value, BinaryOperator.ADD)))
+                )))
+                return ArrayString(ConstantString("$STR"))
+            case BaseString():
+                return value

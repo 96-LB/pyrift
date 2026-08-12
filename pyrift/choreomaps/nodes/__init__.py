@@ -2,6 +2,7 @@ __all__ = (
     'AndCondition',
     'AnimateEvent',
     'AnimationType',
+    'ArrayString',
     'ArrayValue',
     'BaseCondition',
     'BaseEvent',
@@ -31,12 +32,14 @@ __all__ = (
     'IfValue',
     'InputCloseEvent',
     'InputOpenEvent',
+    'JoinString',
     'JumpEvent',
     'LogEvent',
     'MathValue',
     'MoveEvent',
     'MoveLerp',
     'NotCondition',
+    'NumberString',
     'OrCondition',
     'PlayerHealthEvent',
     'RatingDefinition',
@@ -44,6 +47,7 @@ __all__ = (
     'ScoreEvent',
     'ScoreType',
     'SetArrayEvent',
+    'SetArrayStringEvent',
     'SetVariableEvent',
     'Sound',
     'SoundCancelEvent',
@@ -127,6 +131,7 @@ from .event import (
     PlayerHealthEvent,
     ScoreEvent,
     SetArrayEvent,
+    SetArrayStringEvent,
     SetVariableEvent,
     SoundCancelEvent,
     SoundEvent,
@@ -143,7 +148,7 @@ from .event import (
 from .rating import RatingDefinition, RatingStep
 from .sound import Sound
 from .stream import Stream
-from .string import BaseString, ConstantString
+from .string import ArrayString, BaseString, ConstantString, JoinString, NumberString
 from .value import (
     ArrayValue,
     BaseValue,

@@ -1,12 +1,15 @@
 __all__ = ('log',)
 
 
-from collections.abc import Callable
 import inspect
+from collections.abc import Callable
 
 from pyrift.choreomaps.ir.expression import FunctionExpression, VariableExpression
-from pyrift.choreomaps.ir.instruction import BaseInstruction, LogInstruction, SetVariableInstruction
-
+from pyrift.choreomaps.ir.instruction import (
+    BaseInstruction,
+    LogInstruction,
+    SetVariableInstruction,
+)
 
 GLOBAL: list[BaseInstruction] = []
 
