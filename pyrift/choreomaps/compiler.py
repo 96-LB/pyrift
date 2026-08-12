@@ -3,7 +3,7 @@ from collections.abc import Generator, Iterable
 from contextlib import contextmanager
 
 from pyrift.choreomaps.choreomap import Choreomap
-from pyrift.choreomaps.enum import BinaryOperator, ComparisonMode
+from pyrift.choreomaps.enum import ComparisonMode
 from pyrift.choreomaps.ir.expression import (
     AndExpression,
     BaseExpression,
@@ -38,7 +38,6 @@ from pyrift.choreomaps.nodes.condition import (
 )
 from pyrift.choreomaps.nodes.event import (
     BaseEvent,
-    IfEvent,
     JumpEvent,
     LogEvent,
     SetArrayEvent,
@@ -51,6 +50,7 @@ from pyrift.choreomaps.nodes.string import (
     ArrayString,
     BaseString,
     ConstantString,
+    IfString,
     JoinString,
     NumberString,
 )
@@ -79,7 +79,7 @@ class ChoreomapCompiler:
         return self.refs
     
     def make_ref(self):
-        return ConstantValue(10 ** 12 + self.make_id())
+        return ConstantValue(10**12 + self.make_id())
     
     def make_string_ref(self):
         return NumberString(self.make_ref())
@@ -260,7 +260,6 @@ class ChoreomapCompiler:
                 ref = self.make_ref()
                 self.add_event(SetArrayStringEvent(0, NumberString(ref), value)) # TODO: THIS IS REALLY BAD
                 return ref
-                raise NotImplementedError(f'#TODO: implement strings')
     
     def visit_condition(self, node: BaseExpression):
         value = self.visit_expr(node)
@@ -276,13 +275,12 @@ class ChoreomapCompiler:
         value = self.visit_expr(node)
         match value:
             case BaseCondition():
-                return NumberString(IfValue(value, ConstantValue(1), ConstantValue(0))) # TODO: should print booleans
+                return IfString(value, ConstantString("True"), ConstantString("False"))
             case BaseValue():
-                self.add_event(IfEvent(0,
-                    CompareCondition(value, ConstantValue(10 ** 12), ComparisonMode.LESS_EQUAL),
-                    SetArrayStringEvent(0, ConstantString("$STR"), NumberString(value)),
-                    SetArrayStringEvent(0, ConstantString("$STR"), ArrayString(NumberString(MathValue(ConstantValue(10**12), value, BinaryOperator.ADD)))
-                )))
-                return ArrayString(ConstantString("$STR"))
+                return IfString(
+                    CompareCondition(value, ConstantValue(10**12), ComparisonMode.LESS_EQUAL),
+                    NumberString(value),
+                    ArrayString(NumberString(value))
+                )
             case BaseString():
                 return value

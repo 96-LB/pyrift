@@ -66,13 +66,13 @@ class ArrayString(BaseString, type='Array'):
     name: BaseString
 
 
-class IfValue(BaseString, type='If'):
+class IfString(BaseString, type='If'):
     """
     Attributes:
         condition: Condition to check.
         yes: Value if the condition is true.
         no: Value if the condition is false.
-    """
+    """ # TODO: update
     
     condition: BaseCondition
     yes: BaseString
