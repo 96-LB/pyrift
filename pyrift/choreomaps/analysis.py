@@ -1,8 +1,30 @@
 from collections.abc import Generator, Iterable
 from contextlib import contextmanager
 
-from pyrift.choreomaps.ir.expression import BinaryExpression, BooleanExpression, CallExpression, CompareExpression, FormatExpression, FunctionExpression, IfExpression, JoinExpression, NotExpression, NullExpression, NumberExpression, StringExpression, UnaryExpression, VariableExpression
-from pyrift.choreomaps.ir.instruction import BaseInstruction, IfInstruction, LogInstruction, NullInstruction, ReturnInstruction, SetVariableInstruction
+from pyrift.choreomaps.ir.expression import (
+    BinaryExpression,
+    BooleanExpression,
+    CallExpression,
+    CompareExpression,
+    FormatExpression,
+    FunctionExpression,
+    IfExpression,
+    JoinExpression,
+    NotExpression,
+    NullExpression,
+    NumberExpression,
+    StringExpression,
+    UnaryExpression,
+    VariableExpression,
+)
+from pyrift.choreomaps.ir.instruction import (
+    BaseInstruction,
+    IfInstruction,
+    LogInstruction,
+    NullInstruction,
+    ReturnInstruction,
+    SetVariableInstruction,
+)
 from pyrift.choreomaps.ir.script import Script
 from pyrift.jobj import JList, JObj
 
@@ -52,7 +74,7 @@ class ChoreomapAnalyzer:
         raise ValueError(f'Unbound variable: {name}')
     
     @contextmanager
-    def new_scope(self, id: int, args: Iterable[str] = ()) -> Generator[ScopeAnalyzer, None, None]:
+    def new_scope(self, id: int, args: Iterable[str] = ()) -> Generator[ScopeAnalyzer]:
         parent = self.scope
         scope = ScopeAnalyzer(parent)
         for arg in args:
@@ -75,8 +97,8 @@ class ChoreomapAnalyzer:
             if isinstance(inst, SetVariableInstruction):
                 self.scope.declare(inst.name)
     
-    def visit_inst(self, inst: BaseInstruction):
-        match inst:
+    def visit_inst(self, instruction: BaseInstruction):
+        match instruction:
             case (
                 NullInstruction()
                 | NullExpression()
@@ -133,4 +155,4 @@ class ChoreomapAnalyzer:
                         self.visit_inst(inst)
                 
             case _:
-                raise NotImplementedError(f'Unsupported instruction {type(inst)}')
+                raise NotImplementedError(f'Unsupported instruction {type(instruction)}')

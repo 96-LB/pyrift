@@ -91,7 +91,7 @@ class ChoreomapCompiler:
         self.current_scope.events.append(event)
     
     @contextmanager
-    def new_scope(self, args: Iterable[str] = ()) -> Generator[Scope, None, None]:
+    def new_scope(self, args: Iterable[str] = ()) -> Generator[Scope]:
         scope = Scope(
             id=len(self.streams) + 1, # streams are 1-indexed by position
             args=list(args) if args else []
@@ -180,7 +180,7 @@ class ChoreomapCompiler:
             case StringExpression(value):
                 return ConstantString(value)
             
-            case FunctionExpression(id, args, instructions):
+            case FunctionExpression(_, args, instructions):
                 stream = self.visit_stream(args, instructions)
                 return ConstantValue(stream.id) # TODO: closures...
             
@@ -268,7 +268,7 @@ class ChoreomapCompiler:
             case BaseValue():
                 return CompareCondition(value, ConstantValue(0), ComparisonMode.NOT_EQUAL)
             case BaseString():
-                raise NotImplementedError(f'#TODO: implement strings')
+                raise NotImplementedError('#TODO: implement strings')
     
     def visit_str(self, node: BaseExpression):
         value = self.visit_expr(node)
