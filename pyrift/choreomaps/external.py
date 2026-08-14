@@ -1,17 +1,17 @@
-__all__ = ('log',)
+__all__ = ('print',)
 
-
-from enum import Enum, auto
 import inspect
+from builtins import print as builtin_print
 from collections.abc import Callable
+from enum import Enum, auto
 from typing import override
 
-from pyrift.choreomaps.tag import Tag
 from pyrift.choreomaps.ir.expression import BaseExpression
 from pyrift.choreomaps.nodes.condition import Condition
 from pyrift.choreomaps.nodes.event import BaseEvent, LogEvent
 from pyrift.choreomaps.nodes.string import String
 from pyrift.choreomaps.nodes.value import BaseValue, Value
+from pyrift.choreomaps.tag import Tag
 from pyrift.jobj import JList, JObj
 
 EXTERNALS: dict[str, ExternalValue] = {}
@@ -38,10 +38,10 @@ class ExternalValue(BaseValue, type='$EXTERNAL'):
     def to_json_obj(self) -> None:
         raise NotImplementedError('External function cannot be converted to JSON object.')
 
-def external_func[**P, T](func: Callable[P, ExternalExpression]):
-    def decorator(stub: Callable[P, T]) -> Callable[P, T]:
+def external_func(func: Callable[..., ExternalExpression]):
+    def decorator[**P, T](stub: Callable[P, T]) -> Callable[P, T]:
         name = stub.__name__
-        spec = inspect.getfullargspec(stub)
+        spec = inspect.getfullargspec(func)
         args: list[ExternalArg] = []
         for arg in spec.args:
             type = {
@@ -57,14 +57,14 @@ def external_func[**P, T](func: Callable[P, ExternalExpression]):
         return stub
     return decorator
 
-
-def log_external(text: String):
+def print_external(text: String):
     return ExternalExpression(
         events=(LogEvent(text),),
         tag=Tag.STRING,
         value=text
     )
 
-@external_func(log_external)
-def log(text: String) -> None:
-    print(text)
+@external_func(print_external)
+def print[T](text: T) -> T:
+    builtin_print(text)
+    return text

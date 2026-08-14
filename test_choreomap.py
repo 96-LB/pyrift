@@ -1,20 +1,42 @@
-from pyrift.choreomaps.external import log
-
 x = 2 + 3
-log(f'Hello World! {x}')
+print(x)
+print(x > 3)
 
-def inner(x: float, y: float) -> float:
-    log(f'inner called with {x} and {y}')
-    return x if x % y == 0 else y
+# TODO:
+# make if expression lazily evaluate branches
 
-a = 2 * 13 * 17 * 9
-log(f'Hello World! {x} {a}')
-if inner(18, 3):
-    log(f'{x} {a}')
-    inner(a, 3 * 17 * 8)
-else:
-    log(f'{x}{x}{x} {a}{a}{a}')
-    inner(96, a)
+def gcd(x: float, y: float) -> float:
+    print(f'gcd called with {x} and {y}')
+    return gcd(y, x % y) if y else x
 
-b = 2 if False else 3
-log(f'b = {b}')
+d = gcd(8 * 9 * x, 4 * 3 * 25)
+print(f'x = {x}')
+print(f'd = {d}')
+
+
+# TODO:
+# 1. make closures actually copy in their values
+# 2. allow nonlocal/global keyword
+# 3. allow setting of nonlocal/global variables
+
+# def make_counter():
+#     count = 0
+#     def counter():
+#         nonlocal count
+#         count += 1
+#         return count
+#     return counter
+
+
+# counter1 = make_counter()
+# counter2 = make_counter()
+
+
+# log(f'counter1: {counter1()}')
+# log(f'counter1: {counter1()}')
+# log(f'counter1: {counter1()}')
+# log(f'counter1: {counter1()}')
+# log(f'counter2: {counter2()}')
+# log(f'counter2: {counter2()}')
+# log(f'counter1: {counter1()}')
+# log(f'counter1: {counter1()}')

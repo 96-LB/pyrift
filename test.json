@@ -39,183 +39,63 @@
                     },
                     {
                         "text": {
-                            "strings": [
-                                "Hello World! ",
-                                {
-                                    "value": {
-                                        "name": "x",
-                                        "type": "Variable"
-                                    },
-                                    "type": "Number"
-                                }
-                            ],
-                            "type": "Join"
+                            "value": {
+                                "name": "x",
+                                "type": "Variable"
+                            },
+                            "type": "Number"
                         },
                         "ev": "Log"
                     },
                     {
-                        "name": "TAG$inner",
+                        "text": {
+                            "condition": {
+                                "value1": {
+                                    "name": "x",
+                                    "type": "Variable"
+                                },
+                                "value2": -1,
+                                "mode": "Greater",
+                                "type": "Compare"
+                            },
+                            "yes": "True",
+                            "no": "False",
+                            "type": "If"
+                        },
+                        "ev": "Log"
+                    },
+                    {
+                        "name": "TAG$gcd",
                         "value": -4,
                         "ev": "SetVariable"
                     },
                     {
-                        "name": "inner",
+                        "name": "gcd",
                         "value": 2,
                         "ev": "SetVariable"
                     },
                     {
-                        "name": "TAG$a",
+                        "name": "$ARGS",
+                        "index": 0,
                         "value": -1,
-                        "ev": "SetVariable"
+                        "ev": "SetArray"
                     },
                     {
-                        "name": "a",
+                        "name": "$ARGS",
+                        "index": 1,
                         "value": {
                             "value1": {
-                                "value1": {
-                                    "value1": 2,
-                                    "value2": 13,
-                                    "operator": "Multiply",
-                                    "type": "Math"
-                                },
-                                "value2": 17,
+                                "value1": 8,
+                                "value2": 9,
                                 "operator": "Multiply",
                                 "type": "Math"
                             },
-                            "value2": 9,
+                            "value2": {
+                                "name": "x",
+                                "type": "Variable"
+                            },
                             "operator": "Multiply",
                             "type": "Math"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "text": {
-                            "strings": [
-                                "Hello World! ",
-                                {
-                                    "value": {
-                                        "name": "x",
-                                        "type": "Variable"
-                                    },
-                                    "type": "Number"
-                                },
-                                " ",
-                                {
-                                    "value": {
-                                        "name": "a",
-                                        "type": "Variable"
-                                    },
-                                    "type": "Number"
-                                }
-                            ],
-                            "type": "Join"
-                        },
-                        "ev": "Log"
-                    },
-                    {
-                        "name": "$ARGS",
-                        "index": 0,
-                        "value": -1,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "name": "$ARGS",
-                        "index": 1,
-                        "value": 18,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "name": "$ARGS",
-                        "index": 2,
-                        "value": -1,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "name": "$ARGS",
-                        "index": 3,
-                        "value": 3,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "id": {
-                            "name": "inner",
-                            "type": "Variable"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 0
-                    },
-                    {
-                        "index": 0,
-                        "value": {
-                            "name": "$RTAG",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "index": 1,
-                        "value": {
-                            "name": "$RETURN",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "target": {
-                            "condition": {
-                                "value1": {
-                                    "index": 1,
-                                    "type": "Array"
-                                },
-                                "value2": 0,
-                                "mode": "NotEqual",
-                                "type": "Compare"
-                            },
-                            "yes": 18,
-                            "no": 27,
-                            "type": "If"
-                        },
-                        "ev": "Jump"
-                    },
-                    {
-                        "text": {
-                            "strings": [
-                                {
-                                    "value": {
-                                        "name": "x",
-                                        "type": "Variable"
-                                    },
-                                    "type": "Number"
-                                },
-                                " ",
-                                {
-                                    "value": {
-                                        "name": "a",
-                                        "type": "Variable"
-                                    },
-                                    "type": "Number"
-                                }
-                            ],
-                            "type": "Join"
-                        },
-                        "ev": "Log"
-                    },
-                    {
-                        "name": "$ARGS",
-                        "index": 0,
-                        "value": {
-                            "name": "TAG$a",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "name": "$ARGS",
-                        "index": 1,
-                        "value": {
-                            "name": "a",
-                            "type": "Variable"
                         },
                         "ev": "SetArray"
                     },
@@ -230,12 +110,12 @@
                         "index": 3,
                         "value": {
                             "value1": {
-                                "value1": 3,
-                                "value2": 17,
+                                "value1": 4,
+                                "value2": 3,
                                 "operator": "Multiply",
                                 "type": "Math"
                             },
-                            "value2": 8,
+                            "value2": 25,
                             "operator": "Multiply",
                             "type": "Math"
                         },
@@ -243,7 +123,7 @@
                     },
                     {
                         "id": {
-                            "name": "inner",
+                            "name": "gcd",
                             "type": "Variable"
                         },
                         "immediate": true,
@@ -251,7 +131,7 @@
                         "refID": 0
                     },
                     {
-                        "index": 2,
+                        "index": 0,
                         "value": {
                             "name": "$RTAG",
                             "type": "Variable"
@@ -259,7 +139,7 @@
                         "ev": "SetArray"
                     },
                     {
-                        "index": 3,
+                        "index": 1,
                         "value": {
                             "name": "$RETURN",
                             "type": "Variable"
@@ -267,51 +147,28 @@
                         "ev": "SetArray"
                     },
                     {
-                        "target": 35,
-                        "ev": "Jump"
+                        "name": "TAG$d",
+                        "value": {
+                            "index": 0,
+                            "type": "Array"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "name": "d",
+                        "value": {
+                            "index": 1,
+                            "type": "Array"
+                        },
+                        "ev": "SetVariable"
                     },
                     {
                         "text": {
                             "strings": [
+                                "x = ",
                                 {
                                     "value": {
                                         "name": "x",
-                                        "type": "Variable"
-                                    },
-                                    "type": "Number"
-                                },
-                                {
-                                    "value": {
-                                        "name": "x",
-                                        "type": "Variable"
-                                    },
-                                    "type": "Number"
-                                },
-                                {
-                                    "value": {
-                                        "name": "x",
-                                        "type": "Variable"
-                                    },
-                                    "type": "Number"
-                                },
-                                " ",
-                                {
-                                    "value": {
-                                        "name": "a",
-                                        "type": "Variable"
-                                    },
-                                    "type": "Number"
-                                },
-                                {
-                                    "value": {
-                                        "name": "a",
-                                        "type": "Variable"
-                                    },
-                                    "type": "Number"
-                                },
-                                {
-                                    "value": {
-                                        "name": "a",
                                         "type": "Variable"
                                     },
                                     "type": "Number"
@@ -322,87 +179,12 @@
                         "ev": "Log"
                     },
                     {
-                        "name": "$ARGS",
-                        "index": 0,
-                        "value": -1,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "name": "$ARGS",
-                        "index": 1,
-                        "value": 96,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "name": "$ARGS",
-                        "index": 2,
-                        "value": {
-                            "name": "TAG$a",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "name": "$ARGS",
-                        "index": 3,
-                        "value": {
-                            "name": "a",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "id": {
-                            "name": "inner",
-                            "type": "Variable"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 0
-                    },
-                    {
-                        "index": 4,
-                        "value": {
-                            "name": "$RTAG",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "index": 5,
-                        "value": {
-                            "name": "$RETURN",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "name": "TAG$b",
-                        "value": {
-                            "condition": false,
-                            "yes": -1,
-                            "no": -1,
-                            "type": "If"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": "b",
-                        "value": {
-                            "condition": false,
-                            "yes": 2,
-                            "no": 3,
-                            "type": "If"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
                         "text": {
                             "strings": [
-                                "b = ",
+                                "d = ",
                                 {
                                     "value": {
-                                        "name": "b",
+                                        "name": "d",
                                         "type": "Variable"
                                     },
                                     "type": "Number"
@@ -416,10 +198,9 @@
                 "timingMode": "SongStart",
                 "_vars": [
                     "x",
-                    "inner",
-                    "a",
-                    "b",
-                    "log"
+                    "gcd",
+                    "d",
+                    "print"
                 ]
             },
             {
@@ -472,9 +253,22 @@
                         "ev": "SetVariable"
                     },
                     {
+                        "name": "$RTAG",
+                        "value": -1,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "name": "$RETURN",
+                        "value": 0,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "ev": "StopStream"
+                    },
+                    {
                         "text": {
                             "strings": [
-                                "inner called with ",
+                                "gcd called with ",
                                 {
                                     "value": {
                                         "index": 1,
@@ -496,31 +290,89 @@
                         "ev": "Log"
                     },
                     {
+                        "name": "$ARGS",
+                        "index": 0,
+                        "value": {
+                            "index": 2,
+                            "type": "Array"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "name": "$ARGS",
+                        "index": 1,
+                        "value": {
+                            "index": 3,
+                            "type": "Array"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "name": "$ARGS",
+                        "index": 2,
+                        "value": -1,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "name": "$ARGS",
+                        "index": 3,
+                        "value": {
+                            "value1": {
+                                "index": 1,
+                                "type": "Array"
+                            },
+                            "value2": {
+                                "index": 3,
+                                "type": "Array"
+                            },
+                            "operator": "Mod",
+                            "type": "Math"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "id": {
+                            "name": "gcd",
+                            "type": "Variable"
+                        },
+                        "immediate": true,
+                        "ev": "StartStream",
+                        "refID": 0
+                    },
+                    {
+                        "index": 4,
+                        "value": {
+                            "name": "$RTAG",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "index": 5,
+                        "value": {
+                            "name": "$RETURN",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
                         "name": "$RTAG",
                         "value": {
                             "condition": {
                                 "value1": {
-                                    "value1": {
-                                        "index": 1,
-                                        "type": "Array"
-                                    },
-                                    "value2": {
-                                        "index": 3,
-                                        "type": "Array"
-                                    },
-                                    "operator": "Mod",
-                                    "type": "Math"
+                                    "index": 3,
+                                    "type": "Array"
                                 },
-                                "value2": -1,
-                                "mode": "Equal",
+                                "value2": 0,
+                                "mode": "NotEqual",
                                 "type": "Compare"
                             },
                             "yes": {
-                                "index": 0,
+                                "index": 4,
                                 "type": "Array"
                             },
                             "no": {
-                                "index": 2,
+                                "index": 0,
                                 "type": "Array"
                             },
                             "type": "If"
@@ -532,27 +384,19 @@
                         "value": {
                             "condition": {
                                 "value1": {
-                                    "value1": {
-                                        "index": 1,
-                                        "type": "Array"
-                                    },
-                                    "value2": {
-                                        "index": 3,
-                                        "type": "Array"
-                                    },
-                                    "operator": "Mod",
-                                    "type": "Math"
+                                    "index": 3,
+                                    "type": "Array"
                                 },
-                                "value2": -1,
-                                "mode": "Equal",
+                                "value2": 0,
+                                "mode": "NotEqual",
                                 "type": "Compare"
                             },
                             "yes": {
-                                "index": 1,
+                                "index": 5,
                                 "type": "Array"
                             },
                             "no": {
-                                "index": 3,
+                                "index": 1,
                                 "type": "Array"
                             },
                             "type": "If"
@@ -567,7 +411,8 @@
                 "_vars": [
                     "x",
                     "y",
-                    "log"
+                    "print",
+                    "gcd"
                 ]
             }
         ],

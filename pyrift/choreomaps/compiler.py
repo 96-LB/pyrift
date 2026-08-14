@@ -6,7 +6,7 @@ from pyrift.choreomaps.tag import Tag
 from .analysis import Analysis, ChoreomapAnalyzer, ScopeInfo, VarType
 from .choreomap import Choreomap
 from .enum import BinaryOperator, ComparisonMode
-from .external import ExternalExpression, ExternalValue, ExternalArgType
+from .external import ExternalArgType, ExternalExpression, ExternalValue
 from .ir.expression import (
     AndExpression,
     BaseExpression,
@@ -67,19 +67,18 @@ class Scope:
         self.id: int = id
         self.info = info
         self.events: list[BaseEvent] = []
-        self.index: int = 0
+        self.temp_index: int = 0
         for type in info.types:
             if type in (VarType.LOCAL, VarType.NONLOCAL, VarType.CAPTURED):
-                self.index += 2
+                self.temp_index += 2
     
     def temp(self):
-        self.index += 1
-        return self.index - 1
+        self.temp_index += 1
+        return self.temp_index - 1
 
 
 class ChoreomapCompiler:
     def __init__(self):
-        self.refs: int = 0
         self.streams: list[Scope] = []
         self.analysis: Analysis = Analysis(())
         self.externals: dict[str, ExternalValue] = {}
@@ -130,20 +129,20 @@ class ChoreomapCompiler:
                 case VarType.CAPTURED:
                     # copy argument to the heap and save a reference in locals
                     ref = self.allocate(tag, value)
-                    scope.events.append(SetArrayEvent(None, tag_index, Tag.NONE.value))
+                    scope.events.append(SetArrayEvent(None, tag_index, Tag.NONE))
                     scope.events.append(SetArrayEvent(None, value_index, ref))
                 case _:
                     raise NotImplementedError(f'Unsupported argument type for argument {scope.info.vars[i]}: {scope.info.types[i]}')
         
         # set default return value to None
+        scope.events.append(SetVariableEvent("$RTAG", Tag.NONE))
         scope.events.append(SetVariableEvent("$RETURN", 0))
-        scope.events.append(SetVariableEvent("$RTAG", Tag.NONE.value))
         
         yield scope # execute inner code
         
         self.scope = old
     
-    def compile(self, script: Script, externals: dict[str, ExternalValue] = {}):
+    def compile(self, script: Script, externals: dict[str, ExternalValue]):
         analysis = ChoreomapAnalyzer().analyze(script)
         self.analysis = analysis
         self.externals = externals
@@ -170,7 +169,6 @@ class ChoreomapCompiler:
         with self.new_scope() as scope:
             for node in nodes:
                 self.visit_inst(node)
-            print(f'Found stream {scope} in node {'::'.join(type(n).__name__ for n in nodes)}')
         return scope
     
     
@@ -248,20 +246,20 @@ class ChoreomapCompiler:
             
             case FunctionExpression(args, instructions):
                 stream = self.visit_stream(instructions)
-                return Tag.FUNCTION.value, stream.id
+                return Tag.FUNCTION, stream.id
                 
             case VariableExpression(name):
-                index, var_type = self.lookup(name)
+                value_index, var_type = self.lookup(name)
                 
                 match var_type:
                     case VarType.LOCAL:
                         # get the value from the locals array
-                        tag = ArrayValue(None, index)
-                        value = ArrayValue(None, index + 1)
+                        tag = ArrayValue(None, value_index)
+                        value = ArrayValue(None, value_index + 1)
                         return tag, value
                     case VarType.CAPTURED | VarType.NONLOCAL:
                         # the locals array contains a ref to the heap -- get the value there
-                        ref = NumberString(ArrayValue(None, index + 1))
+                        ref = NumberString(ArrayValue(None, value_index + 1))
                         tag = ArrayValue(ref, 0)
                         value = ArrayValue(ref, 1)
                     case VarType.GLOBAL:
@@ -271,34 +269,34 @@ class ChoreomapCompiler:
                     case VarType.EXTERNAL:
                         if name not in self.externals:
                             raise ValueError(f'Unknown external variable {name}.')
-                        tag = Tag.FUNCTION.value
+                        tag = Tag.FUNCTION
                         value = self.externals[name]
                 
                 return tag, value
             
             case AndExpression(conditions):
                 conditions = tuple(self.visit_condition(condition) for condition in conditions)
-                return Tag.NUMBER.value, AndCondition(conditions)
+                return Tag.NUMBER, AndCondition(conditions)
             
             case OrExpression(conditions):
                 conditions = tuple(self.visit_condition(condition) for condition in conditions)
-                return Tag.NUMBER.value, OrCondition(conditions)
+                return Tag.NUMBER, OrCondition(conditions)
             
             case BinaryExpression(left, operator, right):
                 ltag, left = self.visit_value(left)
                 rtag, right = self.visit_value(right)
                 match ltag, rtag:
-                    case Tag.NUMBER.value, Tag.NUMBER.value:
-                        return Tag.NUMBER.value, MathValue(left, right, operator)
+                    case Tag.NUMBER, Tag.NUMBER:
+                        return Tag.NUMBER, MathValue(left, right, operator)
                     case _: # TODO: a lot of cases
-                        return Tag.NUMBER.value, MathValue(left, right, operator) # TODO: REMOVE
+                        return Tag.NUMBER, MathValue(left, right, operator) # TODO: REMOVE
                         raise NotImplementedError(f'Binary operation between tags {type(ltag).__name__} and {type(rtag).__name__} is unsupported.')
             
             case UnaryExpression(expr, operator):
                 tag, value = self.visit_value(expr)
                 match tag:
-                    case Tag.NUMBER.value:
-                        return Tag.NUMBER.value, UnaryValue(value, operator)
+                    case Tag.NUMBER:
+                        return Tag.NUMBER, UnaryValue(value, operator)
                     case _:
                         raise NotImplementedError(f'Unary operation on tag {type(tag)} is unsupported.')
             
@@ -338,16 +336,16 @@ class ChoreomapCompiler:
                 # synchronous functions don't need a ref
                 self.add_event(StartStreamEvent(func, 0, immediate=True))
                 
-                itag = self.scope.temp()
-                index = self.scope.temp()
-                self.add_event(SetArrayEvent(None, itag, VariableValue("$RTAG")))
-                self.add_event(SetArrayEvent(None, index, VariableValue("$RETURN")))
-                return ArrayValue(None, itag), ArrayValue(None, index)
+                tag_index = self.scope.temp()
+                value_index = self.scope.temp()
+                self.add_event(SetArrayEvent(None, tag_index, VariableValue("$RTAG")))
+                self.add_event(SetArrayEvent(None, value_index, VariableValue("$RETURN")))
+                return ArrayValue(None, tag_index), ArrayValue(None, value_index)
             
             case JoinExpression(strings):
                 # TODO: verify tag
                 strings = tuple(self.visit_str(string) for string in strings)
-                return Tag.STRING.value, JoinString(strings)
+                return Tag.STRING, JoinString(strings)
             
             case CompareExpression(first, operands, operators):
                 # TODO: verify tags
@@ -357,13 +355,13 @@ class ChoreomapCompiler:
                 assert len(operands) == len(operators)
                 
                 if len(operators) == 1:
-                    return Tag.NUMBER.value, CompareCondition(first, operands[0], operators[0])
+                    return Tag.NUMBER, CompareCondition(first, operands[0], operators[0])
                 else:
                     conditions = tuple(
                         CompareCondition(first if i == 0 else operands[i - 1], operands[i], operators[i])
                         for i in range(len(operators))
                     )
-                    return Tag.NUMBER.value, AndCondition(conditions)
+                    return Tag.NUMBER, AndCondition(conditions)
             
             case ExternalExpression(events, tag, value):
                 for event in events:
@@ -383,7 +381,7 @@ class ChoreomapCompiler:
             case BaseString() | str():
                 ref = self.allocate()
                 self.add_event(SetArrayStringEvent(NumberString(ref), value)) # TODO: THIS IS REALLY BAD
-                return Tag.STRING.value, ref
+                return Tag.STRING, ref
     
     def visit_condition(self, node: BaseExpression) -> Condition:
         tag, value = self.visit_expr(node)
