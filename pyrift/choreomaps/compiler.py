@@ -97,7 +97,7 @@ class ChoreomapCompiler:
                 index += 2
         raise ValueError(f'Unknown variable {name}.')
     
-    def allocate(self, *values: BaseValue) -> BaseValue:
+    def allocate(self, *values: Value) -> Value:
         ref = VariableValue("$REF")
         name = NumberString(ref)
         # increment the heap counter
@@ -315,16 +315,16 @@ class ChoreomapCompiler:
                     external_args: list[Value | Condition | String] = []
                     if not len(args) == len(func.args):
                         raise ValueError(f'Argument count mismatch for external function {func.func.__name__}. Expected {len(func.args)}, got {len(args)}')
-                    for i in range(len(func.args)):
-                        match func.args[i].type:
+                    for arg, spec in zip(args, func.args):
+                        match spec.type:
                             case ExternalArgType.VALUE:
-                                tag, value = self.visit_value(args[i])
+                                _, value = self.visit_value(arg)
                                 external_args.append(value)
                             case ExternalArgType.CONDITION:
-                                condition = self.visit_condition(args[i])
+                                condition = self.visit_condition(arg)
                                 external_args.append(condition)
                             case ExternalArgType.STRING:
-                                string = self.visit_str(args[i])
+                                string = self.visit_str(arg)
                                 external_args.append(string)
                     expr = func.func(*external_args)
                     return self.visit_expr(expr)
@@ -350,7 +350,7 @@ class ChoreomapCompiler:
             case CompareExpression(first, operands, operators):
                 # TODO: verify tags
                 _, first = self.visit_value(first)
-                operands = tuple(self.visit_value(operand)[0] for operand in operands)
+                operands = tuple(self.visit_value(operand)[1] for operand in operands)
                 assert 0 < len(operands)
                 assert len(operands) == len(operators)
                 
