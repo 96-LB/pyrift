@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar, override
 
-from pyrift.choreomaps.nodes.string import BaseString
+from pyrift.choreomaps.nodes.string import String
 from pyrift.jobj import JList, JObj
 
 from ..enum import (
@@ -19,8 +19,8 @@ from ..enum import (
 )
 
 if TYPE_CHECKING:
-    from .condition import BaseCondition
-    from .value import BaseValue
+    from .condition import Condition
+    from .value import Value
 
 
 class BaseEvent(JObj):
@@ -31,7 +31,7 @@ class BaseEvent(JObj):
     '''
     
     TYPE: ClassVar[str]
-    t: float
+    # t: float # TODO: hmm how to deal with time
     
     def __init_subclass__(cls, type: str):
         super().__init_subclass__()
@@ -52,11 +52,11 @@ class SpawnEvent(BaseEvent, type='Spawn'):
         facing_x: Facing direction to spawn the entity in
     '''
     
-    type: BaseValue
-    id: BaseValue
-    x: BaseValue
-    y: BaseValue
-    facing_x: BaseValue
+    type: Value
+    id: Value
+    x: Value
+    y: Value
+    facing_x: Value
 
 
 class DespawnEvent(BaseEvent, type='Despawn'):
@@ -65,7 +65,7 @@ class DespawnEvent(BaseEvent, type='Despawn'):
         id: ID of the entity to despawn
     '''
     
-    id: BaseValue
+    id: Value
 
 
 class EntityAttributeEvent(BaseEvent, type='EntityAttribute'):
@@ -76,9 +76,9 @@ class EntityAttributeEvent(BaseEvent, type='EntityAttribute'):
         value: Value to set the attribute to
     '''
     
-    id: BaseValue
+    id: Value
     attribute: EntityAttribute
-    value: BaseValue
+    value: Value
 
 
 class MoveEvent(BaseEvent, type='Move'):
@@ -92,12 +92,12 @@ class MoveEvent(BaseEvent, type='Move'):
         lerp: Interpolation mode for this move
     '''
     
-    id: BaseValue
-    delay: BaseValue
-    x: BaseValue | None = None
-    y: BaseValue | None = None
-    facing_x: BaseValue | None = None
-    lerp: BaseValue | None = None
+    id: Value
+    delay: Value
+    x: Value | None = None
+    y: Value | None = None
+    facing_x: Value | None = None
+    lerp: Value | None = None
 
 
 class StatusAddEvent(BaseEvent, type='StatusAdd'):
@@ -107,7 +107,7 @@ class StatusAddEvent(BaseEvent, type='StatusAdd'):
         status: Status effect to apply
     '''
     
-    id: BaseValue
+    id: Value
     status: Status
 
 
@@ -118,8 +118,8 @@ class StatusRemoveEvent(BaseEvent, type='StatusRemove'):
         status: Status effect to remove
     '''
     
-    id: BaseValue
-    status: BaseValue
+    id: Value
+    status: Value
 
 
 class HitVfxEvent(BaseEvent, type='HitVfx'):
@@ -136,15 +136,15 @@ class HitVfxEvent(BaseEvent, type='HitVfx'):
         lockout: Is this a lockout hit? This produces a miss-like animation on the action row
     '''
     
-    x: BaseValue | None = None
-    y: BaseValue | None = None
-    rating: BaseValue | None = None
-    timing: BaseValue | None = None
-    true_perfect: BaseCondition | None = None
-    kill: BaseCondition | None = None
-    health_item: BaseCondition | None = None
-    final_hit: BaseCondition | None = None
-    lockout: BaseCondition | None = None
+    x: Value | None = None
+    y: Value | None = None
+    rating: Value | None = None
+    timing: Value | None = None
+    true_perfect: Condition | None = None
+    kill: Condition | None = None
+    health_item: Condition | None = None
+    final_hit: Condition | None = None
+    lockout: Condition | None = None
 
 
 class SoundEvent(BaseEvent, type='Sound'):
@@ -160,14 +160,14 @@ class SoundEvent(BaseEvent, type='Sound'):
         pitch: Pitch to play the sound effect at (defaults to 1)
     '''
     
-    sound: BaseValue | None = None
-    id: BaseValue | None = None
-    delay: BaseValue | None = None
-    apply_latency: BaseValue | None = None
-    fade_in: BaseValue | None = None
-    lane: BaseValue | None = None
-    volume: BaseValue | None = None
-    pitch: BaseValue | None = None
+    sound: Value | None = None
+    id: Value | None = None
+    delay: Value | None = None
+    apply_latency: Value | None = None
+    fade_in: Value | None = None
+    lane: Value | None = None
+    volume: Value | None = None
+    pitch: Value | None = None
 
 
 class SoundCancelEvent(BaseEvent, type='SoundCancel'):
@@ -176,7 +176,7 @@ class SoundCancelEvent(BaseEvent, type='SoundCancel'):
         ids: List of sound effect IDs to cancel
     '''
     
-    ids: JList[BaseValue]
+    ids: JList[Value]
 
 
 class AnimateEvent(BaseEvent, type='Animate'):
@@ -186,7 +186,7 @@ class AnimateEvent(BaseEvent, type='Animate'):
         type: Name of the animation type to play
     '''
     
-    id: BaseValue
+    id: Value
     type: AnimationType
 
 
@@ -202,13 +202,13 @@ class SpriteEvent(BaseEvent, type='Sprite'):
         w: W component of the attribute value to assign to the sprite. If nil, preserves the old value
     '''
     
-    id: BaseValue
+    id: Value
     attribute: SpriteAttribute
     operator: BinaryOperator
-    x: BaseValue | None = None
-    y: BaseValue | None = None
-    z: BaseValue | None = None
-    w: BaseValue | None = None
+    x: Value | None = None
+    y: Value | None = None
+    z: Value | None = None
+    w: Value | None = None
 
 
 class GraphicCreateEvent(BaseEvent, type='GraphicCreate'):
@@ -219,8 +219,8 @@ class GraphicCreateEvent(BaseEvent, type='GraphicCreate'):
         type: Subtype of the graphic object to instantiate
     '''
     
-    id: BaseValue
-    parent: BaseValue | None = None
+    id: Value
+    parent: Value | None = None
     type: GraphicType | None = None
 
 
@@ -230,7 +230,7 @@ class GraphicDestroyEvent(BaseEvent, type='GraphicDestroy'):
         id: Reference ID of the graphic to destroy
     '''
     
-    id: BaseValue
+    id: Value
 
 
 class PlayerHealthEvent(BaseEvent, type='PlayerHealth'):
@@ -240,8 +240,8 @@ class PlayerHealthEvent(BaseEvent, type='PlayerHealth'):
         diff: Amount of health to add (positive) or remove (negative)
     '''
     
-    id: BaseValue
-    diff: BaseValue
+    id: Value
+    diff: Value
 
 
 class ScoreEvent(BaseEvent, type='Score'):
@@ -275,7 +275,7 @@ class StatEvent(BaseEvent, type='Stat'):
         amount: Amount to change stat by (if nil, 1)
     '''
     
-    type: str
+    type: String
     stat: Statistic
     amount: int | None = None
 
@@ -288,7 +288,7 @@ class SystemEvent(BaseEvent, type='System'):
     '''
     
     attribute: SystemAttribute
-    value: BaseValue
+    value: Value
 
 
 class FinishLevelEvent(BaseEvent, type='FinishLevel'):
@@ -297,7 +297,7 @@ class FinishLevelEvent(BaseEvent, type='FinishLevel'):
         win: If true, the completion counts as a victory
     '''
     
-    win: BaseCondition
+    win: Condition
 
 
 class InputOpenEvent(BaseEvent, type='InputOpen'):
@@ -315,13 +315,13 @@ class InputOpenEvent(BaseEvent, type='InputOpen'):
         on_miss: Stream to start when this input window is missed
     '''
     
-    id: BaseValue
+    id: Value
     mask: ButtonMask
     rating_id: int
-    offset: BaseValue | None = None
-    release_offset: BaseValue | None = None
-    priority: BaseValue | None = None
-    force_split: BaseCondition | None = None
+    offset: Value | None = None
+    release_offset: Value | None = None
+    priority: Value | None = None
+    force_split: Condition | None = None
     on_hit: BaseEvent | None = None
     on_release: BaseEvent | None = None
     on_miss: BaseEvent | None = None
@@ -333,7 +333,7 @@ class InputCloseEvent(BaseEvent, type='InputClose'):
         id: Unique ID of the input window to close
     '''
     
-    id: BaseValue
+    id: Value
 
 
 class StartStreamEvent(BaseEvent, type='StartStream'):
@@ -345,10 +345,10 @@ class StartStreamEvent(BaseEvent, type='StartStream'):
         locals: Optional list of local variables to initialize the stream with
     '''
     
-    id: BaseValue
-    ref_id: BaseValue
-    immediate: BaseCondition
-    locals: JList[BaseValue] | None = None
+    id: Value
+    ref_id: Value
+    immediate: Condition
+    locals: JList[Value] | None = None
     
     @override
     def to_json_obj(self):
@@ -364,7 +364,7 @@ class StopStreamEvent(BaseEvent, type='StopStream'):
         ref_id: Reference ID of the event stream to stop (or nil to stop own stream)
     '''
     
-    ref_id: BaseValue | None = None
+    ref_id: Value | None = None
     
     @override
     def to_json_obj(self):
@@ -382,7 +382,7 @@ class IfEvent(BaseEvent, type='If'):
         no: Event to execute if condition is not met
     '''
     
-    condition: BaseCondition
+    condition: Condition
     yes: BaseEvent | None
     no: BaseEvent | None
 
@@ -393,7 +393,7 @@ class JumpEvent(BaseEvent, type='Jump'):
         target: Instruction index to jump to
     '''
     
-    target: BaseValue
+    target: Value
 
 
 class WaitEvent(BaseEvent, type='Wait'):
@@ -402,7 +402,7 @@ class WaitEvent(BaseEvent, type='Wait'):
         condition: Waits until this condition is true. If nil, waits for one tick instead
     '''
     
-    condition: BaseCondition | None = None
+    condition: Condition | None = None
 
 
 class SetArrayEvent(BaseEvent, type='SetArray'):
@@ -413,9 +413,9 @@ class SetArrayEvent(BaseEvent, type='SetArray'):
         value: Value to write to the array
     '''
     
-    name: str | None = None
-    index: BaseValue | None = None
-    value: BaseValue | None = None
+    name: String | None = None
+    index: Value | None = None
+    value: Value | None = None
 
 
 class SetVariableEvent(BaseEvent, type='SetVariable'):
@@ -426,7 +426,7 @@ class SetVariableEvent(BaseEvent, type='SetVariable'):
     '''
     
     name: str
-    value: BaseValue
+    value: Value
 
 
 class LogEvent(BaseEvent, type='Log'):
@@ -436,10 +436,10 @@ class LogEvent(BaseEvent, type='Log'):
         args: Optional list of values to populate placeholders
     '''
     
-    text: BaseString
+    text: String
 
 class SetArrayStringEvent(BaseEvent, type='SetArrayString'):
     # TODO
     
-    name: BaseString | None = None
-    string: BaseString | None = None
+    name: String | None = None
+    string: String | None = None

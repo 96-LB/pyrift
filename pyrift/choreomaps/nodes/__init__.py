@@ -14,9 +14,7 @@ __all__ = (
     'ComboDropEvent',
     'CompareCondition',
     'ComparisonMode',
-    'ConstantCondition',
-    'ConstantString',
-    'ConstantValue',
+    'Condition',
     'DespawnEvent',
     'EntityAttribute',
     'EntityAttributeEvent',
@@ -29,6 +27,7 @@ __all__ = (
     'GraphicType',
     'HitVfxEvent',
     'IfEvent',
+    'IfString',
     'IfValue',
     'InputCloseEvent',
     'InputOpenEvent',
@@ -67,6 +66,7 @@ __all__ = (
     'StatusRemoveEvent',
     'StopStreamEvent',
     'Stream',
+    'String',
     'SystemAttribute',
     'SystemCondition',
     'SystemEvent',
@@ -75,6 +75,7 @@ __all__ = (
     'TimingMode',
     'UnaryOperator',
     'UnaryValue',
+    'Value',
     'VariableValue',
     'VisualType',
     'WaitEvent',
@@ -105,7 +106,7 @@ from .condition import (
     AndCondition,
     BaseCondition,
     CompareCondition,
-    ConstantCondition,
+    Condition,
     EntityCondition,
     NotCondition,
     OrCondition,
@@ -148,11 +149,17 @@ from .event import (
 from .rating import RatingDefinition, RatingStep
 from .sound import Sound
 from .stream import Stream
-from .string import ArrayString, BaseString, ConstantString, JoinString, NumberString
+from .string import (
+    ArrayString,
+    BaseString,
+    IfString,
+    JoinString,
+    NumberString,
+    String,
+)
 from .value import (
     ArrayValue,
     BaseValue,
-    ConstantValue,
     EntityValue,
     IfValue,
     MathValue,
@@ -161,5 +168,6 @@ from .value import (
     SpriteIDValue,
     SystemValue,
     UnaryValue,
+    Value,
     VariableValue,
 )

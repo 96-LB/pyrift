@@ -38,7 +38,6 @@ from .nodes import (
 class ChoreomapParser(ast.NodeVisitor):
     def __init__(self):
         super().__init__()
-        self.func_id = 2 # id 1 is reserved
     
     @override
     def generic_visit(self, node: ast.AST) -> None:
@@ -64,9 +63,7 @@ class ChoreomapParser(ast.NodeVisitor):
         name = node.name
         args = tuple(arg.arg for arg in node.args.args)
         instructions = tuple(self.visit_stmt(stmt) for stmt in node.body)
-        id = self.func_id
-        self.func_id += 1
-        return SetVariableInstruction(name, FunctionExpression(id, args, instructions))
+        return SetVariableInstruction(name, FunctionExpression(args, instructions))
     
     @override
     def visit_Return(self, node: ast.Return):

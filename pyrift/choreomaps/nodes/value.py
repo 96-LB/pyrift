@@ -14,8 +14,11 @@ from ..enum import (
 )
 
 if TYPE_CHECKING:
-    from .condition import BaseCondition
+    from .condition import Condition
+    from .string import String
 
+
+type Value = float | BaseValue
 
 class BaseValue(JObj):
     '''
@@ -34,17 +37,17 @@ class BaseValue(JObj):
         return {**super().to_dict(), 'type': self.TYPE}
 
 
-class ConstantValue(BaseValue, type='Constant'):
-    '''
-    Attributes:
-        value: Numeric value
-    '''
+# class ConstantValue(BaseValue, type='Constant'):
+#     '''
+#     Attributes:
+#         value: Numeric value
+#     '''
     
-    value: float
+#     value: float
     
-    @override
-    def to_json_obj(self):
-        return self.value
+#     @override
+#     def to_json_obj(self):
+#         return self.value
 
 
 class MathValue(BaseValue, type='Math'):
@@ -55,8 +58,8 @@ class MathValue(BaseValue, type='Math'):
         operator: Math operation to apply.
     """
     
-    value1: BaseValue
-    value2: BaseValue
+    value1: Value
+    value2: Value
     operator: BinaryOperator
 
 
@@ -67,7 +70,7 @@ class UnaryValue(BaseValue, type='Unary'):
         operator: Math operation to apply.
     """
     
-    value: BaseValue
+    value: Value
     operator: UnaryOperator
 
 
@@ -79,9 +82,9 @@ class IfValue(BaseValue, type='If'):
         no: Value if the condition is false.
     """
     
-    condition: BaseCondition
-    yes: BaseValue
-    no: BaseValue
+    condition: Condition
+    yes: Value
+    no: Value
 
 
 class VariableValue(BaseValue, type='Variable'):
@@ -100,8 +103,8 @@ class ArrayValue(BaseValue, type='Array'):
         index: Index to read from, or nil to read the array's length.
     """
     
-    name: str | None = None
-    index: BaseValue | None = None
+    name: String | None = None
+    index: Value | None = None
 
 
 class EntityValue(BaseValue, type='Entity'):
@@ -111,7 +114,7 @@ class EntityValue(BaseValue, type='Entity'):
         attribute: Entity attribute to read.
     """
     
-    id: BaseValue
+    id: Value
     attribute: EntityAttribute
 
 
@@ -133,8 +136,8 @@ class SpriteIDValue(BaseValue, type='SpriteID'):
     """
     
     visualType: VisualType
-    x: BaseValue | None = None
-    y: BaseValue | None = None
+    x: Value | None = None
+    y: Value | None = None
 
 
 class SpriteFindIDValue(BaseValue, type='SpriteFindID'):
@@ -144,7 +147,7 @@ class SpriteFindIDValue(BaseValue, type='SpriteFindID'):
         path: Name of the object to locate (uses Unity GameObject names). If nil, returns the specified object (or scene root) directly if it exists, and 0 if destroyed.
     """
     
-    id: BaseValue
+    id: Value
     path: str | None = None
 
 
@@ -156,6 +159,6 @@ class SpriteAttributeValue(BaseValue, type='SpriteAttribute'):
         index: Component index to read (0 = X, 1 = Y, 2 = Z, 3 = W). Defaults to X.
     """
     
-    id: BaseValue
+    id: Value
     attribute: SpriteAttribute
-    index: BaseValue | None = None
+    index: Value | None = None

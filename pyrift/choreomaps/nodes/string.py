@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from typing import ClassVar, override
 
-from pyrift.choreomaps.nodes.condition import BaseCondition
+from pyrift.choreomaps.nodes.condition import Condition
 from pyrift.jobj import JList, JObj
 
-from .value import BaseValue
+from .value import Value
 
+type String = str | BaseString
 
 class BaseString(JObj):
     '''
@@ -25,17 +26,17 @@ class BaseString(JObj):
         return {**super().to_dict(), 'type': self.TYPE}
 
 
-class ConstantString(BaseString, type='Constant'):
-    '''
-    Attributes:
-        value: String value
-    '''
+# class ConstantString(BaseString, type='Constant'):
+#     '''
+#     Attributes:
+#         value: String value
+#     '''
     
-    value: str
+#     value: str
     
-    @override
-    def to_json_obj(self):
-        return self.value
+#     @override
+#     def to_json_obj(self):
+#         return self.value
 
 
 class NumberString(BaseString, type='Number'):
@@ -44,7 +45,7 @@ class NumberString(BaseString, type='Number'):
         value: numeric value
     ''' # TODO: update
     
-    value: BaseValue
+    value: Value
 
 
 class JoinString(BaseString, type='Join'):
@@ -53,7 +54,7 @@ class JoinString(BaseString, type='Join'):
         strings: fixed-size array of string expressions to join with no intermediate separator
     ''' # TODO: update
     
-    strings: JList[BaseString]
+    strings: JList[String]
 
 
 class ArrayString(BaseString, type='Array'):
@@ -63,7 +64,7 @@ class ArrayString(BaseString, type='Array'):
         index: Index to read from, or nil to read the array's length.
     """ # TODO: update, also this is overloaded
     
-    name: BaseString
+    name: String
 
 
 class IfString(BaseString, type='If'):
@@ -74,6 +75,6 @@ class IfString(BaseString, type='If'):
         no: Value if the condition is false.
     """ # TODO: update
     
-    condition: BaseCondition
-    yes: BaseString
-    no: BaseString
+    condition: Condition
+    yes: String
+    no: String

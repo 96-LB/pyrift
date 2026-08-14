@@ -7,8 +7,10 @@ from pyrift.jobj import JList, JObj
 from ..enum import ComparisonMode, EntityPredicate, SystemPredicate
 
 if TYPE_CHECKING:
-    from .value import BaseValue
+    from .value import Value
 
+
+type Condition = bool | BaseCondition
 
 class BaseCondition(JObj):
     '''
@@ -26,17 +28,17 @@ class BaseCondition(JObj):
     def to_dict(self):
         return {**super().to_dict(), 'type': self.TYPE}
 
-class ConstantCondition(BaseCondition, type='Constant'):
-    '''
-    Attributes:
-        value: Logical constant value
-    '''
+# class ConstantCondition(BaseCondition, type='Constant'):
+#     '''
+#     Attributes:
+#         value: Logical constant value
+#     '''
     
-    value: bool
+#     value: bool
     
-    @override
-    def to_json_obj(self):
-        return self.value
+#     @override
+#     def to_json_obj(self):
+#         return self.value
 
 
 class AndCondition(BaseCondition, type='And'):
@@ -45,7 +47,7 @@ class AndCondition(BaseCondition, type='And'):
         conditions: Conditions that must all be fulfilled
     '''
     
-    conditions: JList[BaseCondition]
+    conditions: JList[Condition]
 
 
 class OrCondition(BaseCondition, type='Or'):
@@ -54,7 +56,7 @@ class OrCondition(BaseCondition, type='Or'):
         conditions: Conditions of which at least one must be fulfilled
     '''
     
-    conditions: JList[BaseCondition]
+    conditions: JList[Condition]
 
 
 class NotCondition(BaseCondition, type='Not'):
@@ -63,7 +65,7 @@ class NotCondition(BaseCondition, type='Not'):
         condition: BaseCondition that must not be fulfilled
     '''
     
-    condition: BaseCondition
+    condition: Condition
 
 
 class CompareCondition(BaseCondition, type='Compare'):
@@ -74,8 +76,8 @@ class CompareCondition(BaseCondition, type='Compare'):
         mode: Comparison operator to apply
     '''
     
-    value1: BaseValue
-    value2: BaseValue
+    value1: Value
+    value2: Value
     mode: ComparisonMode
 
 
@@ -86,7 +88,7 @@ class EntityCondition(BaseCondition, type='Entity'):
         predicate: Predicate to check for this entity
     '''
     
-    id: BaseValue
+    id: Value
     predicate: EntityPredicate
 
 

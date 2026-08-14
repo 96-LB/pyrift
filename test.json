@@ -13,131 +13,63 @@
                 "id": 1,
                 "events": [
                     {
-                        "t": 0,
-                        "value": 13,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "t": 0,
                         "name": "$RETURN",
                         "value": 0,
                         "ev": "SetVariable"
                     },
                     {
-                        "t": 0,
-                        "index": 0,
-                        "value": 2,
-                        "ev": "SetArray"
+                        "name": "$RTAG",
+                        "value": 0,
+                        "ev": "SetVariable"
                     },
                     {
-                        "t": 0,
-                        "index": 1,
+                        "name": "TAG$x",
+                        "value": -1,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "name": "x",
                         "value": {
                             "value1": 2,
                             "value2": 3,
                             "operator": "Add",
                             "type": "Math"
                         },
-                        "ev": "SetArray"
+                        "ev": "SetVariable"
                     },
                     {
-                        "t": 0,
-                        "condition": {
-                            "value1": {
-                                "index": 1,
-                                "type": "Array"
-                            },
-                            "value2": 1000000000000,
-                            "mode": "LessEqual",
-                            "type": "Compare"
-                        },
-                        "yes": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "value": {
-                                    "index": 1,
-                                    "type": "Array"
-                                },
-                                "type": "Number"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "no": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "name": {
-                                    "value": {
-                                        "value1": 1000000000000,
-                                        "value2": {
-                                            "index": 1,
-                                            "type": "Array"
-                                        },
-                                        "operator": "Add",
-                                        "type": "Math"
-                                    },
-                                    "type": "Number"
-                                },
-                                "type": "Array"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "ev": "If"
-                    },
-                    {
-                        "t": 0,
-                        "name": {
-                            "value": 1000000000001,
-                            "type": "Number"
-                        },
-                        "string": {
+                        "text": {
                             "strings": [
                                 "Hello World! ",
                                 {
-                                    "name": "$STR",
-                                    "type": "Array"
+                                    "value": {
+                                        "name": "x",
+                                        "type": "Variable"
+                                    },
+                                    "type": "Number"
                                 }
                             ],
                             "type": "Join"
                         },
-                        "ev": "SetArrayString"
+                        "ev": "Log"
                     },
                     {
-                        "t": 0,
-                        "name": "$ARGS",
-                        "index": 0,
-                        "value": 1000000000001,
-                        "ev": "SetArray"
+                        "name": "TAG$inner",
+                        "value": -4,
+                        "ev": "SetVariable"
                     },
                     {
-                        "t": 0,
-                        "id": {
-                            "index": 0,
-                            "type": "Array"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 1000000000002
+                        "name": "inner",
+                        "value": 2,
+                        "ev": "SetVariable"
                     },
                     {
-                        "t": 0,
-                        "index": 2,
-                        "value": {
-                            "name": "$RETURN",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
+                        "name": "TAG$a",
+                        "value": -1,
+                        "ev": "SetVariable"
                     },
                     {
-                        "t": 0,
-                        "index": 3,
-                        "value": 3,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "t": 0,
-                        "index": 4,
+                        "name": "a",
                         "value": {
                             "value1": {
                                 "value1": {
@@ -154,184 +86,75 @@
                             "operator": "Multiply",
                             "type": "Math"
                         },
-                        "ev": "SetArray"
+                        "ev": "SetVariable"
                     },
                     {
-                        "t": 0,
-                        "condition": {
-                            "value1": {
-                                "index": 1,
-                                "type": "Array"
-                            },
-                            "value2": 1000000000000,
-                            "mode": "LessEqual",
-                            "type": "Compare"
-                        },
-                        "yes": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "value": {
-                                    "index": 1,
-                                    "type": "Array"
-                                },
-                                "type": "Number"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "no": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "name": {
-                                    "value": {
-                                        "value1": 1000000000000,
-                                        "value2": {
-                                            "index": 1,
-                                            "type": "Array"
-                                        },
-                                        "operator": "Add",
-                                        "type": "Math"
-                                    },
-                                    "type": "Number"
-                                },
-                                "type": "Array"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "ev": "If"
-                    },
-                    {
-                        "t": 0,
-                        "condition": {
-                            "value1": {
-                                "index": 4,
-                                "type": "Array"
-                            },
-                            "value2": 1000000000000,
-                            "mode": "LessEqual",
-                            "type": "Compare"
-                        },
-                        "yes": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "value": {
-                                    "index": 4,
-                                    "type": "Array"
-                                },
-                                "type": "Number"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "no": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "name": {
-                                    "value": {
-                                        "value1": 1000000000000,
-                                        "value2": {
-                                            "index": 4,
-                                            "type": "Array"
-                                        },
-                                        "operator": "Add",
-                                        "type": "Math"
-                                    },
-                                    "type": "Number"
-                                },
-                                "type": "Array"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "ev": "If"
-                    },
-                    {
-                        "t": 0,
-                        "name": {
-                            "value": 1000000000005,
-                            "type": "Number"
-                        },
-                        "string": {
+                        "text": {
                             "strings": [
                                 "Hello World! ",
                                 {
-                                    "name": "$STR",
-                                    "type": "Array"
+                                    "value": {
+                                        "name": "x",
+                                        "type": "Variable"
+                                    },
+                                    "type": "Number"
                                 },
                                 " ",
                                 {
-                                    "name": "$STR",
-                                    "type": "Array"
+                                    "value": {
+                                        "name": "a",
+                                        "type": "Variable"
+                                    },
+                                    "type": "Number"
                                 }
                             ],
                             "type": "Join"
                         },
-                        "ev": "SetArrayString"
+                        "ev": "Log"
                     },
                     {
-                        "t": 0,
                         "name": "$ARGS",
                         "index": 0,
-                        "value": 1000000000005,
+                        "value": -1,
                         "ev": "SetArray"
                     },
                     {
-                        "t": 0,
-                        "id": {
-                            "index": 0,
-                            "type": "Array"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 1000000000006
-                    },
-                    {
-                        "t": 0,
-                        "index": 5,
-                        "value": {
-                            "name": "$RETURN",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "t": 0,
                         "name": "$ARGS",
-                        "index": 0,
+                        "index": 1,
                         "value": 18,
                         "ev": "SetArray"
                     },
                     {
-                        "t": 0,
                         "name": "$ARGS",
-                        "index": 1,
+                        "index": 2,
+                        "value": -1,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "name": "$ARGS",
+                        "index": 3,
                         "value": 3,
                         "ev": "SetArray"
                     },
                     {
-                        "t": 0,
-                        "name": "$ARGS",
-                        "index": 2,
+                        "id": {
+                            "name": "inner",
+                            "type": "Variable"
+                        },
+                        "immediate": true,
+                        "ev": "StartStream",
+                        "refID": 0
+                    },
+                    {
+                        "index": 0,
                         "value": {
-                            "index": 0,
-                            "type": "Array"
+                            "name": "$RTAG",
+                            "type": "Variable"
                         },
                         "ev": "SetArray"
                     },
                     {
-                        "t": 0,
-                        "id": {
-                            "index": 3,
-                            "type": "Array"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 1000000000007
-                    },
-                    {
-                        "t": 0,
-                        "index": 6,
+                        "index": 1,
                         "value": {
                             "name": "$RETURN",
                             "type": "Variable"
@@ -339,175 +162,72 @@
                         "ev": "SetArray"
                     },
                     {
-                        "t": 0,
                         "target": {
                             "condition": {
                                 "value1": {
-                                    "index": 6,
+                                    "index": 1,
                                     "type": "Array"
                                 },
                                 "value2": 0,
                                 "mode": "NotEqual",
                                 "type": "Compare"
                             },
-                            "yes": 21,
-                            "no": 33,
+                            "yes": 18,
+                            "no": 27,
                             "type": "If"
                         },
                         "ev": "Jump"
                     },
                     {
-                        "t": 0,
-                        "condition": {
-                            "value1": {
-                                "index": 1,
-                                "type": "Array"
-                            },
-                            "value2": 1000000000000,
-                            "mode": "LessEqual",
-                            "type": "Compare"
-                        },
-                        "yes": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "value": {
-                                    "index": 1,
-                                    "type": "Array"
-                                },
-                                "type": "Number"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "no": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "name": {
-                                    "value": {
-                                        "value1": 1000000000000,
-                                        "value2": {
-                                            "index": 1,
-                                            "type": "Array"
-                                        },
-                                        "operator": "Add",
-                                        "type": "Math"
-                                    },
-                                    "type": "Number"
-                                },
-                                "type": "Array"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "ev": "If"
-                    },
-                    {
-                        "t": 0,
-                        "condition": {
-                            "value1": {
-                                "index": 4,
-                                "type": "Array"
-                            },
-                            "value2": 1000000000000,
-                            "mode": "LessEqual",
-                            "type": "Compare"
-                        },
-                        "yes": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "value": {
-                                    "index": 4,
-                                    "type": "Array"
-                                },
-                                "type": "Number"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "no": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "name": {
-                                    "value": {
-                                        "value1": 1000000000000,
-                                        "value2": {
-                                            "index": 4,
-                                            "type": "Array"
-                                        },
-                                        "operator": "Add",
-                                        "type": "Math"
-                                    },
-                                    "type": "Number"
-                                },
-                                "type": "Array"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "ev": "If"
-                    },
-                    {
-                        "t": 0,
-                        "name": {
-                            "value": 1000000000008,
-                            "type": "Number"
-                        },
-                        "string": {
+                        "text": {
                             "strings": [
                                 {
-                                    "name": "$STR",
-                                    "type": "Array"
+                                    "value": {
+                                        "name": "x",
+                                        "type": "Variable"
+                                    },
+                                    "type": "Number"
                                 },
                                 " ",
                                 {
-                                    "name": "$STR",
-                                    "type": "Array"
+                                    "value": {
+                                        "name": "a",
+                                        "type": "Variable"
+                                    },
+                                    "type": "Number"
                                 }
                             ],
                             "type": "Join"
                         },
-                        "ev": "SetArrayString"
+                        "ev": "Log"
                     },
                     {
-                        "t": 0,
                         "name": "$ARGS",
                         "index": 0,
-                        "value": 1000000000008,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "t": 0,
-                        "id": {
-                            "index": 0,
-                            "type": "Array"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 1000000000009
-                    },
-                    {
-                        "t": 0,
-                        "index": 7,
                         "value": {
-                            "name": "$RETURN",
+                            "name": "TAG$a",
                             "type": "Variable"
                         },
                         "ev": "SetArray"
                     },
                     {
-                        "t": 0,
                         "name": "$ARGS",
-                        "index": 0,
+                        "index": 1,
                         "value": {
-                            "index": 4,
-                            "type": "Array"
+                            "name": "a",
+                            "type": "Variable"
                         },
                         "ev": "SetArray"
                     },
                     {
-                        "t": 0,
                         "name": "$ARGS",
-                        "index": 1,
+                        "index": 2,
+                        "value": -1,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "name": "$ARGS",
+                        "index": 3,
                         "value": {
                             "value1": {
                                 "value1": 3,
@@ -522,28 +242,24 @@
                         "ev": "SetArray"
                     },
                     {
-                        "t": 0,
-                        "name": "$ARGS",
+                        "id": {
+                            "name": "inner",
+                            "type": "Variable"
+                        },
+                        "immediate": true,
+                        "ev": "StartStream",
+                        "refID": 0
+                    },
+                    {
                         "index": 2,
                         "value": {
-                            "index": 0,
-                            "type": "Array"
+                            "name": "$RTAG",
+                            "type": "Variable"
                         },
                         "ev": "SetArray"
                     },
                     {
-                        "t": 0,
-                        "id": {
-                            "index": 3,
-                            "type": "Array"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 1000000000010
-                    },
-                    {
-                        "t": 0,
-                        "index": 8,
+                        "index": 3,
                         "value": {
                             "name": "$RETURN",
                             "type": "Variable"
@@ -551,384 +267,109 @@
                         "ev": "SetArray"
                     },
                     {
-                        "t": 0,
-                        "target": 48,
+                        "target": 35,
                         "ev": "Jump"
                     },
                     {
-                        "t": 0,
-                        "condition": {
-                            "value1": {
-                                "index": 1,
-                                "type": "Array"
-                            },
-                            "value2": 1000000000000,
-                            "mode": "LessEqual",
-                            "type": "Compare"
-                        },
-                        "yes": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "value": {
-                                    "index": 1,
-                                    "type": "Array"
-                                },
-                                "type": "Number"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "no": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "name": {
-                                    "value": {
-                                        "value1": 1000000000000,
-                                        "value2": {
-                                            "index": 1,
-                                            "type": "Array"
-                                        },
-                                        "operator": "Add",
-                                        "type": "Math"
-                                    },
-                                    "type": "Number"
-                                },
-                                "type": "Array"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "ev": "If"
-                    },
-                    {
-                        "t": 0,
-                        "condition": {
-                            "value1": {
-                                "index": 1,
-                                "type": "Array"
-                            },
-                            "value2": 1000000000000,
-                            "mode": "LessEqual",
-                            "type": "Compare"
-                        },
-                        "yes": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "value": {
-                                    "index": 1,
-                                    "type": "Array"
-                                },
-                                "type": "Number"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "no": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "name": {
-                                    "value": {
-                                        "value1": 1000000000000,
-                                        "value2": {
-                                            "index": 1,
-                                            "type": "Array"
-                                        },
-                                        "operator": "Add",
-                                        "type": "Math"
-                                    },
-                                    "type": "Number"
-                                },
-                                "type": "Array"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "ev": "If"
-                    },
-                    {
-                        "t": 0,
-                        "condition": {
-                            "value1": {
-                                "index": 1,
-                                "type": "Array"
-                            },
-                            "value2": 1000000000000,
-                            "mode": "LessEqual",
-                            "type": "Compare"
-                        },
-                        "yes": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "value": {
-                                    "index": 1,
-                                    "type": "Array"
-                                },
-                                "type": "Number"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "no": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "name": {
-                                    "value": {
-                                        "value1": 1000000000000,
-                                        "value2": {
-                                            "index": 1,
-                                            "type": "Array"
-                                        },
-                                        "operator": "Add",
-                                        "type": "Math"
-                                    },
-                                    "type": "Number"
-                                },
-                                "type": "Array"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "ev": "If"
-                    },
-                    {
-                        "t": 0,
-                        "condition": {
-                            "value1": {
-                                "index": 4,
-                                "type": "Array"
-                            },
-                            "value2": 1000000000000,
-                            "mode": "LessEqual",
-                            "type": "Compare"
-                        },
-                        "yes": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "value": {
-                                    "index": 4,
-                                    "type": "Array"
-                                },
-                                "type": "Number"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "no": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "name": {
-                                    "value": {
-                                        "value1": 1000000000000,
-                                        "value2": {
-                                            "index": 4,
-                                            "type": "Array"
-                                        },
-                                        "operator": "Add",
-                                        "type": "Math"
-                                    },
-                                    "type": "Number"
-                                },
-                                "type": "Array"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "ev": "If"
-                    },
-                    {
-                        "t": 0,
-                        "condition": {
-                            "value1": {
-                                "index": 4,
-                                "type": "Array"
-                            },
-                            "value2": 1000000000000,
-                            "mode": "LessEqual",
-                            "type": "Compare"
-                        },
-                        "yes": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "value": {
-                                    "index": 4,
-                                    "type": "Array"
-                                },
-                                "type": "Number"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "no": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "name": {
-                                    "value": {
-                                        "value1": 1000000000000,
-                                        "value2": {
-                                            "index": 4,
-                                            "type": "Array"
-                                        },
-                                        "operator": "Add",
-                                        "type": "Math"
-                                    },
-                                    "type": "Number"
-                                },
-                                "type": "Array"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "ev": "If"
-                    },
-                    {
-                        "t": 0,
-                        "condition": {
-                            "value1": {
-                                "index": 4,
-                                "type": "Array"
-                            },
-                            "value2": 1000000000000,
-                            "mode": "LessEqual",
-                            "type": "Compare"
-                        },
-                        "yes": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "value": {
-                                    "index": 4,
-                                    "type": "Array"
-                                },
-                                "type": "Number"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "no": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "name": {
-                                    "value": {
-                                        "value1": 1000000000000,
-                                        "value2": {
-                                            "index": 4,
-                                            "type": "Array"
-                                        },
-                                        "operator": "Add",
-                                        "type": "Math"
-                                    },
-                                    "type": "Number"
-                                },
-                                "type": "Array"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "ev": "If"
-                    },
-                    {
-                        "t": 0,
-                        "name": {
-                            "value": 1000000000011,
-                            "type": "Number"
-                        },
-                        "string": {
+                        "text": {
                             "strings": [
                                 {
-                                    "name": "$STR",
-                                    "type": "Array"
+                                    "value": {
+                                        "name": "x",
+                                        "type": "Variable"
+                                    },
+                                    "type": "Number"
                                 },
                                 {
-                                    "name": "$STR",
-                                    "type": "Array"
+                                    "value": {
+                                        "name": "x",
+                                        "type": "Variable"
+                                    },
+                                    "type": "Number"
                                 },
                                 {
-                                    "name": "$STR",
-                                    "type": "Array"
+                                    "value": {
+                                        "name": "x",
+                                        "type": "Variable"
+                                    },
+                                    "type": "Number"
                                 },
                                 " ",
                                 {
-                                    "name": "$STR",
-                                    "type": "Array"
+                                    "value": {
+                                        "name": "a",
+                                        "type": "Variable"
+                                    },
+                                    "type": "Number"
                                 },
                                 {
-                                    "name": "$STR",
-                                    "type": "Array"
+                                    "value": {
+                                        "name": "a",
+                                        "type": "Variable"
+                                    },
+                                    "type": "Number"
                                 },
                                 {
-                                    "name": "$STR",
-                                    "type": "Array"
+                                    "value": {
+                                        "name": "a",
+                                        "type": "Variable"
+                                    },
+                                    "type": "Number"
                                 }
                             ],
                             "type": "Join"
                         },
-                        "ev": "SetArrayString"
+                        "ev": "Log"
                     },
                     {
-                        "t": 0,
                         "name": "$ARGS",
                         "index": 0,
-                        "value": 1000000000011,
+                        "value": -1,
                         "ev": "SetArray"
                     },
                     {
-                        "t": 0,
-                        "id": {
-                            "index": 0,
-                            "type": "Array"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 1000000000012
-                    },
-                    {
-                        "t": 0,
-                        "index": 9,
-                        "value": {
-                            "name": "$RETURN",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "t": 0,
                         "name": "$ARGS",
-                        "index": 0,
+                        "index": 1,
                         "value": 96,
                         "ev": "SetArray"
                     },
                     {
-                        "t": 0,
-                        "name": "$ARGS",
-                        "index": 1,
-                        "value": {
-                            "index": 4,
-                            "type": "Array"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "t": 0,
                         "name": "$ARGS",
                         "index": 2,
                         "value": {
-                            "index": 0,
-                            "type": "Array"
+                            "name": "TAG$a",
+                            "type": "Variable"
                         },
                         "ev": "SetArray"
                     },
                     {
-                        "t": 0,
+                        "name": "$ARGS",
+                        "index": 3,
+                        "value": {
+                            "name": "a",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
                         "id": {
-                            "index": 3,
-                            "type": "Array"
+                            "name": "inner",
+                            "type": "Variable"
                         },
                         "immediate": true,
                         "ev": "StartStream",
-                        "refID": 1000000000013
+                        "refID": 0
                     },
                     {
-                        "t": 0,
-                        "index": 10,
+                        "index": 4,
+                        "value": {
+                            "name": "$RTAG",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "index": 5,
                         "value": {
                             "name": "$RETURN",
                             "type": "Variable"
@@ -936,216 +377,55 @@
                         "ev": "SetArray"
                     },
                     {
-                        "t": 0,
-                        "index": 11,
+                        "name": "TAG$b",
+                        "value": {
+                            "condition": false,
+                            "yes": -1,
+                            "no": -1,
+                            "type": "If"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "name": "b",
                         "value": {
                             "condition": false,
                             "yes": 2,
                             "no": 3,
                             "type": "If"
                         },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "t": 0,
-                        "condition": {
-                            "value1": {
-                                "index": 11,
-                                "type": "Array"
-                            },
-                            "value2": 1000000000000,
-                            "mode": "LessEqual",
-                            "type": "Compare"
-                        },
-                        "yes": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "value": {
-                                    "index": 11,
-                                    "type": "Array"
-                                },
-                                "type": "Number"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "no": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "name": {
-                                    "value": {
-                                        "value1": 1000000000000,
-                                        "value2": {
-                                            "index": 11,
-                                            "type": "Array"
-                                        },
-                                        "operator": "Add",
-                                        "type": "Math"
-                                    },
-                                    "type": "Number"
-                                },
-                                "type": "Array"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "ev": "If"
-                    },
-                    {
-                        "t": 0,
-                        "name": {
-                            "value": 1000000000014,
-                            "type": "Number"
-                        },
-                        "string": {
-                            "strings": [
-                                "b = ",
-                                {
-                                    "name": "$STR",
-                                    "type": "Array"
-                                }
-                            ],
-                            "type": "Join"
-                        },
-                        "ev": "SetArrayString"
-                    },
-                    {
-                        "t": 0,
-                        "name": "$ARGS",
-                        "index": 0,
-                        "value": 1000000000014,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "t": 0,
-                        "id": {
-                            "index": 0,
-                            "type": "Array"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 1000000000015
-                    },
-                    {
-                        "t": 0,
-                        "index": 12,
-                        "value": {
-                            "name": "$RETURN",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    }
-                ],
-                "timingMode": "SongStart",
-                "_vars": [
-                    "log",
-                    "x",
-                    "$T0",
-                    "inner",
-                    "a",
-                    "$T1",
-                    "$T2",
-                    "$T3",
-                    "$T4",
-                    "$T5",
-                    "$T6",
-                    "b",
-                    "$T7"
-                ]
-            },
-            {
-                "id": 2,
-                "events": [
-                    {
-                        "t": 0,
-                        "value": 1,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "t": 0,
-                        "index": 0,
-                        "value": {
-                            "name": "$ARGS",
-                            "index": 0,
-                            "type": "Array"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "t": 0,
-                        "name": "$RETURN",
-                        "value": 0,
                         "ev": "SetVariable"
                     },
                     {
-                        "t": 0,
-                        "condition": {
-                            "value1": {
-                                "index": 0,
-                                "type": "Array"
-                            },
-                            "value2": 1000000000000,
-                            "mode": "LessEqual",
-                            "type": "Compare"
-                        },
-                        "yes": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "value": {
-                                    "index": 0,
-                                    "type": "Array"
-                                },
-                                "type": "Number"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "no": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "name": {
+                        "text": {
+                            "strings": [
+                                "b = ",
+                                {
                                     "value": {
-                                        "value1": 1000000000000,
-                                        "value2": {
-                                            "index": 0,
-                                            "type": "Array"
-                                        },
-                                        "operator": "Add",
-                                        "type": "Math"
+                                        "name": "b",
+                                        "type": "Variable"
                                     },
                                     "type": "Number"
-                                },
-                                "type": "Array"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "ev": "If"
-                    },
-                    {
-                        "t": 0,
-                        "text": {
-                            "name": "$STR",
-                            "type": "Array"
+                                }
+                            ],
+                            "type": "Join"
                         },
                         "ev": "Log"
                     }
                 ],
                 "timingMode": "SongStart",
                 "_vars": [
-                    "text"
+                    "x",
+                    "inner",
+                    "a",
+                    "b",
+                    "log"
                 ]
             },
             {
-                "id": 3,
+                "id": 2,
                 "events": [
                     {
-                        "t": 0,
-                        "value": 4,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "t": 0,
                         "index": 0,
                         "value": {
                             "name": "$ARGS",
@@ -1155,7 +435,6 @@
                         "ev": "SetArray"
                     },
                     {
-                        "t": 0,
                         "index": 1,
                         "value": {
                             "name": "$ARGS",
@@ -1165,7 +444,6 @@
                         "ev": "SetArray"
                     },
                     {
-                        "t": 0,
                         "index": 2,
                         "value": {
                             "name": "$ARGS",
@@ -1175,168 +453,65 @@
                         "ev": "SetArray"
                     },
                     {
-                        "t": 0,
+                        "index": 3,
+                        "value": {
+                            "name": "$ARGS",
+                            "index": 3,
+                            "type": "Array"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
                         "name": "$RETURN",
                         "value": 0,
                         "ev": "SetVariable"
                     },
                     {
-                        "t": 0,
-                        "condition": {
-                            "value1": {
-                                "index": 0,
-                                "type": "Array"
-                            },
-                            "value2": 1000000000000,
-                            "mode": "LessEqual",
-                            "type": "Compare"
-                        },
-                        "yes": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "value": {
-                                    "index": 0,
-                                    "type": "Array"
-                                },
-                                "type": "Number"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "no": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "name": {
-                                    "value": {
-                                        "value1": 1000000000000,
-                                        "value2": {
-                                            "index": 0,
-                                            "type": "Array"
-                                        },
-                                        "operator": "Add",
-                                        "type": "Math"
-                                    },
-                                    "type": "Number"
-                                },
-                                "type": "Array"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "ev": "If"
+                        "name": "$RTAG",
+                        "value": 0,
+                        "ev": "SetVariable"
                     },
                     {
-                        "t": 0,
-                        "condition": {
-                            "value1": {
-                                "index": 1,
-                                "type": "Array"
-                            },
-                            "value2": 1000000000000,
-                            "mode": "LessEqual",
-                            "type": "Compare"
-                        },
-                        "yes": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "value": {
-                                    "index": 1,
-                                    "type": "Array"
-                                },
-                                "type": "Number"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "no": {
-                            "t": 0,
-                            "name": "$STR",
-                            "string": {
-                                "name": {
-                                    "value": {
-                                        "value1": 1000000000000,
-                                        "value2": {
-                                            "index": 1,
-                                            "type": "Array"
-                                        },
-                                        "operator": "Add",
-                                        "type": "Math"
-                                    },
-                                    "type": "Number"
-                                },
-                                "type": "Array"
-                            },
-                            "ev": "SetArrayString"
-                        },
-                        "ev": "If"
-                    },
-                    {
-                        "t": 0,
-                        "name": {
-                            "value": 1000000000003,
-                            "type": "Number"
-                        },
-                        "string": {
+                        "text": {
                             "strings": [
                                 "inner called with ",
                                 {
-                                    "name": "$STR",
-                                    "type": "Array"
+                                    "value": {
+                                        "index": 1,
+                                        "type": "Array"
+                                    },
+                                    "type": "Number"
                                 },
                                 " and ",
                                 {
-                                    "name": "$STR",
-                                    "type": "Array"
+                                    "value": {
+                                        "index": 3,
+                                        "type": "Array"
+                                    },
+                                    "type": "Number"
                                 }
                             ],
                             "type": "Join"
                         },
-                        "ev": "SetArrayString"
+                        "ev": "Log"
                     },
                     {
-                        "t": 0,
-                        "name": "$ARGS",
-                        "index": 0,
-                        "value": 1000000000003,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "t": 0,
-                        "id": {
-                            "index": 2,
-                            "type": "Array"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 1000000000004
-                    },
-                    {
-                        "t": 0,
-                        "index": 3,
-                        "value": {
-                            "name": "$RETURN",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "t": 0,
-                        "name": "$RETURN",
+                        "name": "$RTAG",
                         "value": {
                             "condition": {
                                 "value1": {
                                     "value1": {
-                                        "index": 0,
+                                        "index": 1,
                                         "type": "Array"
                                     },
                                     "value2": {
-                                        "index": 1,
+                                        "index": 3,
                                         "type": "Array"
                                     },
                                     "operator": "Mod",
                                     "type": "Math"
                                 },
-                                "value2": 0,
+                                "value2": -1,
                                 "mode": "Equal",
                                 "type": "Compare"
                             },
@@ -1345,7 +520,7 @@
                                 "type": "Array"
                             },
                             "no": {
-                                "index": 1,
+                                "index": 2,
                                 "type": "Array"
                             },
                             "type": "If"
@@ -1353,7 +528,38 @@
                         "ev": "SetVariable"
                     },
                     {
-                        "t": 0,
+                        "name": "$RETURN",
+                        "value": {
+                            "condition": {
+                                "value1": {
+                                    "value1": {
+                                        "index": 1,
+                                        "type": "Array"
+                                    },
+                                    "value2": {
+                                        "index": 3,
+                                        "type": "Array"
+                                    },
+                                    "operator": "Mod",
+                                    "type": "Math"
+                                },
+                                "value2": -1,
+                                "mode": "Equal",
+                                "type": "Compare"
+                            },
+                            "yes": {
+                                "index": 1,
+                                "type": "Array"
+                            },
+                            "no": {
+                                "index": 3,
+                                "type": "Array"
+                            },
+                            "type": "If"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
                         "ev": "StopStream"
                     }
                 ],
@@ -1361,8 +567,7 @@
                 "_vars": [
                     "x",
                     "y",
-                    "log",
-                    "$T0"
+                    "log"
                 ]
             }
         ],
