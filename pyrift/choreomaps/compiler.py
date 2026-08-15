@@ -3,7 +3,7 @@ from contextlib import contextmanager
 
 from pyrift.choreomaps.tag import Tag
 
-from .analysis import Analysis, ChoreomapAnalyzer, ScopeInfo, VarType
+from .analysis import Analysis, ChoreomapAnalyzer, Scope, VarType
 from .choreomap import Choreomap
 from .enum import BinaryOperator, ComparisonMode
 from .external import ExternalArgType, ExternalExpression, ExternalValue
@@ -60,36 +60,23 @@ from .nodes import (
 )
 
 
-class Scope:
-    def __init__(self, id: int, info: ScopeInfo):
-        self.id: int = id
-        self.info = info
-        self.events: list[BaseEvent] = []
-        self.temp_index: int = 0
-        for type in info.types:
-            if type in (VarType.LOCAL, VarType.NONLOCAL, VarType.CAPTURED):
-                self.temp_index += 2
-    
-    def temp(self):
-        self.temp_index += 1
-        return self.temp_index - 1
-
-
 class ChoreomapCompiler:
     def __init__(self):
-        self.streams: list[Scope] = []
+        self.streams: list[list[BaseEvent]] = []
         self.analysis: Analysis = Analysis(())
         self.externals: dict[str, ExternalValue] = {}
-        self.scope: Scope = Scope(0, ScopeInfo((), (), 0))
+        self.scope: Scope = Scope((), (), 0)
+        self.stream: list[BaseEvent] = []
+        self.temp_index = 0
     
     def add_event(self, event: BaseEvent) -> None:
-        self.scope.events.append(event)
+        self.stream.append(event)
     
     def lookup(self, name: str) -> tuple[int, VarType]:
         index = 0
-        for i in range(len(self.scope.info.vars)):
-            var_type = self.scope.info.types[i]
-            if self.scope.info.vars[i] == name:
+        for i in range(len(self.scope.vars)):
+            var_type = self.scope.types[i]
+            if self.scope.vars[i] == name:
                 return index, var_type
             if var_type in (VarType.LOCAL, VarType.CAPTURED, VarType.NONLOCAL):
                 index += 2
@@ -106,39 +93,71 @@ class ChoreomapCompiler:
         return ref
     
     @contextmanager
-    def new_scope(self) -> Generator[Scope]:
-        # prepare new scope object
-        id = len(self.streams)
-        scope = Scope(id + 1, self.analysis.scopes[id]) # streams are 1-indexed
-        self.streams.append(scope)
-        old, self.scope = self.scope, scope
+    def new_scope(self) -> Generator[int]:
+        # store old values
+        old_scope = self.scope
+        old_stream = self.stream
+        old_temp_index = self.temp_index
         
-        # load arguments from globals
-        for i in range(scope.info.argc):
-            tag_index = 2 * i
-            value_index = 2 * i + 1
-            tag = ArrayValue("$ARGS", tag_index)
-            value = ArrayValue("$ARGS", value_index)
-            match scope.info.types[i]:
-                case VarType.LOCAL:
-                    # copy tag and variable to locals
-                    scope.events.append(SetArrayEvent(None, tag_index, tag))
-                    scope.events.append(SetArrayEvent(None, value_index, value))
+        # make new stream
+        scope = self.analysis.scopes[len(self.streams)]
+        self.scope = scope
+        self.stream = []
+        self.streams.append(self.stream)
+        
+        # handle argument initialization
+        tag_index = 0
+        value_index = 1
+        nl_tag_index = 1
+        nl_value_index = 3
+        for i, type in enumerate(scope.types):
+            match type:
+                # load directly from globals into locals array
+                case VarType.LOCAL if i < scope.argc:
+                    tag = ArrayValue("$ARGS", tag_index)
+                    value = ArrayValue("$ARGS", value_index)
+                
+                # copy to the heap and save a reference in locals
+                case VarType.CAPTURED if i < scope.argc:
+                    tag = Tag.NONE
+                    value = self.allocate(ArrayValue("$ARGS", tag_index), ArrayValue("$ARGS", value_index))
+                
+                # allocate uninitialized heap space for captured variables
                 case VarType.CAPTURED:
-                    # copy argument to the heap and save a reference in locals
-                    ref = self.allocate(tag, value)
-                    scope.events.append(SetArrayEvent(None, tag_index, Tag.NONE))
-                    scope.events.append(SetArrayEvent(None, value_index, ref))
+                    tag = Tag.NONE
+                    value = self.allocate()
+                
+                # load nonlocal arguments from environment global
+                case VarType.NONLOCAL:
+                    tag = ArrayValue("$ENV", nl_tag_index)
+                    value = ArrayValue("$ENV", nl_value_index)
+                    nl_tag_index += 2
+                    nl_value_index += 2
+                
+                # the remaining variables don't get stored in the locals array
                 case _:
-                    raise NotImplementedError(f'Unsupported argument type for argument {scope.info.vars[i]}: {scope.info.types[i]}')
+                    continue
+            
+            self.add_event(SetArrayEvent(None, tag_index, tag))
+            self.add_event(SetArrayEvent(None, value_index, value))
+            self.temp_index += 2
+            tag_index += 2
+            value_index += 2
         
         # set default return value to None
-        scope.events.append(SetVariableEvent("$RTAG", Tag.NONE))
-        scope.events.append(SetVariableEvent("$RETURN", 0))
+        self.add_event(SetVariableEvent("$RTAG", Tag.NONE))
+        self.add_event(SetVariableEvent("$RETURN", 0))
         
-        yield scope # execute inner code
+        # execute inner code
+        yield len(self.streams) - 1 # id of stream
         
-        self.scope = old
+        if self.scope is not scope:
+            raise ValueError('Scope nesting invariant was violated. This should only happen if scopes are being created manually.')
+        
+        # restore old values
+        self.scope = old_scope
+        self.temp_index = old_temp_index
+        self.stream = old_stream
     
     def compile(self, script: Script, externals: dict[str, ExternalValue]):
         analysis = ChoreomapAnalyzer().analyze(script)
@@ -148,12 +167,9 @@ class ChoreomapCompiler:
         self.visit_stream(script.instructions)
         
         streams: list[Stream] = []
-        for stream in self.streams:
-            streams.append(Stream(
-                stream.id,
-                tuple(stream.events),
-                _vars=stream.info.vars
-            ))
+        for i, stream in enumerate(self.streams):
+            # stream id is 1-indexed
+            streams.append(Stream(i + 1, tuple(stream)))
         
         # TODO: actually set the properties properly
         return Choreomap(
@@ -164,10 +180,10 @@ class ChoreomapCompiler:
     
     
     def visit_stream(self, nodes: Iterable[BaseInstruction]):
-        with self.new_scope() as scope:
+        with self.new_scope() as scope_id:
             for node in nodes:
                 self.visit_inst(node)
-        return scope
+        return scope_id
     
     
     def visit_inst(self, node: BaseInstruction) -> None:
@@ -204,19 +220,19 @@ class ChoreomapCompiler:
                 
                 self.add_event(BaseEvent()) # placeholder jump
                 
-                yes_index = len(self.scope.events)
+                yes_index = len(self.stream)
                 for inst in yes:
                     self.visit_inst(inst)
                 
                 self.add_event(BaseEvent()) # placeholder jump
                 
-                no_index = len(self.scope.events)
+                no_index = len(self.stream)
                 for inst in no:
                     self.visit_inst(inst)
                 
-                end_index = len(self.scope.events)
-                self.scope.events[yes_index - 1] = JumpEvent(IfValue(condition, yes_index, no_index))
-                self.scope.events[no_index - 1] = JumpEvent(end_index)
+                end_index = len(self.stream)
+                self.stream[yes_index - 1] = JumpEvent(IfValue(condition, yes_index, no_index))
+                self.stream[no_index - 1] = JumpEvent(end_index)
             
             case ReturnInstruction(expr):
                 tag, value = self.visit_value(expr)
@@ -243,8 +259,9 @@ class ChoreomapCompiler:
                 return Tag.STRING, value
             
             case FunctionExpression(args, instructions):
-                stream = self.visit_stream(instructions)
-                return Tag.FUNCTION, stream.id
+                # TODO: LOAD CAPTURED VARIABLES
+                stream_id = self.visit_stream(instructions)
+                return Tag.FUNCTION, stream_id
                 
             case VariableExpression(name):
                 value_index, var_type = self.lookup(name)
@@ -301,27 +318,28 @@ class ChoreomapCompiler:
             case IfExpression(condition, yes, no):
                 # since visit_value can add events, we need to use control flow
                 # otherwise, we'd always be evaluating both branches
-                tag_index = self.scope.temp()
-                value_index = self.scope.temp()
+                tag_index = self.temp_index
+                value_index = self.temp_index + 1
+                self.temp_index += 2
                 
                 self.add_event(BaseEvent()) # placeholder jump
                 
-                yes_index = len(self.scope.events)
+                yes_index = len(self.stream)
                 ytag, yes = self.visit_value(yes)
                 self.add_event(SetArrayEvent(None, tag_index, ytag))
                 self.add_event(SetArrayEvent(None, value_index, yes))
                 
                 self.add_event(BaseEvent()) # placeholder jump
                 
-                no_index = len(self.scope.events)
+                no_index = len(self.stream)
                 ntag, no = self.visit_value(no)
                 self.add_event(SetArrayEvent(None, tag_index, ntag))
                 self.add_event(SetArrayEvent(None, value_index, no))
                 
-                end_index = len(self.scope.events)
+                end_index = len(self.stream)
                 condition = self.visit_condition(condition)
-                self.scope.events[yes_index - 1] = JumpEvent(IfValue(condition, yes_index, no_index))
-                self.scope.events[no_index - 1] = JumpEvent(end_index)
+                self.stream[yes_index - 1] = JumpEvent(IfValue(condition, yes_index, no_index))
+                self.stream[no_index - 1] = JumpEvent(end_index)
                 
                 return ArrayValue(None, tag_index), ArrayValue(None, value_index)
             
@@ -354,8 +372,9 @@ class ChoreomapCompiler:
                 # synchronous functions don't need a ref
                 self.add_event(StartStreamEvent(func, 0, immediate=True))
                 
-                tag_index = self.scope.temp()
-                value_index = self.scope.temp()
+                tag_index = self.temp_index
+                value_index = self.temp_index + 1
+                self.temp_index += 2 # TODO: HELPER FUNCTION FOR TEMPS
                 self.add_event(SetArrayEvent(None, tag_index, VariableValue("$RTAG")))
                 self.add_event(SetArrayEvent(None, value_index, VariableValue("$RETURN")))
                 return ArrayValue(None, tag_index), ArrayValue(None, value_index)

@@ -15,5 +15,3 @@ class Stream(JObj):
     id: int
     events: JList[BaseEvent]
     timing_mode: TimingMode = TimingMode.SONG_START
-    
-    _vars: JList[str] = ()

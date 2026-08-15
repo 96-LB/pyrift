@@ -37,12 +37,16 @@ class VarType(Enum):
     EXTERNAL = auto()
 
 class Analysis(JObj):
-    scopes: JList[ScopeInfo]
+    scopes: JList[Scope]
 
-class ScopeInfo(JObj):
+class Scope(JObj):
     vars: JList[str]
     types: JList[VarType]
     argc: int
+    
+    def filter_args(self, *types: VarType):
+        return ((i, var) for i, (var, var_type) in enumerate(zip(self.vars, self.types)) if var_type in types)
+
 
 class ScopeAnalyzer:
     def __init__(self, parent: ScopeAnalyzer | None = None):
@@ -69,7 +73,7 @@ class ScopeAnalyzer:
         return self.vars[name]
     
     def to_scope(self):
-        return ScopeInfo(
+        return Scope(
             vars=tuple(var for var in self.vars),
             types=tuple(type for type in self.vars.values()),
             argc=self.argc
