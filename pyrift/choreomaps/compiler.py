@@ -7,31 +7,29 @@ from .analysis import Analysis, ChoreomapAnalyzer, ScopeInfo, VarType
 from .choreomap import Choreomap
 from .enum import BinaryOperator, ComparisonMode
 from .external import ExternalArgType, ExternalExpression, ExternalValue
-from .ir.expression import (
+from .ir import (
     AndExpression,
     BaseExpression,
+    BaseInstruction,
     BinaryExpression,
     BooleanExpression,
     CallExpression,
     CompareExpression,
     FunctionExpression,
     IfExpression,
+    IfInstruction,
     JoinExpression,
+    LogInstruction,
+    NullInstruction,
     NumberExpression,
     OrExpression,
+    ReturnInstruction,
+    Script,
+    SetVariableInstruction,
     StringExpression,
     UnaryExpression,
     VariableExpression,
 )
-from .ir.instruction import (
-    BaseInstruction,
-    IfInstruction,
-    LogInstruction,
-    NullInstruction,
-    ReturnInstruction,
-    SetVariableInstruction,
-)
-from .ir.script import Script
 from .nodes import (
     AndCondition,
     ArrayValue,

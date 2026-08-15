@@ -2,7 +2,10 @@ from collections.abc import Generator, Iterable
 from contextlib import contextmanager
 from enum import Enum, auto
 
-from pyrift.choreomaps.ir.expression import (
+from pyrift.jobj import JList, JObj
+
+from .ir import (
+    BaseInstruction,
     BinaryExpression,
     BooleanExpression,
     CallExpression,
@@ -10,24 +13,20 @@ from pyrift.choreomaps.ir.expression import (
     FormatExpression,
     FunctionExpression,
     IfExpression,
+    IfInstruction,
     JoinExpression,
+    LogInstruction,
     NotExpression,
     NullExpression,
+    NullInstruction,
     NumberExpression,
+    ReturnInstruction,
+    Script,
+    SetVariableInstruction,
     StringExpression,
     UnaryExpression,
     VariableExpression,
 )
-from pyrift.choreomaps.ir.instruction import (
-    BaseInstruction,
-    IfInstruction,
-    LogInstruction,
-    NullInstruction,
-    ReturnInstruction,
-    SetVariableInstruction,
-)
-from pyrift.choreomaps.ir.script import Script
-from pyrift.jobj import JList, JObj
 
 
 class VarType(Enum):

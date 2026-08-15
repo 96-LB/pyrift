@@ -2,33 +2,31 @@ import ast
 from typing import override
 
 from pyrift.choreomaps.enum import ComparisonMode
-from pyrift.choreomaps.ir.expression import (
+
+from .ir import (
     AndExpression,
     BaseExpression,
+    BaseInstruction,
     BinaryExpression,
     BooleanExpression,
     CallExpression,
     CompareExpression,
     FunctionExpression,
     IfExpression,
+    IfInstruction,
     JoinExpression,
     NotExpression,
     NullExpression,
+    NullInstruction,
     NumberExpression,
     OrExpression,
+    ReturnInstruction,
+    Script,
+    SetVariableInstruction,
     StringExpression,
     UnaryExpression,
     VariableExpression,
 )
-from pyrift.choreomaps.ir.instruction import (
-    BaseInstruction,
-    IfInstruction,
-    NullInstruction,
-    ReturnInstruction,
-    SetVariableInstruction,
-)
-from pyrift.choreomaps.ir.script import Script
-
 from .nodes import (
     BinaryOperator,
     UnaryOperator,

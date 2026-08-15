@@ -1,18 +1,17 @@
 __all__ = ('print',)
 
+
 import inspect
 from builtins import print as builtin_print
 from collections.abc import Callable
 from enum import Enum, auto
 from typing import override
 
-from pyrift.choreomaps.ir.expression import BaseExpression
-from pyrift.choreomaps.nodes.condition import Condition
-from pyrift.choreomaps.nodes.event import BaseEvent, LogEvent
-from pyrift.choreomaps.nodes.string import String
-from pyrift.choreomaps.nodes.value import BaseValue, Value
-from pyrift.choreomaps.tag import Tag
 from pyrift.jobj import JList, JObj
+
+from .ir import BaseExpression
+from .nodes import BaseEvent, BaseValue, Condition, LogEvent, String, Value
+from .tag import Tag
 
 EXTERNALS: dict[str, ExternalValue] = {}
 
