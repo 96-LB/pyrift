@@ -301,11 +301,31 @@ class ChoreomapCompiler:
                         raise NotImplementedError(f'Unary operation on tag {type(tag)} is unsupported.')
             
             case IfExpression(condition, yes, no):
-                condition = self.visit_condition(condition)
+                # since visit_value can add events, we need to use control flow
+                # otherwise, we'd always be evaluating both branches
+                tag_index = self.scope.temp()
+                value_index = self.scope.temp()
+                
+                self.add_event(BaseEvent()) # placeholder jump
+                
+                yes_index = len(self.scope.events)
                 ytag, yes = self.visit_value(yes)
+                self.add_event(SetArrayEvent(None, tag_index, ytag))
+                self.add_event(SetArrayEvent(None, value_index, yes))
+                
+                self.add_event(BaseEvent()) # placeholder jump
+                
+                no_index = len(self.scope.events)
                 ntag, no = self.visit_value(no)
-                # TODO: optimize case where tags are equal, or condition is constant
-                return IfValue(condition, ytag, ntag), IfValue(condition, yes, no)
+                self.add_event(SetArrayEvent(None, tag_index, ntag))
+                self.add_event(SetArrayEvent(None, value_index, no))
+                
+                end_index = len(self.scope.events)
+                condition = self.visit_condition(condition)
+                self.scope.events[yes_index - 1] = JumpEvent(IfValue(condition, yes_index, no_index))
+                self.scope.events[no_index - 1] = JumpEvent(end_index)
+                
+                return ArrayValue(None, tag_index), ArrayValue(None, value_index)
             
             case CallExpression(func, args):
                 # TODO: verify tag
