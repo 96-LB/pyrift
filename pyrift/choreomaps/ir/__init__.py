@@ -14,7 +14,7 @@ __all__ = (
     'IfInstruction',
     'JoinExpression',
     'LogInstruction',
-    'NotExpression',
+    'NotExpression', 'DeclareVariablesInstruction',
     'NullExpression',
     'NullInstruction',
     'NumberExpression',
@@ -56,6 +56,7 @@ from .instruction import (
     NullInstruction,
     ReturnInstruction,
     SetAttributeInstruction,
+    DeclareVariablesInstruction,
     SetVariableInstruction,
 )
 from .script import Script

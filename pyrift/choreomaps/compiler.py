@@ -1,7 +1,7 @@
 from collections.abc import Generator, Iterable
 from contextlib import contextmanager
 
-from pyrift.choreomaps.tag import Tag
+from pyrift.choreomaps.vars import Tag
 
 from .analysis import Analysis, ChoreomapAnalyzer, Scope, VarType
 from .choreomap import Choreomap

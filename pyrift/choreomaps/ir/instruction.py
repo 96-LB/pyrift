@@ -2,6 +2,8 @@ from typing import TYPE_CHECKING
 
 from pyrift.jobj import JList, JObj
 
+from ..vars import VarType
+
 if TYPE_CHECKING:
     from .expression import BaseExpression
 
@@ -20,6 +22,10 @@ class IfInstruction(BaseInstruction):
 class SetVariableInstruction(BaseInstruction):
     name: str
     expr: BaseExpression
+
+class DeclareVariablesInstruction(BaseInstruction):
+    name: JList[str]
+    type: VarType
 
 class CreateObjectInstruction(BaseInstruction):
     pass

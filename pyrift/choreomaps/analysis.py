@@ -1,6 +1,5 @@
 from collections.abc import Generator, Iterable
 from contextlib import contextmanager
-from enum import Enum, auto
 
 from pyrift.jobj import JList, JObj
 
@@ -27,14 +26,8 @@ from .ir import (
     UnaryExpression,
     VariableExpression,
 )
+from .vars import VarType
 
-
-class VarType(Enum):
-    LOCAL = auto()
-    CAPTURED = auto()
-    NONLOCAL = auto()
-    GLOBAL = auto()
-    EXTERNAL = auto()
 
 class Analysis(JObj):
     scopes: JList[Scope]

@@ -2,6 +2,8 @@ import ast
 from typing import override
 
 from pyrift.choreomaps.enum import ComparisonMode
+from pyrift.choreomaps.ir.instruction import DeclareVariablesInstruction
+from pyrift.choreomaps.vars import VarType
 
 from .ir import (
     AndExpression,
@@ -92,6 +94,14 @@ class ChoreomapParser(ast.NodeVisitor):
     def visit_ImportFrom(self, node: ast.ImportFrom):
         print(f'Ignored import {', '.join(name.name for name in node.names)} from {node.module}')
         return NullInstruction()
+    
+    @override
+    def visit_Global(self, node: ast.Global):
+        return DeclareVariablesInstruction(tuple(node.names), VarType.GLOBAL)
+    
+    @override
+    def visit_Nonlocal(self, node: ast.Nonlocal):
+        return DeclareVariablesInstruction(tuple(node.names), VarType.NONLOCAL)
     
     @override
     def visit_Expr(self, node: ast.Expr):
