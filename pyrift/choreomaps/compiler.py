@@ -92,6 +92,9 @@ class ChoreomapCompiler:
             self.add_event(SetArrayEvent(name, index=i, value=value))
         return ref
     
+    def deref(self, ref: Value, index: Value) -> Value:
+        return ArrayValue(NumberString(ref), index)
+    
     @contextmanager
     def new_scope(self) -> Generator[int]:
         # store old values
@@ -105,11 +108,13 @@ class ChoreomapCompiler:
         self.stream = []
         self.streams.append(self.stream)
         
-        # handle argument initialization
+        # pointers for argument initialization
+        env = ArrayValue("$ENV")
         tag_index = 0
         value_index = 1
-        nl_tag_index = 1
-        nl_value_index = 3
+        nonlocal_index = 1
+        
+        # handle argument initialization
         for i, type in enumerate(scope.types):
             match type:
                 # load directly from globals into locals array
@@ -129,10 +134,9 @@ class ChoreomapCompiler:
                 
                 # load nonlocal arguments from environment global
                 case VarType.NONLOCAL:
-                    tag = ArrayValue("$ENV", nl_tag_index)
-                    value = ArrayValue("$ENV", nl_value_index)
-                    nl_tag_index += 2
-                    nl_value_index += 2
+                    tag = Tag.NONE
+                    value = self.deref(env, nonlocal_index)
+                    nonlocal_index += 1
                 
                 # the remaining variables don't get stored in the locals array
                 case _:
@@ -259,9 +263,19 @@ class ChoreomapCompiler:
                 return Tag.STRING, value
             
             case FunctionExpression(args, instructions):
-                # TODO: LOAD CAPTURED VARIABLES
                 stream_id = self.visit_stream(instructions)
-                return Tag.FUNCTION, stream_id
+                scope = self.analysis.scopes[stream_id - 1] # stream id's are 1-indexed
+                
+                # copy stream id and captured variables into the closure environment
+                values: list[Value] = [stream_id]
+                for var, var_type in zip(scope.vars, scope.types):
+                    if var_type is VarType.CAPTURED:
+                        value_index = self.lookup(var)[0] + 1 # lookup returns the tag index
+                        values.append(ArrayValue(None, value_index))
+                
+                # create and return the closure
+                ref = self.allocate(*values)
+                return Tag.FUNCTION, ref
                 
             case VariableExpression(name):
                 value_index, var_type = self.lookup(name)
@@ -274,9 +288,9 @@ class ChoreomapCompiler:
                         return tag, value
                     case VarType.CAPTURED | VarType.NONLOCAL:
                         # the locals array contains a ref to the heap -- get the value there
-                        ref = NumberString(ArrayValue(None, value_index + 1))
-                        tag = ArrayValue(ref, 0)
-                        value = ArrayValue(ref, 1)
+                        ref = ArrayValue(None, value_index + 1)
+                        tag = self.deref(ref, 0)
+                        value = self.deref(ref, 1)
                     case VarType.GLOBAL:
                         # get the global directly
                         tag = VariableValue("TAG$" + name)
@@ -345,13 +359,13 @@ class ChoreomapCompiler:
             
             case CallExpression(func, args):
                 # TODO: verify tag
-                tag, func = self.visit_value(func)
+                tag, ref = self.visit_value(func)
                 
-                if isinstance(func, ExternalValue):
+                if isinstance(ref, ExternalValue):
                     external_args: list[Value | Condition | String] = []
-                    if not len(args) == len(func.args):
-                        raise ValueError(f'Argument count mismatch for external function {func.func.__name__}. Expected {len(func.args)}, got {len(args)}')
-                    for arg, spec in zip(args, func.args):
+                    if not len(args) == len(ref.args):
+                        raise ValueError(f'Argument count mismatch for external function {ref.func.__name__}. Expected {len(ref.args)}, got {len(args)}')
+                    for arg, spec in zip(args, ref.args):
                         match spec.type:
                             case ExternalArgType.VALUE:
                                 _, value = self.visit_value(arg)
@@ -362,15 +376,21 @@ class ChoreomapCompiler:
                             case ExternalArgType.STRING:
                                 string = self.visit_str(arg)
                                 external_args.append(string)
-                    expr = func.func(*external_args)
+                    expr = ref.func(*external_args)
                     return self.visit_expr(expr)
                 
+                # copy arguments into register for callee function
                 for i, arg in enumerate(args):
                     tag, value = self.visit_value(arg)
                     self.add_event(SetArrayEvent("$ARGS", 2 * i, tag))
                     self.add_event(SetArrayEvent("$ARGS", 2 * i + 1, value))
-                # synchronous functions don't need a ref
-                self.add_event(StartStreamEvent(func, 0, immediate=True))
+                
+                # set the environment pointer so the function can load the closure
+                self.add_event(SetVariableEvent("$ENV", ref))
+                
+                # synchronous functions don't need a ref_id because they finish instantly
+                stream_id = self.deref(ref, 0)
+                self.add_event(StartStreamEvent(stream_id, 0, immediate=True))
                 
                 tag_index = self.temp_index
                 value_index = self.temp_index + 1
