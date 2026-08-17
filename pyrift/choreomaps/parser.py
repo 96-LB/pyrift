@@ -172,6 +172,12 @@ class ChoreomapParser(ast.NodeVisitor):
         return UnaryExpression(expr, operator)
     
     @override
+    def visit_Lambda(self, node: ast.Lambda):
+        expr = self.visit_expr(node.body)
+        args = tuple(arg.arg for arg in node.args.args)
+        return FunctionExpression(args, (ReturnInstruction(expr),))
+    
+    @override
     def visit_IfExp(self, node: ast.IfExp):
         condition = self.visit_expr(node.test)
         yes = self.visit_expr(node.body)
