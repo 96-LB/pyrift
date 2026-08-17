@@ -19,25 +19,25 @@ print(f'd = {d}')
 # 2. allow nonlocal/global keyword
 # 3. allow setting of nonlocal/global variables
 # 4. parse +=
-
-# def make_counter():
-#     count = 0
-#     def counter():
-#         nonlocal count
-#         count += 1
-#         return count
-#     return counter
-
-
-# counter1 = make_counter()
-# counter2 = make_counter()
+count = 1
+def make_counter():
+    count = 0
+    def counter():
+        nonlocal count
+        count += 1
+        return count
+    return counter
 
 
-# log(f'counter1: {counter1()}')
-# log(f'counter1: {counter1()}')
-# log(f'counter1: {counter1()}')
-# log(f'counter1: {counter1()}')
-# log(f'counter2: {counter2()}')
-# log(f'counter2: {counter2()}')
-# log(f'counter1: {counter1()}')
-# log(f'counter1: {counter1()}')
+counter1 = make_counter()
+counter2 = make_counter()
+
+
+print(f'counter1: {counter1()}')
+print(f'counter1: {counter1()}')
+print(f'counter1: {counter1()}')
+print(f'counter1: {counter1()}')
+print(f'counter2: {counter2()}')
+print(f'counter2: {counter2()}')
+print(f'counter1: {counter1()}')
+print(f'counter1: {counter1()}')

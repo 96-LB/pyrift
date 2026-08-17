@@ -65,13 +65,41 @@
                         "ev": "Log"
                     },
                     {
+                        "name": "$REF",
+                        "value": {
+                            "value1": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "value2": 1,
+                            "operator": "Add",
+                            "type": "Math"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "name": {
+                            "value": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 0,
+                        "value": 1,
+                        "ev": "SetArray"
+                    },
+                    {
                         "name": "TAG$gcd",
                         "value": -4,
                         "ev": "SetVariable"
                     },
                     {
                         "name": "gcd",
-                        "value": 1,
+                        "value": {
+                            "name": "$REF",
+                            "type": "Variable"
+                        },
                         "ev": "SetVariable"
                     },
                     {
@@ -122,9 +150,24 @@
                         "ev": "SetArray"
                     },
                     {
-                        "id": {
+                        "name": "$ENV",
+                        "value": {
                             "name": "gcd",
                             "type": "Variable"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "id": {
+                            "name": {
+                                "value": {
+                                    "name": "gcd",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 0,
+                            "type": "Array"
                         },
                         "immediate": true,
                         "ev": "StartStream",
@@ -186,6 +229,614 @@
                                     "value": {
                                         "name": "d",
                                         "type": "Variable"
+                                    },
+                                    "type": "Number"
+                                }
+                            ],
+                            "type": "Join"
+                        },
+                        "ev": "Log"
+                    },
+                    {
+                        "name": "TAG$count",
+                        "value": -1,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "name": "count",
+                        "value": 1,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "name": "$REF",
+                        "value": {
+                            "value1": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "value2": 1,
+                            "operator": "Add",
+                            "type": "Math"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "name": {
+                            "value": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 0,
+                        "value": 2,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "name": "TAG$make_counter",
+                        "value": -4,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "name": "make_counter",
+                        "value": {
+                            "name": "$REF",
+                            "type": "Variable"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "name": "$ENV",
+                        "value": {
+                            "name": "make_counter",
+                            "type": "Variable"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "id": {
+                            "name": {
+                                "value": {
+                                    "name": "make_counter",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 0,
+                            "type": "Array"
+                        },
+                        "immediate": true,
+                        "ev": "StartStream",
+                        "refID": 0
+                    },
+                    {
+                        "index": 2,
+                        "value": {
+                            "name": "$RTAG",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "index": 3,
+                        "value": {
+                            "name": "$RETURN",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "name": "TAG$counter1",
+                        "value": {
+                            "index": 2,
+                            "type": "Array"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "name": "counter1",
+                        "value": {
+                            "index": 3,
+                            "type": "Array"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "name": "$ENV",
+                        "value": {
+                            "name": "make_counter",
+                            "type": "Variable"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "id": {
+                            "name": {
+                                "value": {
+                                    "name": "make_counter",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 0,
+                            "type": "Array"
+                        },
+                        "immediate": true,
+                        "ev": "StartStream",
+                        "refID": 0
+                    },
+                    {
+                        "index": 4,
+                        "value": {
+                            "name": "$RTAG",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "index": 5,
+                        "value": {
+                            "name": "$RETURN",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "name": "TAG$counter2",
+                        "value": {
+                            "index": 4,
+                            "type": "Array"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "name": "counter2",
+                        "value": {
+                            "index": 5,
+                            "type": "Array"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "name": "$ENV",
+                        "value": {
+                            "name": "counter1",
+                            "type": "Variable"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "id": {
+                            "name": {
+                                "value": {
+                                    "name": "counter1",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 0,
+                            "type": "Array"
+                        },
+                        "immediate": true,
+                        "ev": "StartStream",
+                        "refID": 0
+                    },
+                    {
+                        "index": 6,
+                        "value": {
+                            "name": "$RTAG",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "index": 7,
+                        "value": {
+                            "name": "$RETURN",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "text": {
+                            "strings": [
+                                "counter1: ",
+                                {
+                                    "value": {
+                                        "index": 7,
+                                        "type": "Array"
+                                    },
+                                    "type": "Number"
+                                }
+                            ],
+                            "type": "Join"
+                        },
+                        "ev": "Log"
+                    },
+                    {
+                        "name": "$ENV",
+                        "value": {
+                            "name": "counter1",
+                            "type": "Variable"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "id": {
+                            "name": {
+                                "value": {
+                                    "name": "counter1",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 0,
+                            "type": "Array"
+                        },
+                        "immediate": true,
+                        "ev": "StartStream",
+                        "refID": 0
+                    },
+                    {
+                        "index": 8,
+                        "value": {
+                            "name": "$RTAG",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "index": 9,
+                        "value": {
+                            "name": "$RETURN",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "text": {
+                            "strings": [
+                                "counter1: ",
+                                {
+                                    "value": {
+                                        "index": 9,
+                                        "type": "Array"
+                                    },
+                                    "type": "Number"
+                                }
+                            ],
+                            "type": "Join"
+                        },
+                        "ev": "Log"
+                    },
+                    {
+                        "name": "$ENV",
+                        "value": {
+                            "name": "counter1",
+                            "type": "Variable"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "id": {
+                            "name": {
+                                "value": {
+                                    "name": "counter1",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 0,
+                            "type": "Array"
+                        },
+                        "immediate": true,
+                        "ev": "StartStream",
+                        "refID": 0
+                    },
+                    {
+                        "index": 10,
+                        "value": {
+                            "name": "$RTAG",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "index": 11,
+                        "value": {
+                            "name": "$RETURN",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "text": {
+                            "strings": [
+                                "counter1: ",
+                                {
+                                    "value": {
+                                        "index": 11,
+                                        "type": "Array"
+                                    },
+                                    "type": "Number"
+                                }
+                            ],
+                            "type": "Join"
+                        },
+                        "ev": "Log"
+                    },
+                    {
+                        "name": "$ENV",
+                        "value": {
+                            "name": "counter1",
+                            "type": "Variable"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "id": {
+                            "name": {
+                                "value": {
+                                    "name": "counter1",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 0,
+                            "type": "Array"
+                        },
+                        "immediate": true,
+                        "ev": "StartStream",
+                        "refID": 0
+                    },
+                    {
+                        "index": 12,
+                        "value": {
+                            "name": "$RTAG",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "index": 13,
+                        "value": {
+                            "name": "$RETURN",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "text": {
+                            "strings": [
+                                "counter1: ",
+                                {
+                                    "value": {
+                                        "index": 13,
+                                        "type": "Array"
+                                    },
+                                    "type": "Number"
+                                }
+                            ],
+                            "type": "Join"
+                        },
+                        "ev": "Log"
+                    },
+                    {
+                        "name": "$ENV",
+                        "value": {
+                            "name": "counter2",
+                            "type": "Variable"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "id": {
+                            "name": {
+                                "value": {
+                                    "name": "counter2",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 0,
+                            "type": "Array"
+                        },
+                        "immediate": true,
+                        "ev": "StartStream",
+                        "refID": 0
+                    },
+                    {
+                        "index": 14,
+                        "value": {
+                            "name": "$RTAG",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "index": 15,
+                        "value": {
+                            "name": "$RETURN",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "text": {
+                            "strings": [
+                                "counter2: ",
+                                {
+                                    "value": {
+                                        "index": 15,
+                                        "type": "Array"
+                                    },
+                                    "type": "Number"
+                                }
+                            ],
+                            "type": "Join"
+                        },
+                        "ev": "Log"
+                    },
+                    {
+                        "name": "$ENV",
+                        "value": {
+                            "name": "counter2",
+                            "type": "Variable"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "id": {
+                            "name": {
+                                "value": {
+                                    "name": "counter2",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 0,
+                            "type": "Array"
+                        },
+                        "immediate": true,
+                        "ev": "StartStream",
+                        "refID": 0
+                    },
+                    {
+                        "index": 16,
+                        "value": {
+                            "name": "$RTAG",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "index": 17,
+                        "value": {
+                            "name": "$RETURN",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "text": {
+                            "strings": [
+                                "counter2: ",
+                                {
+                                    "value": {
+                                        "index": 17,
+                                        "type": "Array"
+                                    },
+                                    "type": "Number"
+                                }
+                            ],
+                            "type": "Join"
+                        },
+                        "ev": "Log"
+                    },
+                    {
+                        "name": "$ENV",
+                        "value": {
+                            "name": "counter1",
+                            "type": "Variable"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "id": {
+                            "name": {
+                                "value": {
+                                    "name": "counter1",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 0,
+                            "type": "Array"
+                        },
+                        "immediate": true,
+                        "ev": "StartStream",
+                        "refID": 0
+                    },
+                    {
+                        "index": 18,
+                        "value": {
+                            "name": "$RTAG",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "index": 19,
+                        "value": {
+                            "name": "$RETURN",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "text": {
+                            "strings": [
+                                "counter1: ",
+                                {
+                                    "value": {
+                                        "index": 19,
+                                        "type": "Array"
+                                    },
+                                    "type": "Number"
+                                }
+                            ],
+                            "type": "Join"
+                        },
+                        "ev": "Log"
+                    },
+                    {
+                        "name": "$ENV",
+                        "value": {
+                            "name": "counter1",
+                            "type": "Variable"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "id": {
+                            "name": {
+                                "value": {
+                                    "name": "counter1",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 0,
+                            "type": "Array"
+                        },
+                        "immediate": true,
+                        "ev": "StartStream",
+                        "refID": 0
+                    },
+                    {
+                        "index": 20,
+                        "value": {
+                            "name": "$RTAG",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "index": 21,
+                        "value": {
+                            "name": "$RETURN",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "text": {
+                            "strings": [
+                                "counter1: ",
+                                {
+                                    "value": {
+                                        "index": 21,
+                                        "type": "Array"
                                     },
                                     "type": "Number"
                                 }
@@ -282,7 +933,7 @@
                                 "type": "Compare"
                             },
                             "yes": 8,
-                            "no": 18,
+                            "no": 19,
                             "type": "If"
                         },
                         "ev": "Jump"
@@ -329,9 +980,24 @@
                         "ev": "SetArray"
                     },
                     {
-                        "id": {
+                        "name": "$ENV",
+                        "value": {
                             "name": "gcd",
                             "type": "Variable"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "id": {
+                            "name": {
+                                "value": {
+                                    "name": "gcd",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 0,
+                            "type": "Array"
                         },
                         "immediate": true,
                         "ev": "StartStream",
@@ -370,7 +1036,7 @@
                         "ev": "SetArray"
                     },
                     {
-                        "target": 20,
+                        "target": 21,
                         "ev": "Jump"
                     },
                     {
@@ -401,6 +1067,252 @@
                         "name": "$RETURN",
                         "value": {
                             "index": 5,
+                            "type": "Array"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "ev": "StopStream"
+                    }
+                ],
+                "timingMode": "SongStart"
+            },
+            {
+                "id": 3,
+                "events": [
+                    {
+                        "name": "$REF",
+                        "value": {
+                            "value1": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "value2": 1,
+                            "operator": "Add",
+                            "type": "Math"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "index": 0,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "index": 1,
+                        "value": {
+                            "name": "$REF",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "name": "$RTAG",
+                        "value": 0,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "name": "$RETURN",
+                        "value": 0,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "name": {
+                            "value": {
+                                "index": 1,
+                                "type": "Array"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 0,
+                        "value": -1,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "name": {
+                            "value": {
+                                "index": 1,
+                                "type": "Array"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 1,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "name": "$REF",
+                        "value": {
+                            "value1": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "value2": 1,
+                            "operator": "Add",
+                            "type": "Math"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "name": {
+                            "value": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 0,
+                        "value": 3,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "name": {
+                            "value": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 1,
+                        "value": {
+                            "index": 1,
+                            "type": "Array"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "index": 2,
+                        "value": -4,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "index": 3,
+                        "value": {
+                            "name": "$REF",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "name": "$RTAG",
+                        "value": {
+                            "index": 2,
+                            "type": "Array"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "name": "$RETURN",
+                        "value": {
+                            "index": 3,
+                            "type": "Array"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "ev": "StopStream"
+                    }
+                ],
+                "timingMode": "SongStart"
+            },
+            {
+                "id": 4,
+                "events": [
+                    {
+                        "index": 0,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "index": 1,
+                        "value": {
+                            "name": {
+                                "value": {
+                                    "name": "$ENV",
+                                    "type": "Array"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 1,
+                            "type": "Array"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "name": "$RTAG",
+                        "value": 0,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "name": "$RETURN",
+                        "value": 0,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "name": {
+                            "value": {
+                                "index": 1,
+                                "type": "Array"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 0,
+                        "value": -1,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "name": {
+                            "value": {
+                                "index": 1,
+                                "type": "Array"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 1,
+                        "value": {
+                            "value1": {
+                                "name": {
+                                    "value": {
+                                        "index": 1,
+                                        "type": "Array"
+                                    },
+                                    "type": "Number"
+                                },
+                                "index": 1,
+                                "type": "Array"
+                            },
+                            "value2": 1,
+                            "operator": "Add",
+                            "type": "Math"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "name": "$RTAG",
+                        "value": {
+                            "name": {
+                                "value": {
+                                    "index": 1,
+                                    "type": "Array"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 0,
+                            "type": "Array"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "name": "$RETURN",
+                        "value": {
+                            "name": {
+                                "value": {
+                                    "index": 1,
+                                    "type": "Array"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 1,
                             "type": "Array"
                         },
                         "ev": "SetVariable"

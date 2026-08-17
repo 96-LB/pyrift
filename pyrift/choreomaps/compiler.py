@@ -1,6 +1,7 @@
 from collections.abc import Generator, Iterable
 from contextlib import contextmanager
 
+from pyrift.choreomaps.ir.instruction import DeclareVariablesInstruction
 from pyrift.choreomaps.vars import Tag
 
 from .analysis import Analysis, ChoreomapAnalyzer, Scope, VarType
@@ -182,17 +183,15 @@ class ChoreomapCompiler:
             main_id=1
         )
     
-    
     def visit_stream(self, nodes: Iterable[BaseInstruction]):
         with self.new_scope() as scope_id:
             for node in nodes:
                 self.visit_inst(node)
         return scope_id
     
-    
     def visit_inst(self, node: BaseInstruction) -> None:
         match node:
-            case NullInstruction():
+            case NullInstruction() | DeclareVariablesInstruction():
                 pass
             
             case BaseExpression():

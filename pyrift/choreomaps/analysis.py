@@ -1,6 +1,7 @@
 from collections.abc import Generator, Iterable
 from contextlib import contextmanager
 
+from pyrift.choreomaps.ir.instruction import DeclareVariablesInstruction
 from pyrift.jobj import JList, JObj
 
 from .ir import (
@@ -48,22 +49,27 @@ class ScopeAnalyzer:
         self.argc: int = 0
         self.type = VarType.LOCAL if self.parent else VarType.GLOBAL
     
+    def declare(self, name: str, type: VarType | None = None):
+        if name in self.vars:
+            if type:
+                raise ValueError(f'Variable {name} cannot be declared as type {type}; it is already declared as type {self.vars[name]}.')
+            return
+        
+        self.vars[name] = type or self.type
+        
+        # if we declared a variable nonlocal, make sure we can actually capture it
+        if type is VarType.NONLOCAL and (not self.parent or self.parent.capture(name) is not VarType.NONLOCAL):
+            raise ValueError(f'Variable {name} was declared nonlocal but cannot be found in enclosing scope.')
+    
     def get(self, name: str) -> VarType:
         if name not in self.vars:
             self.vars[name] = self.parent.capture(name) if self.parent else VarType.EXTERNAL
         return self.vars[name]
     
     def capture(self, name: str) -> VarType:
-        if self.get(name) == VarType.LOCAL:
+        if self.get(name) is VarType.LOCAL:
             self.vars[name] = VarType.CAPTURED
-        return VarType.NONLOCAL if self.vars[name] == VarType.CAPTURED else self.vars[name]
-    
-    def set(self, name: str) -> VarType:
-        if name not in self.vars:
-            self.vars[name] = self.type
-        elif self.vars[name] in (VarType.NONLOCAL, VarType.GLOBAL) and self.parent:
-            raise ValueError('Setting nonlocal variables is not yet supported')
-        return self.vars[name]
+        return VarType.NONLOCAL if self.vars[name] is VarType.CAPTURED else self.vars[name]
     
     def to_scope(self):
         return Scope(
@@ -78,13 +84,17 @@ class ChoreomapAnalyzer:
         self.scopes: list[ScopeAnalyzer] = []
         self.scope: ScopeAnalyzer = ScopeAnalyzer()
     
+    def analyze(self, script: Script):
+        self.visit_scope((), script.instructions)
+        return Analysis(tuple(scope.to_scope() for scope in self.scopes))
+    
     @contextmanager
     def new_scope(self, args: Iterable[str] = ()) -> Generator[ScopeAnalyzer]:
         id = len(self.scopes)
         parent = self.scope
         scope = ScopeAnalyzer(parent if id else None)
         for arg in args:
-            scope.set(arg)
+            scope.declare(arg)
             scope.argc += 1
         
         self.scopes.append(scope)
@@ -92,22 +102,28 @@ class ChoreomapAnalyzer:
         yield scope
         self.scope = parent
     
-    def analyze(self, script: Script):
-        with self.new_scope():
-            self.declare_vars(script.instructions)
-            for inst in script.instructions:
-                self.visit_inst(inst)
-        return Analysis(tuple(scope.to_scope() for scope in self.scopes))
-    
     def declare_vars(self, instructions: JList[BaseInstruction]):
         for inst in instructions:
-            if isinstance(inst, SetVariableInstruction):
-                self.scope.set(inst.name)
+            match inst:
+                case SetVariableInstruction(name):
+                    self.scope.declare(name)
+                case DeclareVariablesInstruction(names, type):
+                    for name in names:
+                        self.scope.declare(name, type)
+                case _:
+                    pass
+    
+    def visit_scope(self, args: Iterable[str], instructions: JList[BaseInstruction]):
+        with self.new_scope(args):
+            self.declare_vars(instructions)
+            for inst in instructions:
+                self.visit_inst(inst)
     
     def visit_inst(self, instruction: BaseInstruction):
         match instruction:
             case (
                 NullInstruction()
+                | DeclareVariablesInstruction()
                 | NullExpression()
                 | NumberExpression()
                 | BooleanExpression()
@@ -117,6 +133,7 @@ class ChoreomapAnalyzer:
             
             case (
                 ReturnInstruction(expr)
+                | SetVariableInstruction(_, expr)
                 | LogInstruction(expr)
                 | NotExpression(expr)
                 | UnaryExpression(expr)
@@ -151,15 +168,8 @@ class ChoreomapAnalyzer:
             case VariableExpression(name):
                 self.scope.get(name)
             
-            case SetVariableInstruction(name, expr):
-                self.scope.set(name)
-                self.visit_inst(expr)
-            
             case FunctionExpression(args, body):
-                with self.new_scope(args):
-                    self.declare_vars(body)
-                    for inst in body:
-                        self.visit_inst(inst)
+                self.visit_scope(args, body)
             
             case _:
                 raise NotImplementedError(f'Unsupported instruction {type(instruction)}')

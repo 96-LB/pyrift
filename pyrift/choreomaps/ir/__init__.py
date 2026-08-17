@@ -7,6 +7,7 @@ __all__ = (
     'CallExpression',
     'CompareExpression',
     'CreateObjectInstruction',
+    'DeclareVariablesInstruction',
     'FormatExpression',
     'FunctionExpression',
     'GetAttributeInstruction',
@@ -14,7 +15,7 @@ __all__ = (
     'IfInstruction',
     'JoinExpression',
     'LogInstruction',
-    'NotExpression', 'DeclareVariablesInstruction',
+    'NotExpression',
     'NullExpression',
     'NullInstruction',
     'NumberExpression',
@@ -50,13 +51,13 @@ from .expression import (
 from .instruction import (
     BaseInstruction,
     CreateObjectInstruction,
+    DeclareVariablesInstruction,
     GetAttributeInstruction,
     IfInstruction,
     LogInstruction,
     NullInstruction,
     ReturnInstruction,
     SetAttributeInstruction,
-    DeclareVariablesInstruction,
     SetVariableInstruction,
 )
 from .script import Script

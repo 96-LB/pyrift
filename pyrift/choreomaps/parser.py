@@ -53,6 +53,25 @@ class ChoreomapParser(ast.NodeVisitor):
         assert isinstance(inst, BaseInstruction)
         return inst
     
+    def visit_operator(self, node: ast.operator) -> BinaryOperator:
+        MAPPING: dict[type[ast.operator], BinaryOperator] = {
+            ast.Add: BinaryOperator.ADD,
+            ast.Sub: BinaryOperator.SUBTRACT,
+            ast.Mult: BinaryOperator.MULTIPLY,
+            ast.Div: BinaryOperator.DIVIDE,
+            ast.Mod: BinaryOperator.MOD,
+            ast.Pow: BinaryOperator.POWER,
+            ast.BitOr: BinaryOperator.OR,
+            ast.BitAnd: BinaryOperator.AND,
+            ast.BitXor: BinaryOperator.XOR,
+            ast.LShift: BinaryOperator.L_SHIFT,
+            ast.RShift: BinaryOperator.R_SHIFT
+        }
+        
+        if type(node) not in MAPPING:
+            raise NotImplementedError(f'Unsupported operator: {type(node).__name__}')
+        return MAPPING[type(node)]
+    
     @override
     def visit_Module(self, node: ast.Module):
         instructions = tuple(self.visit_stmt(stmt) for stmt in node.body)
@@ -91,6 +110,16 @@ class ChoreomapParser(ast.NodeVisitor):
                 raise NotImplementedError(f'Unsupported assignment target: {type(node.targets[0]).__name__}')
     
     @override
+    def visit_AugAssign(self, node: ast.AugAssign):
+        expr = self.visit_expr(node.value)
+        op = self.visit_operator(node.op)
+        match node.target:
+            case ast.Name(var):
+                return SetVariableInstruction(var, BinaryExpression(VariableExpression(var), op, expr))
+            case _:
+                raise NotImplementedError(f'Unsupported assignment target: {type(node.target).__name__}')
+    
+    @override
     def visit_ImportFrom(self, node: ast.ImportFrom):
         print(f'Ignored import {', '.join(name.name for name in node.names)} from {node.module}')
         return NullInstruction()
@@ -121,26 +150,9 @@ class ChoreomapParser(ast.NodeVisitor):
     
     @override
     def visit_BinOp(self, node: ast.BinOp):
-        MAPPING: dict[type[ast.operator], BinaryOperator] = {
-            ast.Add: BinaryOperator.ADD,
-            ast.Sub: BinaryOperator.SUBTRACT,
-            ast.Mult: BinaryOperator.MULTIPLY,
-            ast.Div: BinaryOperator.DIVIDE,
-            ast.Mod: BinaryOperator.MOD,
-            ast.Pow: BinaryOperator.POWER,
-            ast.BitOr: BinaryOperator.OR,
-            ast.BitAnd: BinaryOperator.AND,
-            ast.BitXor: BinaryOperator.XOR,
-            ast.LShift: BinaryOperator.L_SHIFT,
-            ast.RShift: BinaryOperator.R_SHIFT
-        }
-        
         left = self.visit_expr(node.left)
         right = self.visit_expr(node.right)
-        operator = MAPPING.get(type(node.op))
-        if not operator:
-            raise NotImplementedError(f'Unsupported binary operator: {type(node.op)}')
-        
+        operator = self.visit_operator(node.op)
         return BinaryExpression(left, operator, right)
     
     @override
