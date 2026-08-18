@@ -10,7 +10,7 @@ from typing import override
 from pyrift.jobj import JList, JObj
 
 from .ir import BaseExpression
-from .nodes import BaseEvent, BaseValue, Condition, LogEvent, String, Value
+from .backend import BaseEvent, BaseValue, Condition, LogEvent, String, Value
 from .vars import Tag
 
 EXTERNALS: dict[str, ExternalValue] = {}

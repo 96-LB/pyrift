@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import ClassVar, override
 
-from pyrift.choreomaps.nodes.condition import Condition
+from pyrift.choreomaps.backend.condition import Condition
 from pyrift.jobj import JList, JObj
 
 from .value import Value

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar, override
 
-from pyrift.choreomaps.nodes.string import String
+from pyrift.choreomaps.backend.string import String
 from pyrift.jobj import JList, JObj
 
 from ..enum import (

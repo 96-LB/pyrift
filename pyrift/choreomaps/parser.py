@@ -29,7 +29,7 @@ from .ir import (
     UnaryExpression,
     VariableExpression,
 )
-from .nodes import (
+from .backend import (
     BinaryOperator,
     UnaryOperator,
 )

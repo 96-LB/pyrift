@@ -1,6 +1,6 @@
 from pyrift.jobj import JObj
 
-from .nodes import RatingDefinition, Sound, Stream
+from .backend import RatingDefinition, Sound, Stream
 
 
 class Choreomap(JObj):

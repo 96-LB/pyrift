@@ -14,11 +14,6 @@ print(f'x = {x}')
 print(f'd = {d}')
 
 
-# TODO:
-# 1. make closures actually copy in their values
-# 2. allow nonlocal/global keyword
-# 3. allow setting of nonlocal/global variables
-# 4. parse +=
 count = 1
 def make_counter():
     count = 0
