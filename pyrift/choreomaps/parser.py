@@ -1,18 +1,21 @@
 import ast
 from typing import override
 
-from pyrift.choreomaps.enum import ComparisonMode
-from pyrift.choreomaps.ir.instruction import DeclareVariablesInstruction
-from pyrift.choreomaps.vars import VarType
-
+from .backend import (
+    BinaryOperator,
+    UnaryOperator,
+)
+from .enum import ComparisonMode
 from .ir import (
     AndExpression,
+    AwaitExpression,
     BaseExpression,
     BaseInstruction,
     BinaryExpression,
     BooleanExpression,
     CallExpression,
     CompareExpression,
+    DeclareVariablesInstruction,
     FunctionExpression,
     IfExpression,
     IfInstruction,
@@ -29,10 +32,7 @@ from .ir import (
     UnaryExpression,
     VariableExpression,
 )
-from .backend import (
-    BinaryOperator,
-    UnaryOperator,
-)
+from .vars import VarType
 
 
 class ChoreomapParser(ast.NodeVisitor):
@@ -78,11 +78,15 @@ class ChoreomapParser(ast.NodeVisitor):
         return Script(instructions)
     
     @override
-    def visit_FunctionDef(self, node: ast.FunctionDef):
+    def visit_FunctionDef(self, node: ast.FunctionDef | ast.AsyncFunctionDef, is_async: bool = False):
         name = node.name
         args = tuple(arg.arg for arg in node.args.args)
         instructions = tuple(self.visit_stmt(stmt) for stmt in node.body)
-        return SetVariableInstruction(name, FunctionExpression(args, instructions))
+        return SetVariableInstruction(name, FunctionExpression(args, instructions, is_async=is_async))
+    
+    @override
+    def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef):
+        return self.visit_FunctionDef(node, True)
     
     @override
     def visit_Return(self, node: ast.Return):
@@ -175,7 +179,7 @@ class ChoreomapParser(ast.NodeVisitor):
     def visit_Lambda(self, node: ast.Lambda):
         expr = self.visit_expr(node.body)
         args = tuple(arg.arg for arg in node.args.args)
-        return FunctionExpression(args, (ReturnInstruction(expr),))
+        return FunctionExpression(args, (ReturnInstruction(expr),), is_async=False)
     
     @override
     def visit_IfExp(self, node: ast.IfExp):
@@ -205,6 +209,11 @@ class ChoreomapParser(ast.NodeVisitor):
             operators.append(operator)
         
         return CompareExpression(first, operands, tuple(operators))
+    
+    @override
+    def visit_Await(self, node: ast.Await):
+        value = self.visit_expr(node.value)
+        return AwaitExpression(value)
     
     @override
     def visit_Call(self, node: ast.Call):

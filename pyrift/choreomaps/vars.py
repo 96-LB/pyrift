@@ -5,9 +5,10 @@ class Tag(IntEnum):
     NONE = 0
     NUMBER = -1
     STRING = -2
-    ARRAY = -3
-    FUNCTION = -4
-    OBJECT = -5
+    FUNCTION = -3
+    COROUTINE = -4
+    ARRAY = -5
+    OBJECT = -6
 
 
 class VarType(Enum):

@@ -26,19 +26,6 @@ class BaseString(JObj):
         return {**super().to_dict(), 'type': self.TYPE}
 
 
-# class ConstantString(BaseString, type='Constant'):
-#     '''
-#     Attributes:
-#         value: String value
-#     '''
-    
-#     value: str
-    
-#     @override
-#     def to_json_obj(self):
-#         return self.value
-
-
 class NumberString(BaseString, type='Number'):
     '''
     Attributes:
@@ -58,22 +45,22 @@ class JoinString(BaseString, type='Join'):
 
 
 class ArrayString(BaseString, type='Array'):
-    """
+    '''
     Attributes:
         name: Name of the array to read from, or nil to read the local variable array.
         index: Index to read from, or nil to read the array's length.
-    """ # TODO: update, also this is overloaded
+    ''' # TODO: update, also this is overloaded
     
     name: String
 
 
 class IfString(BaseString, type='If'):
-    """
+    '''
     Attributes:
         condition: Condition to check.
         yes: Value if the condition is true.
         no: Value if the condition is false.
-    """ # TODO: update
+    ''' # TODO: update
     
     condition: Condition
     yes: String

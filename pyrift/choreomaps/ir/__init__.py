@@ -1,5 +1,6 @@
 __all__ = (
     'AndExpression',
+    'AwaitExpression',
     'BaseExpression',
     'BaseInstruction',
     'BinaryExpression',
@@ -31,6 +32,7 @@ __all__ = (
 
 from .expression import (
     AndExpression,
+    AwaitExpression,
     BaseExpression,
     BinaryExpression,
     BooleanExpression,

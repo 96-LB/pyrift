@@ -49,6 +49,7 @@ class ScopeAnalyzer:
         self.argc: int = 0
         self.type = VarType.LOCAL if self.parent else VarType.GLOBAL
     
+    
     def declare(self, name: str, type: VarType | None = None):
         if name in self.vars:
             if type:

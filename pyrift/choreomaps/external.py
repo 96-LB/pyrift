@@ -5,12 +5,13 @@ import inspect
 from builtins import print as builtin_print
 from collections.abc import Callable
 from enum import Enum, auto
+from time import sleep
 from typing import override
 
 from pyrift.jobj import JList, JObj
 
+from .backend import BaseEvent, BaseValue, Condition, LogEvent, String, Value, WaitEvent
 from .ir import BaseExpression
-from .backend import BaseEvent, BaseValue, Condition, LogEvent, String, Value
 from .vars import Tag
 
 EXTERNALS: dict[str, ExternalValue] = {}
@@ -67,3 +68,13 @@ def print_external(text: String):
 def print[T](text: T) -> T:
     builtin_print(text)
     return text
+
+async def wait_external(seconds: Value):
+    return ExternalExpression(
+        events=(WaitEvent()),
+        tag=Tag.COROUTINE,
+        value=
+    )
+
+async def wait(seconds: float):
+    sleep(seconds)

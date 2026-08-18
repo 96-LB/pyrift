@@ -22,6 +22,7 @@ class StringExpression(BaseExpression):
 class FunctionExpression(BaseExpression):
     args: JList[str]
     body: JList[BaseInstruction]
+    is_async: bool
 
 class VariableExpression(BaseExpression):
     name: str
@@ -49,7 +50,7 @@ class FormatExpression(BaseExpression):
     args: JList[BaseExpression]
 
 class UnaryExpression(BaseExpression):
-    value: BaseExpression
+    expr: BaseExpression
     operator: UnaryOperator
 
 class BinaryExpression(BaseExpression):
@@ -64,3 +65,6 @@ class CompareExpression(BaseExpression):
 
 class JoinExpression(BaseExpression):
     strings: JList[BaseExpression]
+
+class AwaitExpression(BaseExpression):
+    expr: BaseExpression

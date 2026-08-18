@@ -14,5 +14,4 @@ def compile(mod: ModuleType):
     tree = ast.parse(source)
     script = ChoreomapParser().visit_Module(tree)
     choreomap = ChoreomapCompiler().compile(script, EXTERNALS)
-    print(choreomap)
     return choreomap

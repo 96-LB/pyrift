@@ -1,36 +1,9 @@
 from collections.abc import Generator, Iterable
 from contextlib import contextmanager
 
-from pyrift.choreomaps.ir.instruction import DeclareVariablesInstruction
-from pyrift.choreomaps.vars import Tag
+from pyrift.choreomaps.ir.expression import AwaitExpression
 
 from .analysis import Analysis, ChoreomapAnalyzer, Scope, VarType
-from .choreomap import Choreomap
-from .enum import BinaryOperator, ComparisonMode
-from .external import ExternalArgType, ExternalExpression, ExternalValue
-from .ir import (
-    AndExpression,
-    BaseExpression,
-    BaseInstruction,
-    BinaryExpression,
-    BooleanExpression,
-    CallExpression,
-    CompareExpression,
-    FunctionExpression,
-    IfExpression,
-    IfInstruction,
-    JoinExpression,
-    LogInstruction,
-    NullInstruction,
-    NumberExpression,
-    OrExpression,
-    ReturnInstruction,
-    Script,
-    SetVariableInstruction,
-    StringExpression,
-    UnaryExpression,
-    VariableExpression,
-)
 from .backend import (
     AndCondition,
     ArrayValue,
@@ -58,7 +31,36 @@ from .backend import (
     UnaryValue,
     Value,
     VariableValue,
+    WaitEvent
 )
+from .choreomap import Choreomap
+from .enum import BinaryOperator, ComparisonMode
+from .external import ExternalArgType, ExternalExpression, ExternalValue
+from .ir import (
+    AndExpression,
+    BaseExpression,
+    BaseInstruction,
+    BinaryExpression,
+    BooleanExpression,
+    CallExpression,
+    CompareExpression,
+    DeclareVariablesInstruction,
+    FunctionExpression,
+    IfExpression,
+    IfInstruction,
+    JoinExpression,
+    LogInstruction,
+    NullInstruction,
+    NumberExpression,
+    OrExpression,
+    ReturnInstruction,
+    Script,
+    SetVariableInstruction,
+    StringExpression,
+    UnaryExpression,
+    VariableExpression,
+)
+from .vars import Tag
 
 
 class ChoreomapCompiler:
@@ -66,9 +68,11 @@ class ChoreomapCompiler:
         self.streams: list[list[BaseEvent]] = []
         self.analysis: Analysis = Analysis(())
         self.externals: dict[str, ExternalValue] = {}
+        # TODO: perhaps combine into a current scope state
         self.scope: Scope = Scope((), (), 0)
         self.stream: list[BaseEvent] = []
         self.temp_index = 0
+        self.is_async = False
     
     def add_event(self, event: BaseEvent) -> None:
         self.stream.append(event)
@@ -84,10 +88,10 @@ class ChoreomapCompiler:
         raise ValueError(f'Unknown variable {name}.')
     
     def allocate(self, *values: Value) -> Value:
-        ref = VariableValue("$REF")
+        ref = VariableValue('$REF')
         name = NumberString(ref)
         # increment the heap counter
-        self.add_event(SetVariableEvent("$REF", MathValue(ref, 1, BinaryOperator.ADD)))
+        self.add_event(SetVariableEvent('$REF', MathValue(ref, 1, BinaryOperator.ADD)))
         # copy in each value
         for i, value in enumerate(values):
             self.add_event(SetArrayEvent(name, index=i, value=value))
@@ -97,20 +101,22 @@ class ChoreomapCompiler:
         return ArrayValue(NumberString(ref), index)
     
     @contextmanager
-    def new_scope(self) -> Generator[int]:
+    def new_scope(self, is_async: bool) -> Generator[int]:
         # store old values
         old_scope = self.scope
         old_stream = self.stream
         old_temp_index = self.temp_index
+        old_is_async = self.is_async
         
         # make new stream
         scope = self.analysis.scopes[len(self.streams)]
         self.scope = scope
         self.stream = []
         self.streams.append(self.stream)
+        self.is_async = old_is_async
         
         # pointers for argument initialization
-        env = VariableValue("$ENV")
+        env = VariableValue('$ENV')
         tag_index = 0
         value_index = 1
         nonlocal_index = 1
@@ -120,13 +126,13 @@ class ChoreomapCompiler:
             match type:
                 # load directly from globals into locals array
                 case VarType.LOCAL if i < scope.argc:
-                    tag = ArrayValue("$ARGS", tag_index)
-                    value = ArrayValue("$ARGS", value_index)
+                    tag = ArrayValue('$ARGS', tag_index)
+                    value = ArrayValue('$ARGS', value_index)
                 
                 # copy to the heap and save a reference in locals
                 case VarType.CAPTURED if i < scope.argc:
                     tag = Tag.NONE
-                    value = self.allocate(ArrayValue("$ARGS", tag_index), ArrayValue("$ARGS", value_index))
+                    value = self.allocate(ArrayValue('$ARGS', tag_index), ArrayValue('$ARGS', value_index))
                 
                 # allocate uninitialized heap space for captured variables
                 case VarType.CAPTURED:
@@ -150,8 +156,11 @@ class ChoreomapCompiler:
             value_index += 2
         
         # set default return value to None
-        self.add_event(SetVariableEvent("$RTAG", Tag.NONE))
-        self.add_event(SetVariableEvent("$RETURN", 0))
+        # async functions allocate a coroutine object to store their return value
+        rtag = Tag.COROUTINE if is_async else Tag.NONE
+        retval = self.allocate(0, Tag.NONE, 0) if is_async else 0
+        self.add_event(SetVariableEvent('$RTAG', rtag))
+        self.add_event(SetVariableEvent('$RETURN', retval))
         
         # execute inner code
         yield len(self.streams) # id of stream
@@ -163,13 +172,14 @@ class ChoreomapCompiler:
         self.scope = old_scope
         self.temp_index = old_temp_index
         self.stream = old_stream
+        self.is_async = old_is_async
     
     def compile(self, script: Script, externals: dict[str, ExternalValue]):
         analysis = ChoreomapAnalyzer().analyze(script)
         self.analysis = analysis
         self.externals = externals
         
-        self.visit_stream(script.instructions)
+        self.visit_stream(script.instructions, is_async=False)
         
         streams: list[Stream] = []
         for i, stream in enumerate(self.streams):
@@ -183,8 +193,8 @@ class ChoreomapCompiler:
             main_id=1
         )
     
-    def visit_stream(self, nodes: Iterable[BaseInstruction]):
-        with self.new_scope() as scope_id:
+    def visit_stream(self, nodes: Iterable[BaseInstruction], is_async: bool):
+        with self.new_scope(is_async) as scope_id:
             for node in nodes:
                 self.visit_inst(node)
         return scope_id
@@ -213,7 +223,7 @@ class ChoreomapCompiler:
                         self.add_event(SetArrayEvent(ref, 1, value))
                     case VarType.GLOBAL:
                         # set the global directly
-                        self.add_event(SetVariableEvent("TAG$" + name, tag))
+                        self.add_event(SetVariableEvent('TAG$' + name, tag))
                         self.add_event(SetVariableEvent(name, value))
                     case VarType.EXTERNAL:
                         raise NotImplementedError('Setting external variables is unsupported.')
@@ -238,9 +248,11 @@ class ChoreomapCompiler:
                 self.stream[no_index - 1] = JumpEvent(end_index)
             
             case ReturnInstruction(expr):
+                # TODO: async functions need to say they're done
+                # also if returns don't happen...
                 tag, value = self.visit_value(expr)
-                self.add_event(SetVariableEvent("$RTAG", tag))
-                self.add_event(SetVariableEvent("$RETURN", value))
+                self.add_event(SetVariableEvent('$RTAG', tag))
+                self.add_event(SetVariableEvent('$RETURN', value))
                 self.add_event(StopStreamEvent())
             
             case LogInstruction(text):
@@ -261,8 +273,8 @@ class ChoreomapCompiler:
             case StringExpression(value):
                 return Tag.STRING, value
             
-            case FunctionExpression(args, instructions):
-                stream_id = self.visit_stream(instructions)
+            case FunctionExpression(args, instructions, is_async):
+                stream_id = self.visit_stream(instructions, is_async)
                 scope = self.analysis.scopes[stream_id - 1] # stream id's are 1-indexed
                 
                 # copy stream id and captured variables into the closure environment
@@ -292,7 +304,7 @@ class ChoreomapCompiler:
                         value = self.deref(ref, 1)
                     case VarType.GLOBAL:
                         # get the global directly
-                        tag = VariableValue("TAG$" + name)
+                        tag = VariableValue('TAG$' + name)
                         value = VariableValue(name)
                     case VarType.EXTERNAL:
                         if name not in self.externals:
@@ -381,11 +393,11 @@ class ChoreomapCompiler:
                 # copy arguments into register for callee function
                 for i, arg in enumerate(args):
                     tag, value = self.visit_value(arg)
-                    self.add_event(SetArrayEvent("$ARGS", 2 * i, tag))
-                    self.add_event(SetArrayEvent("$ARGS", 2 * i + 1, value))
+                    self.add_event(SetArrayEvent('$ARGS', 2 * i, tag))
+                    self.add_event(SetArrayEvent('$ARGS', 2 * i + 1, value))
                 
                 # set the environment pointer so the function can load the closure
-                self.add_event(SetVariableEvent("$ENV", ref))
+                self.add_event(SetVariableEvent('$ENV', ref))
                 
                 # synchronous functions don't need a ref_id because they finish instantly
                 stream_id = self.deref(ref, 0)
@@ -394,8 +406,8 @@ class ChoreomapCompiler:
                 tag_index = self.temp_index
                 value_index = self.temp_index + 1
                 self.temp_index += 2 # TODO: HELPER FUNCTION FOR TEMPS
-                self.add_event(SetArrayEvent(None, tag_index, VariableValue("$RTAG")))
-                self.add_event(SetArrayEvent(None, value_index, VariableValue("$RETURN")))
+                self.add_event(SetArrayEvent(None, tag_index, VariableValue('$RTAG')))
+                self.add_event(SetArrayEvent(None, value_index, VariableValue('$RETURN')))
                 return ArrayValue(None, tag_index), ArrayValue(None, value_index)
             
             case JoinExpression(strings):
@@ -418,6 +430,18 @@ class ChoreomapCompiler:
                         for i in range(len(operators))
                     )
                     return Tag.NUMBER, AndCondition(conditions)
+            
+            case AwaitExpression(expr):
+                if not self.is_async:
+                    raise ValueError('Await expression encountered in synchronous context.')
+                tag, value = self.visit_value(expr)
+                match tag:
+                    case Tag.COROUTINE:
+                        condition = CompareCondition(self.deref(value, 1), 0, ComparisonMode.NOT_EQUAL)
+                        self.add_event(WaitEvent(condition))
+                        return self.deref(value, 1), self.deref(value, 2)
+                    case Tag(value) | int(value) | value: # TODO: handle variable coroutines
+                        raise ValueError(f'Unsupported tag for await expression: {value}')
             
             case ExternalExpression(events, tag, value):
                 for event in events:
@@ -456,7 +480,7 @@ class ChoreomapCompiler:
         tag, value = self.visit_expr(node)
         match tag, value:
             case _, BaseCondition() | bool():
-                return IfString(value, "True", "False")
+                return IfString(value, 'True', 'False')
             case Tag.NUMBER, BaseValue() | float() | int():
                 return NumberString(value)
             case _, BaseValue() | float() | int(): # TODO: a lot of cases
