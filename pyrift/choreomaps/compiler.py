@@ -110,7 +110,7 @@ class ChoreomapCompiler:
         self.streams.append(self.stream)
         
         # pointers for argument initialization
-        env = ArrayValue("$ENV")
+        env = VariableValue("$ENV")
         tag_index = 0
         value_index = 1
         nonlocal_index = 1
@@ -154,7 +154,7 @@ class ChoreomapCompiler:
         self.add_event(SetVariableEvent("$RETURN", 0))
         
         # execute inner code
-        yield len(self.streams) - 1 # id of stream
+        yield len(self.streams) # id of stream
         
         if self.scope is not scope:
             raise ValueError('Scope nesting invariant was violated. This should only happen if scopes are being created manually.')
@@ -268,7 +268,7 @@ class ChoreomapCompiler:
                 # copy stream id and captured variables into the closure environment
                 values: list[Value] = [stream_id]
                 for var, var_type in zip(scope.vars, scope.types):
-                    if var_type is VarType.CAPTURED:
+                    if var_type is VarType.NONLOCAL:
                         value_index = self.lookup(var)[0] + 1 # lookup returns the tag index
                         values.append(ArrayValue(None, value_index))
                 
