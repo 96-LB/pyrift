@@ -19,6 +19,7 @@ if TYPE_CHECKING:
 
 
 type Value = float | BaseValue
+type TaggedValue = tuple[Value, Value | Condition | String]
 
 class BaseValue(JObj):
     '''

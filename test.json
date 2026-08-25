@@ -13,837 +13,276 @@
                 "id": 1,
                 "events": [
                     {
-                        "name": "$RTAG",
-                        "value": 0,
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": "$RETURN",
-                        "value": 0,
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": "TAG$x",
-                        "value": -1,
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": "x",
-                        "value": {
-                            "value1": 2,
-                            "value2": 3,
-                            "operator": "Add",
-                            "type": "Math"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "text": {
+                        "t": 0,
+                        "event": {
+                            "name": "$REF",
                             "value": {
-                                "name": "x",
-                                "type": "Variable"
-                            },
-                            "type": "Number"
-                        },
-                        "ev": "Log"
-                    },
-                    {
-                        "text": {
-                            "condition": {
                                 "value1": {
-                                    "name": "x",
+                                    "name": "$REF",
                                     "type": "Variable"
                                 },
-                                "value2": 3,
-                                "mode": "Greater",
-                                "type": "Compare"
-                            },
-                            "yes": "True",
-                            "no": "False",
-                            "type": "If"
-                        },
-                        "ev": "Log"
-                    },
-                    {
-                        "name": "$REF",
-                        "value": {
-                            "value1": {
-                                "name": "$REF",
-                                "type": "Variable"
-                            },
-                            "value2": 1,
-                            "operator": "Add",
-                            "type": "Math"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": {
-                            "value": {
-                                "name": "$REF",
-                                "type": "Variable"
-                            },
-                            "type": "Number"
-                        },
-                        "index": 0,
-                        "value": 1,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "name": "TAG$gcd",
-                        "value": -4,
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": "gcd",
-                        "value": {
-                            "name": "$REF",
-                            "type": "Variable"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": "$ARGS",
-                        "index": 0,
-                        "value": -1,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "name": "$ARGS",
-                        "index": 1,
-                        "value": {
-                            "value1": {
-                                "value1": 8,
-                                "value2": 9,
-                                "operator": "Multiply",
+                                "value2": 1,
+                                "operator": "Add",
                                 "type": "Math"
                             },
-                            "value2": {
-                                "name": "x",
-                                "type": "Variable"
-                            },
-                            "operator": "Multiply",
-                            "type": "Math"
-                        },
-                        "ev": "SetArray"
+                            "ev": "SetVariable"
+                        }
                     },
                     {
-                        "name": "$ARGS",
-                        "index": 2,
-                        "value": -1,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "name": "$ARGS",
-                        "index": 3,
-                        "value": {
-                            "value1": {
-                                "value1": 4,
-                                "value2": 3,
-                                "operator": "Multiply",
-                                "type": "Math"
-                            },
-                            "value2": 25,
-                            "operator": "Multiply",
-                            "type": "Math"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "name": "$ENV",
-                        "value": {
-                            "name": "gcd",
-                            "type": "Variable"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "id": {
+                        "t": 0,
+                        "event": {
                             "name": {
                                 "value": {
-                                    "name": "gcd",
+                                    "name": "$REF",
                                     "type": "Variable"
                                 },
                                 "type": "Number"
                             },
                             "index": 0,
-                            "type": "Array"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 0
+                            "value": 2,
+                            "ev": "SetArray"
+                        }
                     },
                     {
-                        "index": 0,
-                        "value": {
-                            "name": "$RTAG",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
+                        "t": 0,
+                        "event": {
+                            "name": "TAG$normal",
+                            "value": -3,
+                            "ev": "SetVariable"
+                        }
                     },
                     {
-                        "index": 1,
-                        "value": {
-                            "name": "$RETURN",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
+                        "t": 0,
+                        "event": {
+                            "name": "normal",
+                            "value": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "ev": "SetVariable"
+                        }
                     },
                     {
-                        "name": "TAG$d",
-                        "value": {
+                        "t": 0,
+                        "event": {
+                            "name": "$REF",
+                            "value": {
+                                "value1": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "value2": 1,
+                                "operator": "Add",
+                                "type": "Math"
+                            },
+                            "ev": "SetVariable"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "name": {
+                                "value": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
                             "index": 0,
-                            "type": "Array"
-                        },
-                        "ev": "SetVariable"
+                            "value": 3,
+                            "ev": "SetArray"
+                        }
                     },
                     {
-                        "name": "d",
-                        "value": {
+                        "t": 0,
+                        "event": {
+                            "name": "TAG$wrap",
+                            "value": -3,
+                            "ev": "SetVariable"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "name": "wrap",
+                            "value": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "ev": "SetVariable"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "name": "$ENV",
+                            "value": {
+                                "name": "normal",
+                                "type": "Variable"
+                            },
+                            "ev": "SetVariable"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "id": {
+                                "name": {
+                                    "value": {
+                                        "name": "normal",
+                                        "type": "Variable"
+                                    },
+                                    "type": "Number"
+                                },
+                                "index": 0,
+                                "type": "Array"
+                            },
+                            "immediate": true,
+                            "ev": "StartStream",
+                            "refID": 0
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "index": 0,
+                            "value": {
+                                "name": "$RTAG",
+                                "type": "Variable"
+                            },
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
                             "index": 1,
-                            "type": "Array"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "text": {
-                            "strings": [
-                                "x = ",
-                                {
-                                    "value": {
-                                        "name": "x",
-                                        "type": "Variable"
-                                    },
-                                    "type": "Number"
-                                }
-                            ],
-                            "type": "Join"
-                        },
-                        "ev": "Log"
-                    },
-                    {
-                        "text": {
-                            "strings": [
-                                "d = ",
-                                {
-                                    "value": {
-                                        "name": "d",
-                                        "type": "Variable"
-                                    },
-                                    "type": "Number"
-                                }
-                            ],
-                            "type": "Join"
-                        },
-                        "ev": "Log"
-                    },
-                    {
-                        "name": "TAG$count",
-                        "value": -1,
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": "count",
-                        "value": 1,
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": "$REF",
-                        "value": {
-                            "value1": {
-                                "name": "$REF",
-                                "type": "Variable"
-                            },
-                            "value2": 1,
-                            "operator": "Add",
-                            "type": "Math"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": {
                             "value": {
-                                "name": "$REF",
+                                "name": "$RETURN",
                                 "type": "Variable"
                             },
-                            "type": "Number"
-                        },
-                        "index": 0,
-                        "value": 2,
-                        "ev": "SetArray"
+                            "ev": "SetArray"
+                        }
                     },
                     {
-                        "name": "TAG$make_counter",
-                        "value": -4,
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": "make_counter",
-                        "value": {
-                            "name": "$REF",
-                            "type": "Variable"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": "$ENV",
-                        "value": {
-                            "name": "make_counter",
-                            "type": "Variable"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "id": {
-                            "name": {
-                                "value": {
-                                    "name": "make_counter",
-                                    "type": "Variable"
-                                },
-                                "type": "Number"
-                            },
+                        "t": 0,
+                        "event": {
+                            "name": "$ARGS",
                             "index": 0,
-                            "type": "Array"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 0
+                            "value": {
+                                "index": 0,
+                                "type": "Array"
+                            },
+                            "ev": "SetArray"
+                        }
                     },
                     {
-                        "index": 2,
-                        "value": {
-                            "name": "$RTAG",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
+                        "t": 0,
+                        "event": {
+                            "name": "$ARGS",
+                            "index": 1,
+                            "value": {
+                                "index": 1,
+                                "type": "Array"
+                            },
+                            "ev": "SetArray"
+                        }
                     },
                     {
-                        "index": 3,
-                        "value": {
-                            "name": "$RETURN",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
+                        "t": 0,
+                        "event": {
+                            "name": "$ENV",
+                            "value": {
+                                "name": "wrap",
+                                "type": "Variable"
+                            },
+                            "ev": "SetVariable"
+                        }
                     },
                     {
-                        "name": "TAG$counter1",
-                        "value": {
+                        "t": 0,
+                        "event": {
+                            "id": {
+                                "name": {
+                                    "value": {
+                                        "name": "wrap",
+                                        "type": "Variable"
+                                    },
+                                    "type": "Number"
+                                },
+                                "index": 0,
+                                "type": "Array"
+                            },
+                            "immediate": true,
+                            "ev": "StartStream",
+                            "refID": 0
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
                             "index": 2,
-                            "type": "Array"
-                        },
-                        "ev": "SetVariable"
+                            "value": {
+                                "name": "$RTAG",
+                                "type": "Variable"
+                            },
+                            "ev": "SetArray"
+                        }
                     },
                     {
-                        "name": "counter1",
-                        "value": {
+                        "t": 0,
+                        "event": {
                             "index": 3,
-                            "type": "Array"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": "$ENV",
-                        "value": {
-                            "name": "make_counter",
-                            "type": "Variable"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "id": {
-                            "name": {
-                                "value": {
-                                    "name": "make_counter",
-                                    "type": "Variable"
-                                },
-                                "type": "Number"
+                            "value": {
+                                "name": "$RETURN",
+                                "type": "Variable"
                             },
-                            "index": 0,
-                            "type": "Array"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 0
+                            "ev": "SetArray"
+                        }
                     },
                     {
-                        "index": 4,
-                        "value": {
-                            "name": "$RTAG",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "index": 5,
-                        "value": {
-                            "name": "$RETURN",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "name": "TAG$counter2",
-                        "value": {
-                            "index": 4,
-                            "type": "Array"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": "counter2",
-                        "value": {
-                            "index": 5,
-                            "type": "Array"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": "$ENV",
-                        "value": {
-                            "name": "counter1",
-                            "type": "Variable"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "id": {
-                            "name": {
-                                "value": {
-                                    "name": "counter1",
-                                    "type": "Variable"
-                                },
-                                "type": "Number"
+                        "t": 0,
+                        "event": {
+                            "name": "TAG$_",
+                            "value": {
+                                "index": 2,
+                                "type": "Array"
                             },
-                            "index": 0,
-                            "type": "Array"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 0
+                            "ev": "SetVariable"
+                        }
                     },
                     {
-                        "index": 6,
-                        "value": {
-                            "name": "$RTAG",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "index": 7,
-                        "value": {
-                            "name": "$RETURN",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "text": {
-                            "strings": [
-                                "counter1: ",
-                                {
-                                    "value": {
-                                        "index": 7,
-                                        "type": "Array"
-                                    },
-                                    "type": "Number"
-                                }
-                            ],
-                            "type": "Join"
-                        },
-                        "ev": "Log"
-                    },
-                    {
-                        "name": "$ENV",
-                        "value": {
-                            "name": "counter1",
-                            "type": "Variable"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "id": {
-                            "name": {
-                                "value": {
-                                    "name": "counter1",
-                                    "type": "Variable"
-                                },
-                                "type": "Number"
+                        "t": 0,
+                        "event": {
+                            "name": "_",
+                            "value": {
+                                "index": 3,
+                                "type": "Array"
                             },
-                            "index": 0,
-                            "type": "Array"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 0
+                            "ev": "SetVariable"
+                        }
                     },
                     {
-                        "index": 8,
-                        "value": {
+                        "t": 0,
+                        "event": {
                             "name": "$RTAG",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
+                            "value": 0,
+                            "ev": "SetVariable"
+                        }
                     },
                     {
-                        "index": 9,
-                        "value": {
+                        "t": 0,
+                        "event": {
                             "name": "$RETURN",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
+                            "value": 0,
+                            "ev": "SetVariable"
+                        }
                     },
                     {
-                        "text": {
-                            "strings": [
-                                "counter1: ",
-                                {
-                                    "value": {
-                                        "index": 9,
-                                        "type": "Array"
-                                    },
-                                    "type": "Number"
-                                }
-                            ],
-                            "type": "Join"
-                        },
-                        "ev": "Log"
-                    },
-                    {
-                        "name": "$ENV",
-                        "value": {
-                            "name": "counter1",
-                            "type": "Variable"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "id": {
-                            "name": {
-                                "value": {
-                                    "name": "counter1",
-                                    "type": "Variable"
-                                },
-                                "type": "Number"
-                            },
-                            "index": 0,
-                            "type": "Array"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 0
-                    },
-                    {
-                        "index": 10,
-                        "value": {
-                            "name": "$RTAG",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "index": 11,
-                        "value": {
-                            "name": "$RETURN",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "text": {
-                            "strings": [
-                                "counter1: ",
-                                {
-                                    "value": {
-                                        "index": 11,
-                                        "type": "Array"
-                                    },
-                                    "type": "Number"
-                                }
-                            ],
-                            "type": "Join"
-                        },
-                        "ev": "Log"
-                    },
-                    {
-                        "name": "$ENV",
-                        "value": {
-                            "name": "counter1",
-                            "type": "Variable"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "id": {
-                            "name": {
-                                "value": {
-                                    "name": "counter1",
-                                    "type": "Variable"
-                                },
-                                "type": "Number"
-                            },
-                            "index": 0,
-                            "type": "Array"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 0
-                    },
-                    {
-                        "index": 12,
-                        "value": {
-                            "name": "$RTAG",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "index": 13,
-                        "value": {
-                            "name": "$RETURN",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "text": {
-                            "strings": [
-                                "counter1: ",
-                                {
-                                    "value": {
-                                        "index": 13,
-                                        "type": "Array"
-                                    },
-                                    "type": "Number"
-                                }
-                            ],
-                            "type": "Join"
-                        },
-                        "ev": "Log"
-                    },
-                    {
-                        "name": "$ENV",
-                        "value": {
-                            "name": "counter2",
-                            "type": "Variable"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "id": {
-                            "name": {
-                                "value": {
-                                    "name": "counter2",
-                                    "type": "Variable"
-                                },
-                                "type": "Number"
-                            },
-                            "index": 0,
-                            "type": "Array"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 0
-                    },
-                    {
-                        "index": 14,
-                        "value": {
-                            "name": "$RTAG",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "index": 15,
-                        "value": {
-                            "name": "$RETURN",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "text": {
-                            "strings": [
-                                "counter2: ",
-                                {
-                                    "value": {
-                                        "index": 15,
-                                        "type": "Array"
-                                    },
-                                    "type": "Number"
-                                }
-                            ],
-                            "type": "Join"
-                        },
-                        "ev": "Log"
-                    },
-                    {
-                        "name": "$ENV",
-                        "value": {
-                            "name": "counter2",
-                            "type": "Variable"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "id": {
-                            "name": {
-                                "value": {
-                                    "name": "counter2",
-                                    "type": "Variable"
-                                },
-                                "type": "Number"
-                            },
-                            "index": 0,
-                            "type": "Array"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 0
-                    },
-                    {
-                        "index": 16,
-                        "value": {
-                            "name": "$RTAG",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "index": 17,
-                        "value": {
-                            "name": "$RETURN",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "text": {
-                            "strings": [
-                                "counter2: ",
-                                {
-                                    "value": {
-                                        "index": 17,
-                                        "type": "Array"
-                                    },
-                                    "type": "Number"
-                                }
-                            ],
-                            "type": "Join"
-                        },
-                        "ev": "Log"
-                    },
-                    {
-                        "name": "$ENV",
-                        "value": {
-                            "name": "counter1",
-                            "type": "Variable"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "id": {
-                            "name": {
-                                "value": {
-                                    "name": "counter1",
-                                    "type": "Variable"
-                                },
-                                "type": "Number"
-                            },
-                            "index": 0,
-                            "type": "Array"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 0
-                    },
-                    {
-                        "index": 18,
-                        "value": {
-                            "name": "$RTAG",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "index": 19,
-                        "value": {
-                            "name": "$RETURN",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "text": {
-                            "strings": [
-                                "counter1: ",
-                                {
-                                    "value": {
-                                        "index": 19,
-                                        "type": "Array"
-                                    },
-                                    "type": "Number"
-                                }
-                            ],
-                            "type": "Join"
-                        },
-                        "ev": "Log"
-                    },
-                    {
-                        "name": "$ENV",
-                        "value": {
-                            "name": "counter1",
-                            "type": "Variable"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "id": {
-                            "name": {
-                                "value": {
-                                    "name": "counter1",
-                                    "type": "Variable"
-                                },
-                                "type": "Number"
-                            },
-                            "index": 0,
-                            "type": "Array"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 0
-                    },
-                    {
-                        "index": 20,
-                        "value": {
-                            "name": "$RTAG",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "index": 21,
-                        "value": {
-                            "name": "$RETURN",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "text": {
-                            "strings": [
-                                "counter1: ",
-                                {
-                                    "value": {
-                                        "index": 21,
-                                        "type": "Array"
-                                    },
-                                    "type": "Number"
-                                }
-                            ],
-                            "type": "Join"
-                        },
-                        "ev": "Log"
+                        "t": 0,
+                        "event": {
+                            "ev": "StopStream"
+                        }
                     }
                 ],
                 "timingMode": "SongStart"
@@ -852,227 +291,280 @@
                 "id": 2,
                 "events": [
                     {
-                        "index": 0,
-                        "value": {
-                            "name": "$ARGS",
-                            "index": 0,
-                            "type": "Array"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "index": 1,
-                        "value": {
-                            "name": "$ARGS",
-                            "index": 1,
-                            "type": "Array"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "index": 2,
-                        "value": {
-                            "name": "$ARGS",
-                            "index": 2,
-                            "type": "Array"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "index": 3,
-                        "value": {
-                            "name": "$ARGS",
-                            "index": 3,
-                            "type": "Array"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "name": "$RTAG",
-                        "value": 0,
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": "$RETURN",
-                        "value": 0,
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "text": {
-                            "strings": [
-                                "gcd called with ",
-                                {
-                                    "value": {
-                                        "index": 1,
-                                        "type": "Array"
-                                    },
-                                    "type": "Number"
-                                },
-                                " and ",
-                                {
-                                    "value": {
-                                        "index": 3,
-                                        "type": "Array"
-                                    },
-                                    "type": "Number"
-                                }
-                            ],
-                            "type": "Join"
-                        },
-                        "ev": "Log"
-                    },
-                    {
-                        "target": {
-                            "condition": {
+                        "t": 0,
+                        "event": {
+                            "name": "$REF",
+                            "value": {
                                 "value1": {
-                                    "index": 3,
-                                    "type": "Array"
+                                    "name": "$REF",
+                                    "type": "Variable"
                                 },
-                                "value2": 0,
-                                "mode": "NotEqual",
-                                "type": "Compare"
+                                "value2": 1,
+                                "operator": "Add",
+                                "type": "Math"
                             },
-                            "yes": 8,
-                            "no": 19,
-                            "type": "If"
-                        },
-                        "ev": "Jump"
+                            "ev": "SetVariable"
+                        }
                     },
                     {
-                        "name": "$ARGS",
-                        "index": 0,
-                        "value": {
-                            "index": 2,
-                            "type": "Array"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "name": "$ARGS",
-                        "index": 1,
-                        "value": {
-                            "index": 3,
-                            "type": "Array"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "name": "$ARGS",
-                        "index": 2,
-                        "value": -1,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "name": "$ARGS",
-                        "index": 3,
-                        "value": {
-                            "value1": {
-                                "index": 1,
-                                "type": "Array"
-                            },
-                            "value2": {
-                                "index": 3,
-                                "type": "Array"
-                            },
-                            "operator": "Mod",
-                            "type": "Math"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "name": "$ENV",
-                        "value": {
-                            "name": "gcd",
-                            "type": "Variable"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "id": {
+                        "t": 0,
+                        "event": {
                             "name": {
                                 "value": {
-                                    "name": "gcd",
+                                    "name": "$REF",
                                     "type": "Variable"
                                 },
                                 "type": "Number"
                             },
                             "index": 0,
-                            "type": "Array"
-                        },
-                        "immediate": true,
-                        "ev": "StartStream",
-                        "refID": 0
+                            "value": 0,
+                            "ev": "SetArray"
+                        }
                     },
                     {
-                        "index": 6,
-                        "value": {
-                            "name": "$RTAG",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "index": 7,
-                        "value": {
-                            "name": "$RETURN",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "index": 4,
-                        "value": {
-                            "index": 6,
-                            "type": "Array"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "index": 5,
-                        "value": {
-                            "index": 7,
-                            "type": "Array"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "target": 21,
-                        "ev": "Jump"
-                    },
-                    {
-                        "index": 4,
-                        "value": {
-                            "index": 0,
-                            "type": "Array"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "index": 5,
-                        "value": {
+                        "t": 0,
+                        "event": {
+                            "name": {
+                                "value": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
                             "index": 1,
-                            "type": "Array"
-                        },
-                        "ev": "SetArray"
+                            "value": 0,
+                            "ev": "SetArray"
+                        }
                     },
                     {
-                        "name": "$RTAG",
-                        "value": {
-                            "index": 4,
-                            "type": "Array"
-                        },
-                        "ev": "SetVariable"
+                        "t": 0,
+                        "event": {
+                            "name": {
+                                "value": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 2,
+                            "value": 0,
+                            "ev": "SetArray"
+                        }
                     },
                     {
-                        "name": "$RETURN",
-                        "value": {
-                            "index": 5,
-                            "type": "Array"
-                        },
-                        "ev": "SetVariable"
+                        "t": 0,
+                        "event": {
+                            "name": {
+                                "value": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 3,
+                            "value": 0,
+                            "ev": "SetArray"
+                        }
                     },
                     {
-                        "ev": "StopStream"
+                        "t": 0,
+                        "event": {
+                            "text": {
+                                "value": 0,
+                                "type": "Number"
+                            },
+                            "ev": "Log"
+                        }
+                    },
+                    {
+                        "t": 1,
+                        "event": {
+                            "text": {
+                                "value": 1,
+                                "type": "Number"
+                            },
+                            "ev": "Log"
+                        }
+                    },
+                    {
+                        "t": 3,
+                        "event": {
+                            "text": {
+                                "value": 2,
+                                "type": "Number"
+                            },
+                            "ev": "Log"
+                        }
+                    },
+                    {
+                        "t": 3,
+                        "event": {
+                            "name": {
+                                "value": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 0,
+                            "value": 1,
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 3,
+                        "event": {
+                            "name": {
+                                "value": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 1,
+                            "value": -1,
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 3,
+                        "event": {
+                            "name": {
+                                "value": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 2,
+                            "value": 3,
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 3,
+                        "event": {
+                            "name": {
+                                "value": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 3,
+                            "value": 3,
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 3,
+                        "event": {
+                            "name": "$RTAG",
+                            "value": -4,
+                            "ev": "SetVariable"
+                        }
+                    },
+                    {
+                        "t": 3,
+                        "event": {
+                            "name": "$RETURN",
+                            "value": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "ev": "SetVariable"
+                        }
+                    },
+                    {
+                        "t": 3,
+                        "event": {
+                            "ev": "StopStream"
+                        }
+                    },
+                    {
+                        "t": 3,
+                        "event": {
+                            "name": {
+                                "value": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 0,
+                            "value": 1,
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 3,
+                        "event": {
+                            "name": {
+                                "value": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 1,
+                            "value": 0,
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 3,
+                        "event": {
+                            "name": {
+                                "value": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 2,
+                            "value": 0,
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 3,
+                        "event": {
+                            "name": {
+                                "value": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 3,
+                            "value": 3,
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 3,
+                        "event": {
+                            "name": "$RTAG",
+                            "value": -4,
+                            "ev": "SetVariable"
+                        }
+                    },
+                    {
+                        "t": 3,
+                        "event": {
+                            "name": "$RETURN",
+                            "value": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "ev": "SetVariable"
+                        }
+                    },
+                    {
+                        "t": 3,
+                        "event": {
+                            "ev": "StopStream"
+                        }
                     }
                 ],
                 "timingMode": "SongStart"
@@ -1081,196 +573,218 @@
                 "id": 3,
                 "events": [
                     {
-                        "name": "$REF",
-                        "value": {
-                            "value1": {
-                                "name": "$REF",
-                                "type": "Variable"
-                            },
-                            "value2": 1,
-                            "operator": "Add",
-                            "type": "Math"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "index": 0,
-                        "value": 0,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "index": 1,
-                        "value": {
-                            "name": "$REF",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
-                    },
-                    {
-                        "name": "$RTAG",
-                        "value": 0,
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": "$RETURN",
-                        "value": 0,
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": {
+                        "t": 0,
+                        "event": {
+                            "index": 0,
                             "value": {
-                                "index": 1,
+                                "name": "$ARGS",
+                                "index": 0,
                                 "type": "Array"
                             },
-                            "type": "Number"
-                        },
-                        "index": 0,
-                        "value": -1,
-                        "ev": "SetArray"
+                            "ev": "SetArray"
+                        }
                     },
                     {
-                        "name": {
-                            "value": {
-                                "index": 1,
-                                "type": "Array"
-                            },
-                            "type": "Number"
-                        },
-                        "index": 1,
-                        "value": 0,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "name": "$REF",
-                        "value": {
-                            "value1": {
-                                "name": "$REF",
-                                "type": "Variable"
-                            },
-                            "value2": 1,
-                            "operator": "Add",
-                            "type": "Math"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": {
-                            "value": {
-                                "name": "$REF",
-                                "type": "Variable"
-                            },
-                            "type": "Number"
-                        },
-                        "index": 0,
-                        "value": 3,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "name": {
-                            "value": {
-                                "name": "$REF",
-                                "type": "Variable"
-                            },
-                            "type": "Number"
-                        },
-                        "index": 1,
-                        "value": {
+                        "t": 0,
+                        "event": {
                             "index": 1,
-                            "type": "Array"
-                        },
-                        "ev": "SetArray"
+                            "value": {
+                                "name": "$ARGS",
+                                "index": 1,
+                                "type": "Array"
+                            },
+                            "ev": "SetArray"
+                        }
                     },
                     {
-                        "index": 2,
-                        "value": -4,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "index": 3,
-                        "value": {
+                        "t": 0,
+                        "event": {
                             "name": "$REF",
-                            "type": "Variable"
-                        },
-                        "ev": "SetArray"
+                            "value": {
+                                "value1": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "value2": 1,
+                                "operator": "Add",
+                                "type": "Math"
+                            },
+                            "ev": "SetVariable"
+                        }
                     },
                     {
-                        "name": "$RTAG",
-                        "value": {
-                            "index": 2,
-                            "type": "Array"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": "$RETURN",
-                        "value": {
-                            "index": 3,
-                            "type": "Array"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "ev": "StopStream"
-                    }
-                ],
-                "timingMode": "SongStart"
-            },
-            {
-                "id": 4,
-                "events": [
-                    {
-                        "index": 0,
-                        "value": 0,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "index": 1,
-                        "value": {
+                        "t": 0,
+                        "event": {
                             "name": {
                                 "value": {
-                                    "name": "$ENV",
-                                    "type": "Array"
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 0,
+                            "value": 0,
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "name": {
+                                "value": {
+                                    "name": "$REF",
+                                    "type": "Variable"
                                 },
                                 "type": "Number"
                             },
                             "index": 1,
-                            "type": "Array"
-                        },
-                        "ev": "SetArray"
+                            "value": 0,
+                            "ev": "SetArray"
+                        }
                     },
                     {
-                        "name": "$RTAG",
-                        "value": 0,
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": "$RETURN",
-                        "value": 0,
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "name": {
-                            "value": {
-                                "index": 1,
-                                "type": "Array"
+                        "t": 0,
+                        "event": {
+                            "name": {
+                                "value": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
                             },
-                            "type": "Number"
-                        },
-                        "index": 0,
-                        "value": -1,
-                        "ev": "SetArray"
+                            "index": 2,
+                            "value": 0,
+                            "ev": "SetArray"
+                        }
                     },
                     {
-                        "name": {
-                            "value": {
-                                "index": 1,
-                                "type": "Array"
+                        "t": 0,
+                        "event": {
+                            "name": {
+                                "value": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
                             },
-                            "type": "Number"
-                        },
-                        "index": 1,
-                        "value": {
-                            "value1": {
+                            "index": 3,
+                            "value": 0,
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "text": "starting",
+                            "ev": "Log"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "index": 3,
+                            "value": 0,
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "target": {
+                                "condition": {
+                                    "value1": {
+                                        "name": {
+                                            "value": {
+                                                "index": 1,
+                                                "type": "Array"
+                                            },
+                                            "type": "Number"
+                                        },
+                                        "index": 0,
+                                        "type": "Array"
+                                    },
+                                    "value2": 0,
+                                    "mode": "NotEqual",
+                                    "type": "Compare"
+                                },
+                                "yes": 10,
+                                "no": 16,
+                                "type": "If"
+                            },
+                            "ev": "Jump"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "condition": {
+                                "value1": {
+                                    "name": {
+                                        "value": {
+                                            "index": 1,
+                                            "type": "Array"
+                                        },
+                                        "type": "Number"
+                                    },
+                                    "index": 0,
+                                    "type": "Array"
+                                },
+                                "value2": 0,
+                                "mode": "NotEqual",
+                                "type": "Compare"
+                            },
+                            "ev": "Wait"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "index": 3,
+                            "value": {
+                                "value1": {
+                                    "attribute": "StreamTime",
+                                    "type": "System"
+                                },
+                                "value2": {
+                                    "name": {
+                                        "value": {
+                                            "index": 1,
+                                            "type": "Array"
+                                        },
+                                        "type": "Number"
+                                    },
+                                    "index": 3,
+                                    "type": "Array"
+                                },
+                                "operator": "Add",
+                                "type": "Math"
+                            },
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "condition": {
+                                "value1": {
+                                    "attribute": "StreamTime",
+                                    "type": "System"
+                                },
+                                "value2": {
+                                    "index": 3,
+                                    "type": "Array"
+                                },
+                                "mode": "GreaterEqual",
+                                "type": "Compare"
+                            },
+                            "ev": "Wait"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "index": 4,
+                            "value": {
                                 "name": {
                                     "value": {
                                         "index": 1,
@@ -1281,44 +795,273 @@
                                 "index": 1,
                                 "type": "Array"
                             },
-                            "value2": 1,
-                            "operator": "Add",
-                            "type": "Math"
-                        },
-                        "ev": "SetArray"
+                            "ev": "SetArray"
+                        }
                     },
                     {
-                        "name": "$RTAG",
-                        "value": {
+                        "t": 0,
+                        "event": {
+                            "index": 5,
+                            "value": {
+                                "name": {
+                                    "value": {
+                                        "index": 1,
+                                        "type": "Array"
+                                    },
+                                    "type": "Number"
+                                },
+                                "index": 2,
+                                "type": "Array"
+                            },
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "target": 18,
+                            "ev": "Jump"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "index": 4,
+                            "value": {
+                                "index": 0,
+                                "type": "Array"
+                            },
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "index": 5,
+                            "value": {
+                                "index": 1,
+                                "type": "Array"
+                            },
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "index": 2,
+                            "value": {
+                                "index": 4,
+                                "type": "Array"
+                            },
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "index": 3,
+                            "value": {
+                                "index": 5,
+                                "type": "Array"
+                            },
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "text": {
+                                "value": {
+                                    "index": 3,
+                                    "type": "Array"
+                                },
+                                "type": "Number"
+                            },
+                            "ev": "Log"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "text": "ending",
+                            "ev": "Log"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
                             "name": {
                                 "value": {
-                                    "index": 1,
-                                    "type": "Array"
+                                    "name": "$REF",
+                                    "type": "Variable"
                                 },
                                 "type": "Number"
                             },
                             "index": 0,
-                            "type": "Array"
-                        },
-                        "ev": "SetVariable"
+                            "value": 1,
+                            "ev": "SetArray"
+                        }
                     },
                     {
-                        "name": "$RETURN",
-                        "value": {
+                        "t": 0,
+                        "event": {
                             "name": {
                                 "value": {
-                                    "index": 1,
-                                    "type": "Array"
+                                    "name": "$REF",
+                                    "type": "Variable"
                                 },
                                 "type": "Number"
                             },
                             "index": 1,
-                            "type": "Array"
-                        },
-                        "ev": "SetVariable"
+                            "value": {
+                                "index": 2,
+                                "type": "Array"
+                            },
+                            "ev": "SetArray"
+                        }
                     },
                     {
-                        "ev": "StopStream"
+                        "t": 0,
+                        "event": {
+                            "name": {
+                                "value": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 2,
+                            "value": {
+                                "index": 3,
+                                "type": "Array"
+                            },
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "name": {
+                                "value": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 3,
+                            "value": 0,
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "name": "$RTAG",
+                            "value": -4,
+                            "ev": "SetVariable"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "name": "$RETURN",
+                            "value": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "ev": "SetVariable"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "ev": "StopStream"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "name": {
+                                "value": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 0,
+                            "value": 1,
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "name": {
+                                "value": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 1,
+                            "value": 0,
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "name": {
+                                "value": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 2,
+                            "value": 0,
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "name": {
+                                "value": {
+                                    "name": "$REF",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 3,
+                            "value": 0,
+                            "ev": "SetArray"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "name": "$RTAG",
+                            "value": -4,
+                            "ev": "SetVariable"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "name": "$RETURN",
+                            "value": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "ev": "SetVariable"
+                        }
+                    },
+                    {
+                        "t": 0,
+                        "event": {
+                            "ev": "StopStream"
+                        }
                     }
                 ],
                 "timingMode": "SongStart"

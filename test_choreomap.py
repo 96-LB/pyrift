@@ -1,38 +1,24 @@
-x = 2 + 3
-print(x)
-print(x > 3)
+from typing import Coroutine
 
-# TODO:
-# make if expression lazily evaluate branches
-
-def gcd(x: float, y: float) -> float:
-    print(f'gcd called with {x} and {y}')
-    return gcd(y, x % y) if y else x
-
-d = gcd(8 * 9 * x, 4 * 3 * 25)
-print(f'x = {x}')
-print(f'd = {d}')
+from pyrift.choreomaps.external import wait
 
 
-count = 1
-def make_counter():
-    count = 0
-    def counter():
-        nonlocal count
-        count += 1
-        return count
-    return counter
+
+async def normal():
+    print(0)
+    await wait(1)
+    print(1)
+    await wait(2)
+    print(2)
+    return 3
 
 
-counter1 = make_counter()
-counter2 = make_counter()
+async def wrap[T](coroutine: Coroutine[None, None, T]) -> T:
+    print('starting')
+    x = await coroutine
+    print(x)
+    print('ending')
+    return x
 
 
-print(f'counter1: {counter1()}')
-print(f'counter1: {counter1()}')
-print(f'counter1: {counter1()}')
-print(f'counter1: {counter1()}')
-print(f'counter2: {counter2()}')
-print(f'counter2: {counter2()}')
-print(f'counter1: {counter1()}')
-print(f'counter1: {counter1()}')
+_ = wrap(normal())

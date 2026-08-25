@@ -1,6 +1,7 @@
 from collections.abc import Generator, Iterable
 from contextlib import contextmanager
 
+from pyrift.choreomaps.ir.expression import AwaitExpression
 from pyrift.choreomaps.ir.instruction import DeclareVariablesInstruction
 from pyrift.jobj import JList, JObj
 
@@ -15,7 +16,6 @@ from .ir import (
     IfExpression,
     IfInstruction,
     JoinExpression,
-    LogInstruction,
     NotExpression,
     NullExpression,
     NullInstruction,
@@ -40,6 +40,10 @@ class Scope(JObj):
     
     def filter_args(self, *types: VarType):
         return ((i, var) for i, (var, var_type) in enumerate(zip(self.vars, self.types)) if var_type in types)
+    
+    @classmethod
+    def empty(cls):
+        return cls((), (), 0)
 
 
 class ScopeAnalyzer:
@@ -48,7 +52,6 @@ class ScopeAnalyzer:
         self.vars: dict[str, VarType] = {}
         self.argc: int = 0
         self.type = VarType.LOCAL if self.parent else VarType.GLOBAL
-    
     
     def declare(self, name: str, type: VarType | None = None):
         if name in self.vars:
@@ -135,9 +138,9 @@ class ChoreomapAnalyzer:
             case (
                 ReturnInstruction(expr)
                 | SetVariableInstruction(_, expr)
-                | LogInstruction(expr)
                 | NotExpression(expr)
                 | UnaryExpression(expr)
+                | AwaitExpression(expr)
             ):
                 self.visit_inst(expr)
             

@@ -27,11 +27,9 @@ class BaseEvent(JObj):
     '''
     Attributes:
         TYPE: Event type
-        t: Time that the event is triggered, in seconds
     '''
     
     TYPE: ClassVar[str]
-    # t: float # TODO: hmm how to deal with time
     
     def __init_subclass__(cls, type: str):
         super().__init_subclass__()
@@ -438,8 +436,21 @@ class LogEvent(BaseEvent, type='Log'):
     
     text: String
 
+
 class SetArrayStringEvent(BaseEvent, type='SetArrayString'):
     # TODO
     
     name: String | None = None
     string: String | None = None
+
+
+class EventBackend(JObj):
+    t: float
+    event: BaseEvent
+    
+    @override
+    def to_json_obj(self):
+        return {
+            't': self.t,
+            'event': self.event.to_json_obj()
+        }

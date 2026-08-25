@@ -1,17 +1,22 @@
-__all__ = ('print',)
-
-
 import inspect
+from asyncio import sleep
 from builtins import print as builtin_print
 from collections.abc import Callable
 from enum import Enum, auto
-from time import sleep
-from typing import override
+from typing import Concatenate, override
 
 from pyrift.jobj import JList, JObj
 
-from .backend import BaseEvent, BaseValue, Condition, LogEvent, String, Value, WaitEvent
-from .ir import BaseExpression
+from .backend import (
+    BaseValue,
+    Condition,
+    IfEvent,
+    LogEvent,
+    String,
+    Value,
+    WaitEvent,
+)
+from .context import StreamContext
 from .vars import Tag
 
 EXTERNALS: dict[str, ExternalValue] = {}
@@ -25,25 +30,24 @@ class ExternalArg(JObj):
     name: str
     type: ExternalArgType
 
-class ExternalExpression(BaseExpression):
-    events: JList[BaseEvent]
-    tag: Value
-    value: Value | Condition | String
-
 class ExternalValue(BaseValue, type='$EXTERNAL'):
-    func: Callable[..., ExternalExpression]
+    func: ExternalFuncType
     args: JList[ExternalArg]
+    is_async: bool
     
     @override
     def to_json_obj(self) -> None:
         raise NotImplementedError('External function cannot be converted to JSON object.')
 
-def external_func(func: Callable[..., ExternalExpression]):
+
+type ExternalFuncType = Callable[Concatenate[StreamContext, ...], tuple[Value, Value | Condition | String]]
+
+def register_external(func: ExternalFuncType, is_async: bool):
     def decorator[**P, T](stub: Callable[P, T]) -> Callable[P, T]:
         name = stub.__name__
         spec = inspect.getfullargspec(func)
         args: list[ExternalArg] = []
-        for arg in spec.args:
+        for arg in spec.args[1:]:
             type = {
                 Value: ExternalArgType.VALUE,
                 Condition: ExternalArgType.CONDITION,
@@ -51,30 +55,49 @@ def external_func(func: Callable[..., ExternalExpression]):
                 None: None # for type-checking
             }.get(spec.annotations.get(arg))
             if not type:
-                raise ValueError(f'Invalid type for argument "{arg}" of {name}: {spec.annotations.get(arg)}')
+                raise ValueError(f'Invalid type for argument "{arg}" of {func.__name__}: {spec.annotations.get(arg)}')
             args.append(ExternalArg(arg, type))
-        EXTERNALS[name] = ExternalValue(func, tuple(args))
+        EXTERNALS[name] = ExternalValue(func, tuple(args), is_async)
         return stub
     return decorator
 
-def print_external(text: String):
-    return ExternalExpression(
-        events=(LogEvent(text),),
-        tag=Tag.STRING,
-        value=text
-    )
+def external_func(func: ExternalFuncType):
+    return register_external(func, is_async=False)
+
+def external_coroutine(func: ExternalFuncType):
+    return register_external(func, is_async=True)
+
+
+def print_external(ctx: StreamContext, text: String):
+    ctx.add_event(LogEvent(text))
+    return Tag.STRING, text
 
 @external_func(print_external)
 def print[T](text: T) -> T:
     builtin_print(text)
     return text
 
-async def wait_external(seconds: Value):
-    return ExternalExpression(
-        events=(WaitEvent()),
-        tag=Tag.COROUTINE,
-        value=
-    )
 
-async def wait(seconds: float):
-    sleep(seconds)
+def wait_external(ctx: StreamContext, seconds: Value):
+    ctx.wait(seconds)
+    return Tag.NONE, 0
+
+@external_coroutine(wait_external)
+async def wait(seconds: float | None = None):
+    await sleep(seconds or 0)
+
+
+def wait_until_external(ctx: StreamContext, condition: Condition):
+    ctx.upgrade_timekeeping()
+    
+    # we don't wait directly on the condition because we need to re-evaluate side effects
+    ctx.add_event(WaitEvent())
+    ctx.add_event(IfEvent(condition, ctx.jump_up_stack(), None))
+    
+    return Tag.NONE, 0
+
+@external_coroutine(wait_until_external)
+async def wait_until(condition: bool):
+    if not condition:
+        # TODO: we probably don't want to softlock the compiler
+        await sleep(0)

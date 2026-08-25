@@ -38,6 +38,3 @@ class SetAttributeInstruction(BaseInstruction):
 
 class ReturnInstruction(BaseInstruction):
     expr: BaseExpression
-
-class LogInstruction(BaseInstruction):
-    text: BaseExpression

@@ -1,11 +1,7 @@
 import ast
 from typing import override
 
-from .backend import (
-    BinaryOperator,
-    UnaryOperator,
-)
-from .enum import ComparisonMode
+from .enum import BinaryOperator, ComparisonMode, UnaryOperator
 from .ir import (
     AndExpression,
     AwaitExpression,
