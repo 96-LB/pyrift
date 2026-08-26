@@ -81,7 +81,7 @@ class VariableValue(BaseValue, type='Variable'):
         name: Name of the variable to read from.
     '''
     
-    name: str
+    name: String
 
 
 class ArrayValue(BaseValue, type='Array'):
@@ -136,7 +136,7 @@ class SpriteFindIDValue(BaseValue, type='SpriteFindID'):
     '''
     
     id: Value
-    path: str | None = None
+    path: String | None = None
 
 
 class SpriteAttributeValue(BaseValue, type='SpriteAttribute'):

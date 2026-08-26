@@ -8,6 +8,7 @@ class Sound(JObj):
         events: Relative audio file path for custom sound files
         timing_mode: FMOD audio bus name for custom sound files
     '''
+    
     fmod: str | None = None
     path: str | None = None
     bus: str | None = None

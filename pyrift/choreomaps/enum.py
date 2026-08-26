@@ -225,6 +225,10 @@ class VisualType(Enum):
     GRAPHIC = 'Graphic'
     GRAPHIC_MASK = 'GraphicMask'
 
+class NumberFormat(Enum):
+    FLOAT = "Float"
+    INT = "Int"
+
 class InputRating(Enum):
     MISS = 'Miss'
     OK = 'Ok'

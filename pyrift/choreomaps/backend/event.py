@@ -11,6 +11,7 @@ from ..enum import (
     ButtonMask,
     EntityAttribute,
     GraphicType,
+    MoveLerp,
     ScoreType,
     SpriteAttribute,
     Statistic,
@@ -95,7 +96,7 @@ class MoveEvent(BaseEvent, type='Move'):
     x: Value | None = None
     y: Value | None = None
     facing_x: Value | None = None
-    lerp: Value | None = None
+    lerp: MoveLerp | None = None
 
 
 class StatusAddEvent(BaseEvent, type='StatusAdd'):
@@ -117,7 +118,7 @@ class StatusRemoveEvent(BaseEvent, type='StatusRemove'):
     '''
     
     id: Value
-    status: Value
+    status: Status
 
 
 class HitVfxEvent(BaseEvent, type='HitVfx'):
@@ -161,7 +162,7 @@ class SoundEvent(BaseEvent, type='Sound'):
     sound: Value | None = None
     id: Value | None = None
     delay: Value | None = None
-    apply_latency: Value | None = None
+    apply_latency: Condition | None = None
     fade_in: Value | None = None
     lane: Value | None = None
     volume: Value | None = None
@@ -273,7 +274,7 @@ class StatEvent(BaseEvent, type='Stat'):
         amount: Amount to change stat by (if nil, 1)
     '''
     
-    type: String
+    type: str
     stat: Statistic
     amount: int | None = None
 
@@ -416,6 +417,18 @@ class SetArrayEvent(BaseEvent, type='SetArray'):
     value: Value | None = None
 
 
+
+class SetArrayStringEvent(BaseEvent, type='SetArrayString'):
+    '''
+    Attributes:
+        name: Name of the array to modify, or nil for the stream's local variables array
+        string: String to convert to UTF-32 and write to the array
+    '''
+    
+    name: String | None = None
+    string: String | None = None
+
+
 class SetVariableEvent(BaseEvent, type='SetVariable'):
     '''
     Attributes:
@@ -423,7 +436,7 @@ class SetVariableEvent(BaseEvent, type='SetVariable'):
         value: Value to write to the variable
     '''
     
-    name: str
+    name: String
     value: Value
 
 
@@ -435,13 +448,6 @@ class LogEvent(BaseEvent, type='Log'):
     '''
     
     text: String
-
-
-class SetArrayStringEvent(BaseEvent, type='SetArrayString'):
-    # TODO
-    
-    name: String | None = None
-    string: String | None = None
 
 
 class EventBackend(JObj):

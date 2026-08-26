@@ -28,18 +28,6 @@ class BaseCondition(JObj):
     def to_dict(self):
         return {**super().to_dict(), 'type': self.TYPE}
 
-# class ConstantCondition(BaseCondition, type='Constant'):
-#     '''
-#     Attributes:
-#         value: Logical constant value
-#     '''
-    
-#     value: bool
-    
-#     @override
-#     def to_json_obj(self):
-#         return self.value
-
 
 class AndCondition(BaseCondition, type='And'):
     '''
