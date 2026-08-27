@@ -1,6 +1,7 @@
 from collections.abc import Callable, Generator, Iterable
 from contextlib import contextmanager
 from functools import wraps
+from typing import Literal
 
 from .analysis import Analysis, ChoreomapAnalyzer, VarType
 from .backend import (
@@ -99,6 +100,21 @@ class ChoreomapCompiler:
             self.add_event(SetArrayEvent(name, index=i, value=value))
         return ref
     
+    def allocate_to_temp(self, *values: Value) -> tuple[Literal[Tag.NONE], Value]:
+        ref = self.allocate(*values)
+        tag_index, value_index = self.context.allocate_temp()
+        self.add_event(SetArrayEvent(None, tag_index, Tag.NONE))
+        self.add_event(SetArrayEvent(None, value_index, ref))
+        return Tag.NONE, ArrayValue(None, value_index)
+    
+    def allocate_string(self, string: String) -> tuple[Literal[Tag.STRING], Value]:
+        ref = self.allocate()
+        tag_index, value_index = self.context.allocate_temp()
+        self.add_event(SetArrayStringEvent(NumberString(ref), string))
+        self.add_event(SetArrayEvent(None, tag_index, Tag.STRING))
+        self.add_event(SetArrayEvent(None, value_index, ref))
+        return Tag.STRING, ArrayValue(None, value_index)
+    
     def deref(self, ref: Value, index: Value) -> Value:
         return ArrayValue(NumberString(ref), index)
     
@@ -154,8 +170,7 @@ class ChoreomapCompiler:
         # set default return value to None
         # async functions allocate a coroutine object to store their return value
         if is_async:
-            async_pointer = self.allocate(0, Tag.NONE, 0, 0)
-            # TODO: IMPORTANT! TODO: TODO: TODO: need to actually store the async pointer somewhere :)
+            _, async_pointer = self.allocate_to_temp(0, Tag.NONE, 0, 0)
             self.context.make_async(async_pointer)
         
         # execute inner code
@@ -280,7 +295,7 @@ class ChoreomapCompiler:
                         values.append(ArrayValue(None, value_index))
                 
                 # create and return the closure
-                ref = self.allocate(*values) # TODO: this could be a problem?
+                _, ref = self.allocate_to_temp(*values) # TODO: this probably yields unnecessary allocations
                 return Tag.FUNCTION, ref
                 
             case VariableExpression(name):
@@ -458,9 +473,8 @@ class ChoreomapCompiler:
             case BaseValue() | float() | int():
                 return tag, value
             case BaseString() | str():
-                ref = self.allocate() # TODO: this could be a problem?
-                self.add_event(SetArrayStringEvent(NumberString(ref), value)) # TODO: THIS IS REALLY BAD
-                return Tag.STRING, ref
+                # TODO: we should be interning strings
+                return self.allocate_string(value)
     
     def visit_condition(self, node: BaseExpression) -> Condition:
         tag, value = self.visit_expr(node)

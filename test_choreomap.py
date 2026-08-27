@@ -3,9 +3,12 @@ from typing import Coroutine
 from pyrift.choreomaps.external import wait
 
 
-x = 1
-async def f():
-    await x
+print("test" + "test2")
+
+
+# x = 1
+# async def f():
+#     await x
 
 
 # async def normal():
