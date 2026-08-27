@@ -52,7 +52,7 @@ class NumberString(BaseString, type='Number'):
     Attributes:
         value: Number to convert to string
         format: Number format to use
-    ''' # TODO: update
+    '''
     
     value: Value
     format: NumberFormat | None = None

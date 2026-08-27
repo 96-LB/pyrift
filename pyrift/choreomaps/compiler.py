@@ -2,7 +2,7 @@ from collections.abc import Callable, Generator, Iterable
 from contextlib import contextmanager
 from functools import wraps
 
-from .analysis import Analysis, ChoreomapAnalyzer, Scope, VarType
+from .analysis import Analysis, ChoreomapAnalyzer, VarType
 from .backend import (
     AndCondition,
     ArrayValue,
@@ -32,7 +32,7 @@ from .backend import (
     WaitEvent,
 )
 from .choreomap import Choreomap
-from .context import StreamContext
+from .context import BaseContext, MatchContext, NullContext, StreamContext, TagContext
 from .enum import BinaryOperator, ComparisonMode
 from .external import ExternalArgType, ExternalValue
 from .ir import (
@@ -67,20 +67,27 @@ class ChoreomapCompiler:
         self.streams: list[StreamContext] = []
         self.analysis: Analysis = Analysis(())
         self.externals: dict[str, ExternalValue] = {}
-        self.context: StreamContext = StreamContext(Scope.empty())
+        self.context: BaseContext = NullContext()
     
     def add_event(self, event: BaseEvent) -> None:
         self.context.add_event(event)
     
-    def lookup(self, name: str) -> tuple[int, VarType]:
-        index = 0
-        for i in range(len(self.context.scope.vars)):
-            var_type = self.context.scope.types[i]
-            if self.context.scope.vars[i] == name:
-                return index, var_type
-            if var_type in (VarType.LOCAL, VarType.CAPTURED, VarType.NONLOCAL):
-                index += 2
-        raise ValueError(f'Unknown variable {name}.')
+    @contextmanager
+    def match(self, tag: Value):
+        # store old context and make new one
+        old_context = self.context
+        context = TagContext(self.context, Tag(tag)) if isinstance(tag, (Tag, int)) else MatchContext(self.context, tag)
+        self.context = context
+        
+        # execute inner code
+        with context:
+            yield context
+        
+        if self.context is not context:
+            raise ValueError('Scope nesting invariant was violated. This should only happen if scopes are being created manually.')
+        
+        # finalize stream and restore old values
+        self.context = old_context
     
     def allocate(self, *values: Value) -> Value:
         ref = VariableValue('$REF')
@@ -148,6 +155,7 @@ class ChoreomapCompiler:
         # async functions allocate a coroutine object to store their return value
         if is_async:
             async_pointer = self.allocate(0, Tag.NONE, 0, 0)
+            # TODO: IMPORTANT! TODO: TODO: TODO: need to actually store the async pointer somewhere :)
             self.context.make_async(async_pointer)
         
         # execute inner code
@@ -157,7 +165,7 @@ class ChoreomapCompiler:
             raise ValueError('Scope nesting invariant was violated. This should only happen if scopes are being created manually.')
         
         # finalize stream and restore old values
-        context.return_value()
+        context.return_value(Tag.NONE, 0)
         self.context = old_context
     
     @staticmethod
@@ -201,7 +209,7 @@ class ChoreomapCompiler:
                 self.visit_expr(node)
             
             case SetVariableInstruction(name, expr):
-                index, var_type = self.lookup(name)
+                index, var_type = self.context.lookup(name)
                 
                 tag, value = self.visit_value(expr)
                 match var_type:
@@ -222,28 +230,28 @@ class ChoreomapCompiler:
                         raise NotImplementedError('Setting external variables is unsupported.')
             
             case IfInstruction(condition, yes, no):
-                self.context.upgrade_timekeeping()
+                self.context.begin_control_flow()
                 condition = self.visit_condition(condition)
                 
                 self.add_event(BaseEvent()) # placeholder jump
-                yes_index = len(self.context.events)
+                yes_index = len(self.context)
                 
                 for inst in yes:
                     self.visit_inst(inst)
                 
                 self.add_event(BaseEvent()) # placeholder jump
-                no_index = len(self.context.events)
+                no_index = len(self.context)
                 
                 for inst in no:
                     self.visit_inst(inst)
                 
-                end_index = len(self.context.events)
+                end_index = len(self.context)
                 self.context.replace_event(yes_index - 1, JumpEvent(IfValue(condition, yes_index, no_index)))
                 self.context.replace_event(no_index - 1, JumpEvent(end_index))
             
             case ReturnInstruction(expr):
                 tag, value = self.visit_value(expr)
-                self.context.return_value((tag, value))
+                self.context.return_value(tag, value)
             
             case _:
                 raise NotImplementedError(f'Unsupported instruction: {type(node)}')
@@ -268,15 +276,15 @@ class ChoreomapCompiler:
                 values: list[Value] = [stream_id]
                 for var, var_type in zip(scope.vars, scope.types):
                     if var_type is VarType.NONLOCAL:
-                        value_index = self.lookup(var)[0] + 1 # lookup returns the tag index
+                        value_index = self.context.lookup(var)[0] + 1 # lookup returns the tag index
                         values.append(ArrayValue(None, value_index))
                 
                 # create and return the closure
-                ref = self.allocate(*values)
+                ref = self.allocate(*values) # TODO: this could be a problem?
                 return Tag.FUNCTION, ref
                 
             case VariableExpression(name):
-                value_index, var_type = self.lookup(name)
+                value_index, var_type = self.context.lookup(name)
                 
                 match var_type:
                     case VarType.LOCAL:
@@ -330,24 +338,25 @@ class ChoreomapCompiler:
             case IfExpression(condition, yes, no):
                 # since visit_value can add events, we need to use control flow
                 # otherwise, we'd always be evaluating both branches
-                self.context.upgrade_timekeeping()
+                self.context.begin_control_flow()
                 tag_index, value_index = self.context.allocate_temp()
                 
                 self.add_event(BaseEvent()) # placeholder jump
-                yes_index = len(self.context.events)
+                yes_index = len(self.context)
                 
                 ytag, yes = self.visit_value(yes)
                 self.add_event(SetArrayEvent(None, tag_index, ytag))
                 self.add_event(SetArrayEvent(None, value_index, yes))
                 
                 self.add_event(BaseEvent()) # placeholder jump
-                no_index = len(self.context.events)
+                no_index = len(self.context)
                 
                 ntag, no = self.visit_value(no)
                 self.add_event(SetArrayEvent(None, tag_index, ntag))
                 self.add_event(SetArrayEvent(None, value_index, no))
                 
-                end_index = len(self.context.events)
+                # TODO: we can do these jumps simpler i think
+                end_index = len(self.context)
                 condition = self.visit_condition(condition)
                 self.context.replace_event(yes_index - 1, JumpEvent(IfValue(condition, yes_index, no_index)))
                 self.context.replace_event(no_index - 1, JumpEvent(end_index))
@@ -415,15 +424,15 @@ class ChoreomapCompiler:
                     return Tag.NUMBER, AndCondition(conditions)
             
             case AwaitExpression(expr):
-                if not self.context.async_ref:
+                if not self.context.is_async:
                     raise ValueError('Await expression encountered in synchronous context.')
                 
                 tag, value = self.visit_value(expr)
                 if isinstance(value, ExternalValue):
                     return tag, value
                 
-                match tag:
-                    case Tag.COROUTINE:
+                with self.match(tag) as match:
+                    with match.case(Tag.COROUTINE):
                         finished = self.deref(value, 0)
                         rtag = self.deref(value, 1)
                         rval = self.deref(value, 2)
@@ -431,42 +440,12 @@ class ChoreomapCompiler:
                         condition = CompareCondition(finished, 0, ComparisonMode.NOT_EQUAL)
                         self.add_event(WaitEvent(condition))
                         self.context.wait(t) # update local timekeeping
-                        return rtag, rval
+                        match.return_value(rtag, rval)
                     
-                    case Tag(tag) | int(tag):
-                        # TODO: maybe error here
-                        return tag, value
-                    
-                    case tag: # TODO: generalize if statements? we'll need to do this runtime check in a lot of places
-                        # dynamic runtime check
-                        self.context.upgrade_timekeeping()
-                        tag_index, value_index = self.context.allocate_temp()
-                        
-                        self.add_event(BaseEvent()) # placeholder jump
-                        yes_index = len(self.context.events)
-                        
-                        finished = self.deref(value, 0)
-                        rtag = self.deref(value, 1)
-                        rval = self.deref(value, 2)
-                        t = self.deref(value, 3)
-                        condition = CompareCondition(finished, 0, ComparisonMode.NOT_EQUAL)
-                        self.add_event(WaitEvent(condition))
-                        self.context.wait(t) # update local timekeeping
-                        
-                        self.add_event(SetArrayEvent(None, tag_index, rtag))
-                        self.add_event(SetArrayEvent(None, value_index, rval))
-                        
-                        self.add_event(BaseEvent()) # placeholder jump
-                        no_index = len(self.context.events)
-                        
-                        self.add_event(SetArrayEvent(None, tag_index, tag))
-                        self.add_event(SetArrayEvent(None, value_index, value))
-                        
-                        end_index = len(self.context.events)
-                        self.context.replace_event(yes_index - 1, JumpEvent(IfValue(condition, yes_index, no_index)))
-                        self.context.replace_event(no_index - 1, JumpEvent(end_index))
-                        
-                        return ArrayValue(None, tag_index), ArrayValue(None, value_index)
+                    with match.default():
+                        match.return_value(tag, value)
+                
+                return match.output
             
             case _:
                 raise NotImplementedError(f'Unsupported expression: {type(node).__name__}')
@@ -479,7 +458,7 @@ class ChoreomapCompiler:
             case BaseValue() | float() | int():
                 return tag, value
             case BaseString() | str():
-                ref = self.allocate()
+                ref = self.allocate() # TODO: this could be a problem?
                 self.add_event(SetArrayStringEvent(NumberString(ref), value)) # TODO: THIS IS REALLY BAD
                 return Tag.STRING, ref
     

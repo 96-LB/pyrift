@@ -16,7 +16,7 @@ from .backend import (
     Value,
     WaitEvent,
 )
-from .context import StreamContext
+from .context import BaseContext
 from .vars import Tag
 
 EXTERNALS: dict[str, ExternalValue] = {}
@@ -40,7 +40,7 @@ class ExternalValue(BaseValue, type='$EXTERNAL'):
         raise NotImplementedError('External function cannot be converted to JSON object.')
 
 
-type ExternalFuncType = Callable[Concatenate[StreamContext, ...], tuple[Value, Value | Condition | String]]
+type ExternalFuncType = Callable[Concatenate[BaseContext, ...], tuple[Value, Value | Condition | String]]
 
 def register_external(func: ExternalFuncType, is_async: bool):
     def decorator[**P, T](stub: Callable[P, T]) -> Callable[P, T]:
@@ -68,7 +68,7 @@ def external_coroutine(func: ExternalFuncType):
     return register_external(func, is_async=True)
 
 
-def print_external(ctx: StreamContext, text: String):
+def print_external(ctx: BaseContext, text: String):
     ctx.add_event(LogEvent(text))
     return Tag.STRING, text
 
@@ -78,7 +78,7 @@ def print[T](text: T) -> T:
     return text
 
 
-def wait_external(ctx: StreamContext, seconds: Value):
+def wait_external(ctx: BaseContext, seconds: Value):
     ctx.wait(seconds)
     return Tag.NONE, 0
 
@@ -87,8 +87,8 @@ async def wait(seconds: float | None = None):
     await sleep(seconds or 0)
 
 
-def wait_until_external(ctx: StreamContext, condition: Condition):
-    ctx.upgrade_timekeeping()
+def wait_until_external(ctx: BaseContext, condition: Condition):
+    ctx.begin_control_flow()
     
     # we don't wait directly on the condition because we need to re-evaluate side effects
     ctx.add_event(WaitEvent())
