@@ -1,16 +1,16 @@
 from collections.abc import Generator, Iterable
 from contextlib import contextmanager
 
-from pyrift.choreomaps.ir.expression import AwaitExpression
-from pyrift.choreomaps.ir.instruction import DeclareVariablesInstruction
 from pyrift.jobj import JList, JObj
 
 from .ir import (
+    AwaitExpression,
     BaseInstruction,
     BinaryExpression,
     BooleanExpression,
     CallExpression,
     CompareExpression,
+    DeclareVariablesInstruction,
     FormatExpression,
     FunctionExpression,
     IfExpression,

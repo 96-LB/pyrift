@@ -1,13 +1,13 @@
-from functools import wraps
 import inspect
 from asyncio import sleep
 from builtins import print as builtin_print
-from collections.abc import Callable
 from enum import Enum, auto
+from functools import wraps
 from itertools import islice
 from typing import Any, Concatenate, override
 
 from pyrift.jobj import JList, JObj
+from pyrift.util.typing import F
 
 from .backend import (
     BaseValue,
@@ -41,10 +41,10 @@ class ExternalValue(BaseValue, type='$EXTERNAL'):
         raise NotImplementedError('External function cannot be converted to JSON object.')
 
 
-type ExternalFuncType = Callable[Concatenate[BaseContext, ...], tuple[Value, Value | Condition | String]]
+type ExternalFuncType = F[Concatenate[BaseContext, ...], tuple[Value, Value | Condition | String]]
 
 def register_external(func: ExternalFuncType, is_async: bool):
-    def decorator[**P, T](stub: Callable[P, T]) -> Callable[P, T]:
+    def decorator[**P, T](stub: F[P, T]) -> F[P, T]:
         name = stub.__name__
         sig = inspect.signature(func)
         args: list[ExternalArg] = []

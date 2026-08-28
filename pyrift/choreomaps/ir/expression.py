@@ -1,6 +1,6 @@
-from pyrift.choreomaps.enum import BinaryOperator, ComparisonMode, UnaryOperator
 from pyrift.jobj import JList
 
+from ..enum import BinaryOperator, ComparisonMode, UnaryOperator
 from .instruction import BaseInstruction
 
 
