@@ -1,8 +1,10 @@
-from collections.abc import Callable, Generator, Iterable
+from collections.abc import Generator, Iterable
 from contextlib import contextmanager
-from functools import reduce, wraps
+from functools import reduce
 from typing import Literal
 
+from ..util.decorators import decorates
+from ..util.typing import F
 from .analysis import Analysis, ChoreomapAnalyzer, VarType
 from .backend import (
     AndCondition,
@@ -63,6 +65,14 @@ from .ir import (
 )
 from .vars import Tag
 
+
+@decorates
+def push_stack[T: BaseInstruction, R](func: F[[ChoreomapCompiler, T], R], self: ChoreomapCompiler, inst: T) -> R:
+    # TODO: i would like this to be a static method but pyright disagrees
+    self.context.push_stack(inst, len(self.streams))
+    output = func(self, inst)
+    self.context.pop_stack()
+    return output
 
 class ChoreomapCompiler:
     def __init__(self):
@@ -183,16 +193,6 @@ class ChoreomapCompiler:
         # finalize stream and restore old values
         context.return_value(Tag.NONE, 0)
         self.context = old_context
-    
-    @staticmethod
-    def push_stack[T: BaseInstruction, R](func: Callable[[ChoreomapCompiler, T], R]) -> Callable[[ChoreomapCompiler, T], R]:
-        @wraps(func) # TODO: import decorates_self?
-        def wrapper(self: ChoreomapCompiler, inst: T):
-            self.context.push_stack(inst, len(self.streams))
-            output = func(self, inst)
-            self.context.pop_stack()
-            return output
-        return wrapper
     
     def compile(self, script: Script, externals: dict[str, ExternalValue]):
         analysis = ChoreomapAnalyzer().analyze(script)
@@ -505,12 +505,13 @@ class ChoreomapCompiler:
                 if isinstance(tag, Tag):
                     return mapping.get(tag, False)
                 else:
-                    return OrCondition(
-                        tuple(
-                            AndCondition((CompareCondition(tag, t, ComparisonMode.EQUAL), mapping[t]))
-                            for t in Tag
-                        )
+                    conditions = tuple(
+                        CompareCondition(tag, t, ComparisonMode.EQUAL)
+                        if mapping[t] is True
+                        else AndCondition((CompareCondition(tag, t, ComparisonMode.EQUAL), mapping[t]))
+                        for t in Tag if mapping[t] is not False
                     )
+                    return OrCondition(conditions)
     
     def visit_str(self, node: BaseExpression) -> String:
         tag, value = self.visit_expr(node)
@@ -536,10 +537,10 @@ class ChoreomapCompiler:
                 }
                 
                 if isinstance(tag, Tag):
-                    return mapping.get(tag, f'<unknown>')
+                    return mapping.get(tag, '<unknown>')
                 else:
                     return reduce(
                         lambda acc, t: IfString(CompareCondition(tag, t, ComparisonMode.EQUAL), mapping[t], acc),
                         Tag,
-                        f'<unknown>'
+                        '<unknown>'
                     )

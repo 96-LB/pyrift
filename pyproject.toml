@@ -25,9 +25,12 @@ Issues = "https://github.com/96-LB/pyrift/issues"
 [tool.hatch.build.targets.wheel]
 packages = ["pyrift"]
 
+[tool.isort]
+profile = "black"
+
 [tool.pyright]
 venv = ".venv"
 typeCheckingMode = "strict"
 
-[tool.isort]
-profile = "black"
+[tool.ruff]
+exclude = ["test_choreomap.py"]

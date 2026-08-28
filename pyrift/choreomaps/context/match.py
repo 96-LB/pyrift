@@ -21,7 +21,7 @@ class MatchContext(CaseContext):
     def __init__(self, context: BaseContext, value: Value):
         super().__init__(context)
         self.value = value
-        self.possible_tags = set(tag for tag in Tag if self.is_tag_possible(tag))
+        self.possible_tags = {tag for tag in Tag if self.is_tag_possible(tag)}
         self.tag_index = 0
         self.value_index = 0
         self.jumps: list[tuple[int, Condition]] = []

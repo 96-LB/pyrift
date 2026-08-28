@@ -4,10 +4,10 @@ from contextlib import contextmanager
 from types import TracebackType
 from typing import override
 
-from ..ir import BaseInstruction
-from .base import BaseContext
 from ..backend import BaseEvent, Value
+from ..ir import BaseInstruction
 from ..vars import Tag
+from .base import BaseContext
 from .null import NullContext
 
 
