@@ -8,6 +8,9 @@ print(x)
 if x:
     print("x is truthy")
 
+async def f():
+    x = wait(0)
+
 
 # x = 1
 # async def f():

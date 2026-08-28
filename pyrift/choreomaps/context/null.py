@@ -33,20 +33,16 @@ class NullContext(BaseContext):
         return (0, VarType.EXTERNAL)
     
     @override
-    def push_stack(self, instruction: BaseInstruction, index: int) -> None:
+    def push_stack(self, instruction: BaseInstruction) -> None:
         pass
     
     @override
-    def pop_stack(self) -> tuple[BaseInstruction, int]:
-        return (BaseInstruction(), 0)
-    
-    @override
-    def get_parent_instruction(self) -> BaseInstruction:
+    def pop_stack(self) -> BaseInstruction:
         return BaseInstruction()
     
     @override
-    def jump_up_stack(self) -> None:
-        pass
+    def get_parent_instruction(self) -> type[BaseInstruction]:
+        return BaseInstruction
     
     @override
     def wait(self, seconds: Value) -> None:

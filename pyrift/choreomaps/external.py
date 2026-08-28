@@ -1,22 +1,23 @@
+from functools import wraps
 import inspect
 from asyncio import sleep
 from builtins import print as builtin_print
 from collections.abc import Callable
 from enum import Enum, auto
-from typing import Concatenate, override
+from itertools import islice
+from typing import Any, Concatenate, override
 
 from pyrift.jobj import JList, JObj
 
 from .backend import (
     BaseValue,
     Condition,
-    IfEvent,
     LogEvent,
     String,
     Value,
-    WaitEvent,
 )
 from .context import BaseContext
+from .ir import AwaitExpression
 from .vars import Tag
 
 EXTERNALS: dict[str, ExternalValue] = {}
@@ -45,18 +46,18 @@ type ExternalFuncType = Callable[Concatenate[BaseContext, ...], tuple[Value, Val
 def register_external(func: ExternalFuncType, is_async: bool):
     def decorator[**P, T](stub: Callable[P, T]) -> Callable[P, T]:
         name = stub.__name__
-        spec = inspect.getfullargspec(func)
+        sig = inspect.signature(func)
         args: list[ExternalArg] = []
-        for arg in spec.args[1:]:
-            type = {
+        for arg in islice(sig.parameters.values(), 1, None):
+            arg_type = {
                 Value: ExternalArgType.VALUE,
                 Condition: ExternalArgType.CONDITION,
                 String: ExternalArgType.STRING,
                 None: None # for type-checking
-            }.get(spec.annotations.get(arg))
-            if not type:
-                raise ValueError(f'Invalid type for argument "{arg}" of {func.__name__}: {spec.annotations.get(arg)}')
-            args.append(ExternalArg(arg, type))
+            }.get(arg.annotation)
+            if not arg_type:
+                raise ValueError(f'Invalid type for argument "{arg}" of {func.__name__}: {arg.annotation}')
+            args.append(ExternalArg(arg.name, arg_type))
         EXTERNALS[name] = ExternalValue(func, tuple(args), is_async)
         return stub
     return decorator
@@ -65,7 +66,13 @@ def external_func(func: ExternalFuncType):
     return register_external(func, is_async=False)
 
 def external_coroutine(func: ExternalFuncType):
-    return register_external(func, is_async=True)
+    @wraps(func)
+    def wrapper(ctx: BaseContext, *args: Any, **kwargs: Any):
+        parent = ctx.get_parent_instruction()
+        if parent is not AwaitExpression:
+            raise ValueError(f'External coroutine can only be used directly inside await expression, but parent is {parent.__name__}.')
+        return func(ctx, *args, **kwargs)
+    return register_external(wrapper, is_async=True)
 
 
 def print_external(ctx: BaseContext, text: String):
@@ -83,21 +90,5 @@ def wait_external(ctx: BaseContext, seconds: Value):
     return Tag.NONE, 0
 
 @external_coroutine(wait_external)
-async def wait(seconds: float | None = None):
+async def wait(seconds: float):
     await sleep(seconds or 0)
-
-
-def wait_until_external(ctx: BaseContext, condition: Condition):
-    ctx.begin_control_flow()
-    
-    # we don't wait directly on the condition because we need to re-evaluate side effects
-    ctx.add_event(WaitEvent())
-    ctx.add_event(IfEvent(condition, ctx.jump_up_stack(), None))
-    
-    return Tag.NONE, 0
-
-@external_coroutine(wait_until_external)
-async def wait_until(condition: bool):
-    if not condition:
-        # TODO: we probably don't want to softlock the compiler
-        await sleep(0)

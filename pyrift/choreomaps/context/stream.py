@@ -6,7 +6,6 @@ from ..backend import (
     BaseEvent,
     CompareCondition,
     EventBackend,
-    JumpEvent,
     MathValue,
     NumberString,
     SetArrayEvent,
@@ -28,7 +27,7 @@ class StreamContext(BaseContext):
         self.async_ref: Value | None = None
         self.events: list[EventBackend] = []
         self.temp_index: int = 0
-        self.stack: list[tuple[BaseInstruction, int]] = []
+        self.stack: list[BaseInstruction] = []
         self.t_index: int = 0
         self.t: float = 0
         self.simple: bool = True
@@ -68,21 +67,16 @@ class StreamContext(BaseContext):
         return (self.temp_index - 2, self.temp_index - 1)
     
     @override
-    def push_stack(self, instruction: BaseInstruction, index: int) -> None:
-        self.stack.append((instruction, index))
+    def push_stack(self, instruction: BaseInstruction) -> None:
+        self.stack.append(instruction)
     
     @override
-    def pop_stack(self) -> tuple[BaseInstruction, int]:
+    def pop_stack(self) -> BaseInstruction:
         return self.stack.pop()
     
     @override
-    def get_parent_instruction(self) -> BaseInstruction:
-        return self.stack[-1][0]
-    
-    @override
-    def jump_up_stack(self) -> None:
-        index = self.stack[-1][1]
-        self.add_event(JumpEvent(index))
+    def get_parent_instruction(self) -> type[BaseInstruction]:
+        return type(self.stack[-2])
     
     @override
     def wait(self, seconds: Value) -> None:

@@ -3,8 +3,9 @@ from contextlib import contextmanager
 from functools import reduce
 from typing import Literal
 
-from ..util.decorators import decorates
-from ..util.typing import F
+from pyrift.util.decorators import decorates
+from pyrift.util.typing import F
+
 from .analysis import Analysis, ChoreomapAnalyzer, VarType
 from .backend import (
     AndCondition,
@@ -69,7 +70,7 @@ from .vars import Tag
 @decorates
 def push_stack[T: BaseInstruction, R](func: F[[ChoreomapCompiler, T], R], self: ChoreomapCompiler, inst: T) -> R:
     # TODO: i would like this to be a static method but pyright disagrees
-    self.context.push_stack(inst, len(self.streams))
+    self.context.push_stack(inst)
     output = func(self, inst)
     self.context.pop_stack()
     return output

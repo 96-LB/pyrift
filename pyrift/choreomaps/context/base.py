@@ -32,19 +32,15 @@ class BaseContext(ABC):
         ...
     
     @abstractmethod
-    def push_stack(self, instruction: BaseInstruction, index: int) -> None:
+    def push_stack(self, instruction: BaseInstruction) -> None:
         ...
     
     @abstractmethod
-    def pop_stack(self) -> tuple[BaseInstruction, int]:
+    def pop_stack(self) -> BaseInstruction:
         ...
     
     @abstractmethod
-    def get_parent_instruction(self) -> BaseInstruction:
-        ...
-    
-    @abstractmethod
-    def jump_up_stack(self) -> None:
+    def get_parent_instruction(self) -> type[BaseInstruction]:
         ...
     
     @abstractmethod

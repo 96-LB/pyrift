@@ -63,8 +63,8 @@ class CaseContext(BaseContext):
         return self.ensure_context().allocate_temp()
     
     @override
-    def push_stack(self, instruction: BaseInstruction, index: int):
-        return self.ensure_context().push_stack(instruction, index)
+    def push_stack(self, instruction: BaseInstruction):
+        return self.ensure_context().push_stack(instruction)
     
     @override
     def pop_stack(self):
@@ -73,10 +73,6 @@ class CaseContext(BaseContext):
     @override
     def get_parent_instruction(self):
         return self.ensure_context().get_parent_instruction()
-    
-    @override
-    def jump_up_stack(self):
-        return self.ensure_context().jump_up_stack()
     
     @override
     def wait(self, seconds: Value) -> None:
