@@ -471,5 +471,5 @@ class EventBackend(JObj):
     def to_json_obj(self):
         return {
             't': self.t,
-            'event': self.event.to_json_obj()
+            **self.event.to_dict()
         }

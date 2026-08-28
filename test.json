@@ -1,0 +1,1444 @@
+{
+    "bpm": 200,
+    "beatDivisions": 2,
+    "name": "_test2_",
+    "coalTrapSpeedUpFactorOverride": 2,
+    "countdownTicks": 4,
+    "countdownBpm": 200,
+    "playbackOffset": -4,
+    "playbackOffsetTime": 0,
+    "choreomap": {
+        "streams": [
+            {
+                "id": 1,
+                "events": [
+                    {
+                        "t": 0,
+                        "name": "$REF",
+                        "value": {
+                            "value1": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "value2": 1,
+                            "operator": "Add",
+                            "type": "Math"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": {
+                            "value": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 0,
+                        "value": 2,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 0,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 1,
+                        "value": {
+                            "name": "$REF",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TAG$foo",
+                        "value": -3,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "foo",
+                        "value": {
+                            "index": 1,
+                            "type": "Array"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$REF",
+                        "value": {
+                            "value1": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "value2": 1,
+                            "operator": "Add",
+                            "type": "Math"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": {
+                            "value": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 0,
+                        "value": 3,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 2,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 3,
+                        "value": {
+                            "name": "$REF",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TAG$wait_for",
+                        "value": -3,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "wait_for",
+                        "value": {
+                            "index": 3,
+                            "type": "Array"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "text": "hi!",
+                        "ev": "Log"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$ENV",
+                        "value": {
+                            "name": "foo",
+                            "type": "Variable"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "id": {
+                            "name": {
+                                "value": {
+                                    "name": "foo",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 0,
+                            "type": "Array"
+                        },
+                        "refId": 0,
+                        "immediate": true,
+                        "ev": "StartStream"
+                    },
+                    {
+                        "t": 0,
+                        "index": 4,
+                        "value": {
+                            "name": "$RTAG",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 5,
+                        "value": {
+                            "name": "$RETURN",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$ARGS",
+                        "index": 0,
+                        "value": {
+                            "index": 4,
+                            "type": "Array"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$ARGS",
+                        "index": 1,
+                        "value": {
+                            "index": 5,
+                            "type": "Array"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$ENV",
+                        "value": {
+                            "name": "wait_for",
+                            "type": "Variable"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "id": {
+                            "name": {
+                                "value": {
+                                    "name": "wait_for",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 0,
+                            "type": "Array"
+                        },
+                        "refId": 0,
+                        "immediate": true,
+                        "ev": "StartStream"
+                    },
+                    {
+                        "t": 0,
+                        "index": 6,
+                        "value": {
+                            "name": "$RTAG",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 7,
+                        "value": {
+                            "name": "$RETURN",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$RTAG",
+                        "value": 0,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$RETURN",
+                        "value": 0,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "ev": "StopStream"
+                    }
+                ],
+                "timingMode": "StreamStart"
+            },
+            {
+                "id": 2,
+                "events": [
+                    {
+                        "t": 0,
+                        "name": "$REF",
+                        "value": {
+                            "value1": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "value2": 1,
+                            "operator": "Add",
+                            "type": "Math"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": {
+                            "value": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 0,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": {
+                            "value": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 1,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": {
+                            "value": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 2,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": {
+                            "value": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 3,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 0,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 1,
+                        "value": {
+                            "name": "$REF",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$RTAG",
+                        "value": -4,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$RETURN",
+                        "value": {
+                            "index": 1,
+                            "type": "Array"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "text": "waiting 1 second...",
+                        "ev": "Log"
+                    },
+                    {
+                        "t": 1,
+                        "text": "waiting 2 seconds...",
+                        "ev": "Log"
+                    },
+                    {
+                        "t": 3,
+                        "text": "waiting 3 seconds...",
+                        "ev": "Log"
+                    },
+                    {
+                        "t": 6,
+                        "text": "returning!",
+                        "ev": "Log"
+                    },
+                    {
+                        "t": 6,
+                        "name": {
+                            "value": {
+                                "index": 1,
+                                "type": "Array"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 0,
+                        "value": 1,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 6,
+                        "name": {
+                            "value": {
+                                "index": 1,
+                                "type": "Array"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 1,
+                        "value": -1,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 6,
+                        "name": {
+                            "value": {
+                                "index": 1,
+                                "type": "Array"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 2,
+                        "value": 96,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 6,
+                        "name": {
+                            "value": {
+                                "index": 1,
+                                "type": "Array"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 3,
+                        "value": 6,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 6,
+                        "ev": "StopStream"
+                    },
+                    {
+                        "t": 6,
+                        "name": {
+                            "value": {
+                                "index": 1,
+                                "type": "Array"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 0,
+                        "value": 1,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 6,
+                        "name": {
+                            "value": {
+                                "index": 1,
+                                "type": "Array"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 1,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 6,
+                        "name": {
+                            "value": {
+                                "index": 1,
+                                "type": "Array"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 2,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 6,
+                        "name": {
+                            "value": {
+                                "index": 1,
+                                "type": "Array"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 3,
+                        "value": 6,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 6,
+                        "ev": "StopStream"
+                    }
+                ],
+                "timingMode": "StreamStart"
+            },
+            {
+                "id": 3,
+                "events": [
+                    {
+                        "t": 0,
+                        "index": 0,
+                        "value": {
+                            "name": "$ARGS",
+                            "index": 0,
+                            "type": "Array"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 1,
+                        "value": {
+                            "name": "$ARGS",
+                            "index": 1,
+                            "type": "Array"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$REF",
+                        "value": {
+                            "value1": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "value2": 1,
+                            "operator": "Add",
+                            "type": "Math"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": {
+                            "value": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 0,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": {
+                            "value": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 1,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": {
+                            "value": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 2,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": {
+                            "value": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 3,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 2,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 3,
+                        "value": {
+                            "name": "$REF",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$RTAG",
+                        "value": -4,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$RETURN",
+                        "value": {
+                            "index": 3,
+                            "type": "Array"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "text": {
+                            "strings": [
+                                "waiting on coroutine ",
+                                {
+                                    "condition": {
+                                        "value1": {
+                                            "index": 0,
+                                            "type": "Array"
+                                        },
+                                        "value2": -6,
+                                        "mode": "Equal",
+                                        "type": "Compare"
+                                    },
+                                    "yes": {
+                                        "text": "<object {0}>",
+                                        "args": [
+                                            {
+                                                "value": {
+                                                    "index": 1,
+                                                    "type": "Array"
+                                                },
+                                                "type": "Number"
+                                            }
+                                        ],
+                                        "type": "Format"
+                                    },
+                                    "no": {
+                                        "condition": {
+                                            "value1": {
+                                                "index": 0,
+                                                "type": "Array"
+                                            },
+                                            "value2": -5,
+                                            "mode": "Equal",
+                                            "type": "Compare"
+                                        },
+                                        "yes": {
+                                            "text": "<array {0}>",
+                                            "args": [
+                                                {
+                                                    "value": {
+                                                        "index": 1,
+                                                        "type": "Array"
+                                                    },
+                                                    "type": "Number"
+                                                }
+                                            ],
+                                            "type": "Format"
+                                        },
+                                        "no": {
+                                            "condition": {
+                                                "value1": {
+                                                    "index": 0,
+                                                    "type": "Array"
+                                                },
+                                                "value2": -4,
+                                                "mode": "Equal",
+                                                "type": "Compare"
+                                            },
+                                            "yes": {
+                                                "text": "<coroutine {0}>",
+                                                "args": [
+                                                    {
+                                                        "value": {
+                                                            "index": 1,
+                                                            "type": "Array"
+                                                        },
+                                                        "type": "Number"
+                                                    }
+                                                ],
+                                                "type": "Format"
+                                            },
+                                            "no": {
+                                                "condition": {
+                                                    "value1": {
+                                                        "index": 0,
+                                                        "type": "Array"
+                                                    },
+                                                    "value2": -3,
+                                                    "mode": "Equal",
+                                                    "type": "Compare"
+                                                },
+                                                "yes": {
+                                                    "text": "<function {0}>",
+                                                    "args": [
+                                                        {
+                                                            "value": {
+                                                                "index": 1,
+                                                                "type": "Array"
+                                                            },
+                                                            "type": "Number"
+                                                        }
+                                                    ],
+                                                    "type": "Format"
+                                                },
+                                                "no": {
+                                                    "condition": {
+                                                        "value1": {
+                                                            "index": 0,
+                                                            "type": "Array"
+                                                        },
+                                                        "value2": -2,
+                                                        "mode": "Equal",
+                                                        "type": "Compare"
+                                                    },
+                                                    "yes": {
+                                                        "name": {
+                                                            "value": {
+                                                                "index": 1,
+                                                                "type": "Array"
+                                                            },
+                                                            "type": "Number"
+                                                        },
+                                                        "type": "Array"
+                                                    },
+                                                    "no": {
+                                                        "condition": {
+                                                            "value1": {
+                                                                "index": 0,
+                                                                "type": "Array"
+                                                            },
+                                                            "value2": -1,
+                                                            "mode": "Equal",
+                                                            "type": "Compare"
+                                                        },
+                                                        "yes": {
+                                                            "value": {
+                                                                "index": 1,
+                                                                "type": "Array"
+                                                            },
+                                                            "type": "Number"
+                                                        },
+                                                        "no": {
+                                                            "condition": {
+                                                                "value1": {
+                                                                    "index": 0,
+                                                                    "type": "Array"
+                                                                },
+                                                                "value2": 0,
+                                                                "mode": "Equal",
+                                                                "type": "Compare"
+                                                            },
+                                                            "yes": "None",
+                                                            "no": "<unknown>",
+                                                            "type": "If"
+                                                        },
+                                                        "type": "If"
+                                                    },
+                                                    "type": "If"
+                                                },
+                                                "type": "If"
+                                            },
+                                            "type": "If"
+                                        },
+                                        "type": "If"
+                                    },
+                                    "type": "If"
+                                }
+                            ],
+                            "type": "Join"
+                        },
+                        "ev": "Log"
+                    },
+                    {
+                        "t": 0,
+                        "index": 5,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "condition": {
+                            "value1": {
+                                "index": 0,
+                                "type": "Array"
+                            },
+                            "value2": -4,
+                            "mode": "NotEqual",
+                            "type": "Compare"
+                        },
+                        "yes": {
+                            "target": 19,
+                            "ev": "Jump"
+                        },
+                        "ev": "If"
+                    },
+                    {
+                        "t": 0,
+                        "condition": {
+                            "value1": {
+                                "name": {
+                                    "value": {
+                                        "index": 1,
+                                        "type": "Array"
+                                    },
+                                    "type": "Number"
+                                },
+                                "index": 0,
+                                "type": "Array"
+                            },
+                            "value2": 0,
+                            "mode": "NotEqual",
+                            "type": "Compare"
+                        },
+                        "ev": "Wait"
+                    },
+                    {
+                        "t": 0,
+                        "index": 5,
+                        "value": {
+                            "value1": {
+                                "index": 5,
+                                "type": "Array"
+                            },
+                            "value2": {
+                                "name": {
+                                    "value": {
+                                        "index": 1,
+                                        "type": "Array"
+                                    },
+                                    "type": "Number"
+                                },
+                                "index": 3,
+                                "type": "Array"
+                            },
+                            "operator": "Add",
+                            "type": "Math"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "condition": {
+                            "value1": {
+                                "attribute": "StreamTime",
+                                "type": "System"
+                            },
+                            "value2": {
+                                "index": 5,
+                                "type": "Array"
+                            },
+                            "mode": "GreaterEqual",
+                            "type": "Compare"
+                        },
+                        "ev": "Wait"
+                    },
+                    {
+                        "t": 0,
+                        "index": 6,
+                        "value": {
+                            "name": {
+                                "value": {
+                                    "index": 1,
+                                    "type": "Array"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 1,
+                            "type": "Array"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 7,
+                        "value": {
+                            "name": {
+                                "value": {
+                                    "index": 1,
+                                    "type": "Array"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 2,
+                            "type": "Array"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "condition": {
+                            "conditions": [
+                                {
+                                    "value1": {
+                                        "index": 0,
+                                        "type": "Array"
+                                    },
+                                    "value2": 0,
+                                    "mode": "NotEqual",
+                                    "type": "Compare"
+                                },
+                                {
+                                    "value1": {
+                                        "index": 0,
+                                        "type": "Array"
+                                    },
+                                    "value2": -1,
+                                    "mode": "NotEqual",
+                                    "type": "Compare"
+                                },
+                                {
+                                    "value1": {
+                                        "index": 0,
+                                        "type": "Array"
+                                    },
+                                    "value2": -2,
+                                    "mode": "NotEqual",
+                                    "type": "Compare"
+                                },
+                                {
+                                    "value1": {
+                                        "index": 0,
+                                        "type": "Array"
+                                    },
+                                    "value2": -3,
+                                    "mode": "NotEqual",
+                                    "type": "Compare"
+                                },
+                                {
+                                    "value1": {
+                                        "index": 0,
+                                        "type": "Array"
+                                    },
+                                    "value2": -5,
+                                    "mode": "NotEqual",
+                                    "type": "Compare"
+                                },
+                                {
+                                    "value1": {
+                                        "index": 0,
+                                        "type": "Array"
+                                    },
+                                    "value2": -6,
+                                    "mode": "NotEqual",
+                                    "type": "Compare"
+                                }
+                            ],
+                            "type": "And"
+                        },
+                        "yes": {
+                            "target": 22,
+                            "ev": "Jump"
+                        },
+                        "ev": "If"
+                    },
+                    {
+                        "t": 0,
+                        "index": 6,
+                        "value": {
+                            "index": 0,
+                            "type": "Array"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 7,
+                        "value": {
+                            "index": 1,
+                            "type": "Array"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 2,
+                        "value": {
+                            "index": 6,
+                            "type": "Array"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 3,
+                        "value": {
+                            "index": 7,
+                            "type": "Array"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "text": {
+                            "strings": [
+                                "coroutine ",
+                                {
+                                    "condition": {
+                                        "value1": {
+                                            "index": 0,
+                                            "type": "Array"
+                                        },
+                                        "value2": -6,
+                                        "mode": "Equal",
+                                        "type": "Compare"
+                                    },
+                                    "yes": {
+                                        "text": "<object {0}>",
+                                        "args": [
+                                            {
+                                                "value": {
+                                                    "index": 1,
+                                                    "type": "Array"
+                                                },
+                                                "type": "Number"
+                                            }
+                                        ],
+                                        "type": "Format"
+                                    },
+                                    "no": {
+                                        "condition": {
+                                            "value1": {
+                                                "index": 0,
+                                                "type": "Array"
+                                            },
+                                            "value2": -5,
+                                            "mode": "Equal",
+                                            "type": "Compare"
+                                        },
+                                        "yes": {
+                                            "text": "<array {0}>",
+                                            "args": [
+                                                {
+                                                    "value": {
+                                                        "index": 1,
+                                                        "type": "Array"
+                                                    },
+                                                    "type": "Number"
+                                                }
+                                            ],
+                                            "type": "Format"
+                                        },
+                                        "no": {
+                                            "condition": {
+                                                "value1": {
+                                                    "index": 0,
+                                                    "type": "Array"
+                                                },
+                                                "value2": -4,
+                                                "mode": "Equal",
+                                                "type": "Compare"
+                                            },
+                                            "yes": {
+                                                "text": "<coroutine {0}>",
+                                                "args": [
+                                                    {
+                                                        "value": {
+                                                            "index": 1,
+                                                            "type": "Array"
+                                                        },
+                                                        "type": "Number"
+                                                    }
+                                                ],
+                                                "type": "Format"
+                                            },
+                                            "no": {
+                                                "condition": {
+                                                    "value1": {
+                                                        "index": 0,
+                                                        "type": "Array"
+                                                    },
+                                                    "value2": -3,
+                                                    "mode": "Equal",
+                                                    "type": "Compare"
+                                                },
+                                                "yes": {
+                                                    "text": "<function {0}>",
+                                                    "args": [
+                                                        {
+                                                            "value": {
+                                                                "index": 1,
+                                                                "type": "Array"
+                                                            },
+                                                            "type": "Number"
+                                                        }
+                                                    ],
+                                                    "type": "Format"
+                                                },
+                                                "no": {
+                                                    "condition": {
+                                                        "value1": {
+                                                            "index": 0,
+                                                            "type": "Array"
+                                                        },
+                                                        "value2": -2,
+                                                        "mode": "Equal",
+                                                        "type": "Compare"
+                                                    },
+                                                    "yes": {
+                                                        "name": {
+                                                            "value": {
+                                                                "index": 1,
+                                                                "type": "Array"
+                                                            },
+                                                            "type": "Number"
+                                                        },
+                                                        "type": "Array"
+                                                    },
+                                                    "no": {
+                                                        "condition": {
+                                                            "value1": {
+                                                                "index": 0,
+                                                                "type": "Array"
+                                                            },
+                                                            "value2": -1,
+                                                            "mode": "Equal",
+                                                            "type": "Compare"
+                                                        },
+                                                        "yes": {
+                                                            "value": {
+                                                                "index": 1,
+                                                                "type": "Array"
+                                                            },
+                                                            "type": "Number"
+                                                        },
+                                                        "no": {
+                                                            "condition": {
+                                                                "value1": {
+                                                                    "index": 0,
+                                                                    "type": "Array"
+                                                                },
+                                                                "value2": 0,
+                                                                "mode": "Equal",
+                                                                "type": "Compare"
+                                                            },
+                                                            "yes": "None",
+                                                            "no": "<unknown>",
+                                                            "type": "If"
+                                                        },
+                                                        "type": "If"
+                                                    },
+                                                    "type": "If"
+                                                },
+                                                "type": "If"
+                                            },
+                                            "type": "If"
+                                        },
+                                        "type": "If"
+                                    },
+                                    "type": "If"
+                                },
+                                " returned value ",
+                                {
+                                    "condition": {
+                                        "value1": {
+                                            "index": 2,
+                                            "type": "Array"
+                                        },
+                                        "value2": -6,
+                                        "mode": "Equal",
+                                        "type": "Compare"
+                                    },
+                                    "yes": {
+                                        "text": "<object {0}>",
+                                        "args": [
+                                            {
+                                                "value": {
+                                                    "index": 3,
+                                                    "type": "Array"
+                                                },
+                                                "type": "Number"
+                                            }
+                                        ],
+                                        "type": "Format"
+                                    },
+                                    "no": {
+                                        "condition": {
+                                            "value1": {
+                                                "index": 2,
+                                                "type": "Array"
+                                            },
+                                            "value2": -5,
+                                            "mode": "Equal",
+                                            "type": "Compare"
+                                        },
+                                        "yes": {
+                                            "text": "<array {0}>",
+                                            "args": [
+                                                {
+                                                    "value": {
+                                                        "index": 3,
+                                                        "type": "Array"
+                                                    },
+                                                    "type": "Number"
+                                                }
+                                            ],
+                                            "type": "Format"
+                                        },
+                                        "no": {
+                                            "condition": {
+                                                "value1": {
+                                                    "index": 2,
+                                                    "type": "Array"
+                                                },
+                                                "value2": -4,
+                                                "mode": "Equal",
+                                                "type": "Compare"
+                                            },
+                                            "yes": {
+                                                "text": "<coroutine {0}>",
+                                                "args": [
+                                                    {
+                                                        "value": {
+                                                            "index": 3,
+                                                            "type": "Array"
+                                                        },
+                                                        "type": "Number"
+                                                    }
+                                                ],
+                                                "type": "Format"
+                                            },
+                                            "no": {
+                                                "condition": {
+                                                    "value1": {
+                                                        "index": 2,
+                                                        "type": "Array"
+                                                    },
+                                                    "value2": -3,
+                                                    "mode": "Equal",
+                                                    "type": "Compare"
+                                                },
+                                                "yes": {
+                                                    "text": "<function {0}>",
+                                                    "args": [
+                                                        {
+                                                            "value": {
+                                                                "index": 3,
+                                                                "type": "Array"
+                                                            },
+                                                            "type": "Number"
+                                                        }
+                                                    ],
+                                                    "type": "Format"
+                                                },
+                                                "no": {
+                                                    "condition": {
+                                                        "value1": {
+                                                            "index": 2,
+                                                            "type": "Array"
+                                                        },
+                                                        "value2": -2,
+                                                        "mode": "Equal",
+                                                        "type": "Compare"
+                                                    },
+                                                    "yes": {
+                                                        "name": {
+                                                            "value": {
+                                                                "index": 3,
+                                                                "type": "Array"
+                                                            },
+                                                            "type": "Number"
+                                                        },
+                                                        "type": "Array"
+                                                    },
+                                                    "no": {
+                                                        "condition": {
+                                                            "value1": {
+                                                                "index": 2,
+                                                                "type": "Array"
+                                                            },
+                                                            "value2": -1,
+                                                            "mode": "Equal",
+                                                            "type": "Compare"
+                                                        },
+                                                        "yes": {
+                                                            "value": {
+                                                                "index": 3,
+                                                                "type": "Array"
+                                                            },
+                                                            "type": "Number"
+                                                        },
+                                                        "no": {
+                                                            "condition": {
+                                                                "value1": {
+                                                                    "index": 2,
+                                                                    "type": "Array"
+                                                                },
+                                                                "value2": 0,
+                                                                "mode": "Equal",
+                                                                "type": "Compare"
+                                                            },
+                                                            "yes": "None",
+                                                            "no": "<unknown>",
+                                                            "type": "If"
+                                                        },
+                                                        "type": "If"
+                                                    },
+                                                    "type": "If"
+                                                },
+                                                "type": "If"
+                                            },
+                                            "type": "If"
+                                        },
+                                        "type": "If"
+                                    },
+                                    "type": "If"
+                                }
+                            ],
+                            "type": "Join"
+                        },
+                        "ev": "Log"
+                    },
+                    {
+                        "t": 0,
+                        "name": {
+                            "value": {
+                                "index": 3,
+                                "type": "Array"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 0,
+                        "value": 1,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": {
+                            "value": {
+                                "index": 3,
+                                "type": "Array"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 1,
+                        "value": {
+                            "index": 2,
+                            "type": "Array"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": {
+                            "value": {
+                                "index": 3,
+                                "type": "Array"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 2,
+                        "value": {
+                            "index": 3,
+                            "type": "Array"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": {
+                            "value": {
+                                "index": 3,
+                                "type": "Array"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 3,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "ev": "StopStream"
+                    },
+                    {
+                        "t": 0,
+                        "name": {
+                            "value": {
+                                "index": 3,
+                                "type": "Array"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 0,
+                        "value": 1,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": {
+                            "value": {
+                                "index": 3,
+                                "type": "Array"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 1,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": {
+                            "value": {
+                                "index": 3,
+                                "type": "Array"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 2,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": {
+                            "value": {
+                                "index": 3,
+                                "type": "Array"
+                            },
+                            "type": "Number"
+                        },
+                        "index": 3,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "ev": "StopStream"
+                    }
+                ],
+                "timingMode": "StreamStart"
+            }
+        ],
+        "inputRatingDefinitions": [],
+        "mainId": 1,
+        "sounds": []
+    }
+}

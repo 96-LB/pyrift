@@ -84,9 +84,9 @@ class StreamContext(BaseContext):
             self.t += seconds
         else:
             self.begin_control_flow()
-            time = SystemValue(SystemAttribute.STREAM_TIME)
-            self.add_event(SetArrayEvent(None, self.t_index, MathValue(time, seconds, BinaryOperator.ADD)))
-            self.add_event(WaitEvent(CompareCondition(time, ArrayValue(None, self.t_index), ComparisonMode.GREATER_EQUAL)))
+            t = ArrayValue(None, self.t_index)
+            self.add_event(SetArrayEvent(None, self.t_index, MathValue(t, seconds, BinaryOperator.ADD)))
+            self.add_event(WaitEvent(CompareCondition( SystemValue(SystemAttribute.STREAM_TIME), t, ComparisonMode.GREATER_EQUAL)))
     
     @override
     def begin_control_flow(self) -> None:
@@ -103,6 +103,8 @@ class StreamContext(BaseContext):
         if self.async_ref:
             raise ValueError(f'Stream is already async with ref {self.async_ref}.')
         self.async_ref = async_ref
+        self.add_event(SetVariableEvent('$RTAG', Tag.COROUTINE))
+        self.add_event(SetVariableEvent('$RETURN', async_ref))
     
     def return_value(self, tag: Value, value: Value) -> None:
         # async functions need to update their coroutine object
@@ -114,7 +116,7 @@ class StreamContext(BaseContext):
             self.add_event(SetArrayEvent(ref, 3, self.t))
             tag = Tag.COROUTINE
             value = self.async_ref
-        
-        self.add_event(SetVariableEvent('$RTAG', tag))
-        self.add_event(SetVariableEvent('$RETURN', value))
+        else:
+            self.add_event(SetVariableEvent('$RTAG', tag))
+            self.add_event(SetVariableEvent('$RETURN', value))
         self.add_event(StopStreamEvent())

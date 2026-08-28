@@ -36,6 +36,7 @@ from .backend import (
     VariableValue,
     WaitEvent,
 )
+from .backend.string import FormatString
 from .choreomap import Choreomap
 from .context import BaseContext, MatchContext, NullContext, StreamContext, TagContext
 from .enum import BinaryOperator, ComparisonMode
@@ -547,10 +548,10 @@ class ChoreomapCompiler:
                     Tag.NONE: 'None',
                     Tag.NUMBER: NumberString(value),
                     Tag.STRING: ArrayString(NumberString(value)),
-                    Tag.FUNCTION: f'<function {value}>', # TODO: better string representations
-                    Tag.COROUTINE: f'<coroutine {value}>',
-                    Tag.ARRAY: f'<array {value}>',
-                    Tag.OBJECT: f'<object {value}>',
+                    Tag.FUNCTION: FormatString('<function {0}>', (NumberString(value),)), # TODO: better string representations
+                    Tag.COROUTINE: FormatString('<coroutine {0}>', (NumberString(value),)),
+                    Tag.ARRAY: FormatString('<array {0}>', (NumberString(value),)),
+                    Tag.OBJECT: FormatString('<object {0}>', (NumberString(value),)),
                 }
                 
                 if isinstance(tag, Tag):

@@ -3,9 +3,6 @@ from typing import Coroutine
 from pyrift.choreomaps.external import wait
 
 
-x = [1]
-
-
 # TODO:
 # 1. test existing code (async functions, fix for heap allocation, dynamic matching, etc.)
 # 2. exceptions
@@ -24,21 +21,22 @@ x = [1]
 #     await x
 
 
-# async def normal():
-#     print(0)
-#     await wait(1)
-#     print(1)
-#     await wait(2)
-#     print(2)
-#     return 3
+async def foo():
+    print('waiting 1 second...')
+    await wait(1)
+    print('waiting 2 seconds...')
+    await wait(2)
+    print('waiting 3 seconds...')
+    await wait(3)
+    print('returning!')
+    return 96
 
 
-# async def wrap[T](coroutine: Coroutine[None, None, T]) -> T:
-#     print('starting')
-#     x = await coroutine
-#     print(x)
-#     print('ending')
-#     return x
+async def wait_for[T](coroutine: Coroutine[None, None, T]) -> T:
+    print(f'waiting on coroutine {coroutine}')
+    x = await coroutine
+    print(f'coroutine {coroutine} returned value {x}')
+    return x
 
-
-# _ = wrap(normal())
+print('hi!')
+wait_for(foo())
