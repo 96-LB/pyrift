@@ -471,31 +471,60 @@ class ChoreomapCompiler:
         match value:
             case BaseCondition() | bool():
                 return Tag.NUMBER, IfValue(value, 1, 0)
-            case BaseValue() | float() | int():
-                return tag, value
             case BaseString() | str():
                 # TODO: we should be interning strings
                 return self.allocate_string(value)
+            case BaseValue() | float() | int():
+                return tag, value
     
     def visit_condition(self, node: BaseExpression) -> Condition:
         tag, value = self.visit_expr(node)
-        match tag, value:
-            case _, BaseCondition() | bool():
+        match value:
+            case bool() | float() | int() | str():
+                return bool(value)
+            
+            case BaseCondition():
                 return value
-            case Tag.NUMBER, BaseValue() | float() | int():
-                return CompareCondition(value, 0, ComparisonMode.NOT_EQUAL)
-            case _, BaseString() | str():
-                raise NotImplementedError('#TODO: implement strings')
-            case _: # TODO: a lot of cases
-                return CompareCondition(value, 0, ComparisonMode.NOT_EQUAL) # TODO: REMOVE
-                raise NotImplementedError(f'Missing case when trying to cast value to condition: tag={type(tag).__name__}, value={type(value).__name__}.')
+            
+            case BaseString():
+                # TODO: we should be interning strings
+                _, ref = self.allocate_string(value)
+                return CompareCondition(ArrayValue(NumberString(ref)), 0, ComparisonMode.NOT_EQUAL)
+            
+            case BaseValue():
+                mapping = {
+                    Tag.NONE: False,
+                    Tag.NUMBER: CompareCondition(value, 0, ComparisonMode.NOT_EQUAL),
+                    Tag.STRING: CompareCondition(ArrayValue(NumberString(value)), 0, ComparisonMode.NOT_EQUAL),
+                    Tag.FUNCTION: True,
+                    Tag.COROUTINE: True,
+                    Tag.ARRAY: CompareCondition(ArrayValue(NumberString(value)), 0, ComparisonMode.NOT_EQUAL), # TODO: this is a length check, but arrays not implemented
+                    Tag.OBJECT: True,
+                }
+                
+                if isinstance(tag, Tag):
+                    return mapping.get(tag, False)
+                else:
+                    return OrCondition(
+                        tuple(
+                            AndCondition((CompareCondition(tag, t, ComparisonMode.EQUAL), mapping[t]))
+                            for t in Tag
+                        )
+                    )
     
     def visit_str(self, node: BaseExpression) -> String:
         tag, value = self.visit_expr(node)
         match value:
-            case BaseCondition() | bool():
+            case bool() | str() | float() | int():
+                return str(value)
+            
+            case BaseCondition():
                 return IfString(value, 'True', 'False')
-            case BaseValue() | float() | int():
+            
+            case BaseString():
+                return value
+            
+            case BaseValue():
                 mapping = {
                     Tag.NONE: 'None',
                     Tag.NUMBER: NumberString(value),
@@ -510,10 +539,7 @@ class ChoreomapCompiler:
                     return mapping.get(tag, f'<unknown>')
                 else:
                     return reduce(
-                        lambda acc, k: IfString(CompareCondition(value, k, ComparisonMode.EQUAL), mapping[k], acc),
-                        mapping.keys(),
+                        lambda acc, t: IfString(CompareCondition(tag, t, ComparisonMode.EQUAL), mapping[t], acc),
+                        Tag,
                         f'<unknown>'
                     )
-                    
-            case BaseString() | str():
-                return value
