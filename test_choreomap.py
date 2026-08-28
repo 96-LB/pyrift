@@ -6,6 +6,19 @@ from pyrift.choreomaps.external import wait
 x = [1]
 
 
+# TODO:
+# 1. test existing code (async functions, fix for heap allocation, dynamic matching, etc.)
+# 2. exceptions
+# 3. arrays
+# 4. property access
+# 5. basic builtins for interacting with the game
+# 6. classes
+# 7. dictionaries
+# 8. sets
+# 9. type-checking
+
+
+
 # x = 1
 # async def f():
 #     await x

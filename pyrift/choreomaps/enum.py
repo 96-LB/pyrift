@@ -169,6 +169,7 @@ class UnaryOperator(Enum):
 class GraphicType(Enum):
     CANVAS = 'Canvas'
     CANVAS_MASKABLE = 'CanvasMaskable'
+    CANVAS_TEXT = 'CanvasText'
     SPRITE = 'Sprite'
 
 class SpriteAttribute(Enum):
@@ -179,6 +180,9 @@ class SpriteAttribute(Enum):
     COLOR = 'Color'
     TEXTURE = 'Texture'
     SORTING_LAYER = 'SortingLayer'
+
+class SpriteStringAttribute(Enum):
+    TEXT = 'Text'
 
 class VisualType(Enum):
     STAGE_ROOT = 'StageRoot'
@@ -226,8 +230,8 @@ class VisualType(Enum):
     GRAPHIC_MASK = 'GraphicMask'
 
 class NumberFormat(Enum):
-    FLOAT = "Float"
-    INT = "Int"
+    FLOAT = 'Float'
+    INT = 'Int'
 
 class InputRating(Enum):
     MISS = 'Miss'

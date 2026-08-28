@@ -486,7 +486,7 @@ class ChoreomapCompiler:
     def visit_value(self, node: BaseExpression) -> tuple[Value, Value]:
         tag, value = self.visit_expr(node)
         match value:
-            case BaseCondition() | bool():
+            case BaseCondition():
                 return Tag.NUMBER, IfValue(value, 1, 0)
             case BaseString() | str():
                 # TODO: we should be interning strings

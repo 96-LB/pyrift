@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar, override
 
-from pyrift.choreomaps.backend.string import String
 from pyrift.jobj import JList, JObj
 
 from ..enum import (
@@ -14,10 +13,12 @@ from ..enum import (
     MoveLerp,
     ScoreType,
     SpriteAttribute,
+    SpriteStringAttribute,
     Statistic,
     Status,
     SystemAttribute,
 )
+from .string import String
 
 if TYPE_CHECKING:
     from .condition import Condition
@@ -210,6 +211,19 @@ class SpriteEvent(BaseEvent, type='Sprite'):
     w: Value | None = None
 
 
+class SpriteStringEvent(BaseEvent, type='SpriteString'):
+    '''
+    Attributes:
+        id: ID of the sprite to affect
+        attribute: Attribute to modify
+        text: String value to assign
+    '''
+    
+    id: Value
+    attribute: SpriteStringAttribute
+    text: String
+
+
 class GraphicCreateEvent(BaseEvent, type='GraphicCreate'):
     '''
     Attributes:
@@ -274,7 +288,7 @@ class StatEvent(BaseEvent, type='Stat'):
         amount: Amount to change stat by (if nil, 1)
     '''
     
-    type: str
+    type: String
     stat: Statistic
     amount: int | None = None
 
@@ -415,7 +429,6 @@ class SetArrayEvent(BaseEvent, type='SetArray'):
     name: String | None = None
     index: Value | None = None
     value: Value | None = None
-
 
 
 class SetArrayStringEvent(BaseEvent, type='SetArrayString'):
