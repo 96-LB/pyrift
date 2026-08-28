@@ -1,11 +1,12 @@
 from collections.abc import Callable, Generator, Iterable
 from contextlib import contextmanager
-from functools import wraps
+from functools import reduce, wraps
 from typing import Literal
 
 from .analysis import Analysis, ChoreomapAnalyzer, VarType
 from .backend import (
     AndCondition,
+    ArrayString,
     ArrayValue,
     BaseCondition,
     BaseEvent,
@@ -489,15 +490,30 @@ class ChoreomapCompiler:
                 return CompareCondition(value, 0, ComparisonMode.NOT_EQUAL) # TODO: REMOVE
                 raise NotImplementedError(f'Missing case when trying to cast value to condition: tag={type(tag).__name__}, value={type(value).__name__}.')
     
-    def visit_str(self, node: BaseExpression):
+    def visit_str(self, node: BaseExpression) -> String:
         tag, value = self.visit_expr(node)
-        match tag, value:
-            case _, BaseCondition() | bool():
+        match value:
+            case BaseCondition() | bool():
                 return IfString(value, 'True', 'False')
-            case Tag.NUMBER, BaseValue() | float() | int():
-                return NumberString(value)
-            case _, BaseValue() | float() | int(): # TODO: a lot of cases
-                return NumberString(value) # TODO: REMOVE
-                raise NotImplementedError(f'Missing case when trying to cast value to condition: tag={type(tag).__name__}, value={type(value).__name__}.')
-            case _, BaseString() | str():
+            case BaseValue() | float() | int():
+                mapping = {
+                    Tag.NONE: 'None',
+                    Tag.NUMBER: NumberString(value),
+                    Tag.STRING: ArrayString(NumberString(value)),
+                    Tag.FUNCTION: f'<function {value}>', # TODO: better string representations
+                    Tag.COROUTINE: f'<coroutine {value}>',
+                    Tag.ARRAY: f'<array {value}>',
+                    Tag.OBJECT: f'<object {value}>',
+                }
+                
+                if isinstance(tag, Tag):
+                    return mapping.get(tag, f'<unknown>')
+                else:
+                    return reduce(
+                        lambda acc, k: IfString(CompareCondition(value, k, ComparisonMode.EQUAL), mapping[k], acc),
+                        mapping.keys(),
+                        f'<unknown>'
+                    )
+                    
+            case BaseString() | str():
                 return value

@@ -60,7 +60,6 @@ class MatchContext(CaseContext):
     @override
     def match_tags(self, *tags: Tag) -> list[Tag]:
         matched_tags: list[Tag] = []
-        conditions: list[CompareCondition] = []
         for tag in tags:
             if tag in self.possible_tags:
                 matched_tags.append(tag)
