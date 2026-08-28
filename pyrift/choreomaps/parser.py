@@ -16,6 +16,7 @@ from .ir import (
     IfExpression,
     IfInstruction,
     JoinExpression,
+    ListExpression,
     NotExpression,
     NullExpression,
     NullInstruction,
@@ -243,3 +244,8 @@ class ChoreomapParser(ast.NodeVisitor):
     @override
     def visit_Name(self, node: ast.Name):
         return VariableExpression(node.id)
+    
+    @override
+    def visit_List(self, node: ast.List):
+        exprs = tuple(self.visit_expr(element) for element in node.elts)
+        return ListExpression(exprs)

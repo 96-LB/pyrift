@@ -54,6 +54,7 @@ from .ir import (
     IfExpression,
     IfInstruction,
     JoinExpression,
+    ListExpression,
     NullInstruction,
     NumberExpression,
     OrExpression,
@@ -126,6 +127,16 @@ class ChoreomapCompiler:
         self.add_event(SetArrayEvent(None, tag_index, Tag.STRING))
         self.add_event(SetArrayEvent(None, value_index, ref))
         return Tag.STRING, ArrayValue(None, value_index)
+    
+    def allocate_array(self, *tagged_values: tuple[Value, Value]) -> tuple[Literal[Tag.ARRAY], Value]:
+        # flatten tagged values into a single array
+        values = (value for tagged_value in tagged_values for value in tagged_value)
+        ref = self.allocate(*values)
+        tag_index, value_index = self.context.allocate_temp()
+        self.add_event(SetArrayEvent(None, tag_index, Tag.ARRAY))
+        self.add_event(SetArrayEvent(None, value_index, ref))
+        return Tag.ARRAY, ArrayValue(None, value_index)
+        # TODO: allocation can be made more DRY
     
     def deref(self, ref: Value, index: Value) -> Value:
         return ArrayValue(NumberString(ref), index)
@@ -463,6 +474,11 @@ class ChoreomapCompiler:
                         match.return_value(tag, value)
                 
                 return match.output
+            
+            case ListExpression(exprs):
+                # TODO: we can probably intern some lists
+                _, ref = self.allocate_array(*(self.visit_value(expr) for expr in exprs))
+                return Tag.ARRAY, ref # TODO: actually handle arrays
             
             case _:
                 raise NotImplementedError(f'Unsupported expression: {type(node).__name__}')

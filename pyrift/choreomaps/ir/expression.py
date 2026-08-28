@@ -68,3 +68,6 @@ class JoinExpression(BaseExpression):
 
 class AwaitExpression(BaseExpression):
     expr: BaseExpression
+
+class ListExpression(BaseExpression):
+    exprs: JList[BaseExpression]

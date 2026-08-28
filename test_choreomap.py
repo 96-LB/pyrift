@@ -3,13 +3,7 @@ from typing import Coroutine
 from pyrift.choreomaps.external import wait
 
 
-x = "test" + "test2"
-print(x)
-if x:
-    print("x is truthy")
-
-async def f():
-    x = wait(0)
+x = [1]
 
 
 # x = 1
