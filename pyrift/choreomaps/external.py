@@ -12,11 +12,14 @@ from pyrift.util.typing import F
 from .backend import (
     BaseValue,
     Condition,
+    GraphicCreateEvent,
     LogEvent,
+    SpriteStringEvent,
     String,
     Value,
 )
 from .context import BaseContext
+from .enum import GraphicType, SpriteStringAttribute
 from .ir import AwaitExpression
 from .vars import Tag
 
@@ -92,3 +95,30 @@ def wait_external(ctx: BaseContext, seconds: Value):
 @external_coroutine(wait_external)
 async def wait(seconds: float):
     await sleep(seconds or 0)
+
+
+_counter = 960000 # TODO: change this
+def text_external(ctx: BaseContext):
+    global _counter
+    _counter += 1
+    ctx.add_event(
+        GraphicCreateEvent(_counter, None, GraphicType.CANVAS_TEXT)
+    )
+    return Tag.NUMBER, _counter
+
+class Text(int): ...
+
+@external_func(text_external)
+def text():
+    return Text(0)
+
+_counter = 960000 # TODO: change this
+def set_text_external(ctx: BaseContext, id: Value, text: String):
+    ctx.add_event(
+        SpriteStringEvent(id, SpriteStringAttribute.TEXT, text)
+    )
+    return Tag.NONE, 0
+
+@external_func(set_text_external)
+def set_text(id: Text, text: String):
+    pass

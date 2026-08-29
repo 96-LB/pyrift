@@ -29,7 +29,7 @@ class CaseContext(BaseContext):
         return self
     
     def __exit__(self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None):
-        if not exc_val:
+        if exc_val is None:
             self.ensure_fully_matched()
     
     def ensure_context(self) -> BaseContext:

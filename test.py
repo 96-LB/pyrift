@@ -18,5 +18,5 @@ with open('test.json', 'w') as f:
         },
         f,
         default=lambda x: x.to_json_obj() if hasattr(x, 'to_json_obj') else str(x.value),
-        indent=4
+        indent=4,
     )

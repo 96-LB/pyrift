@@ -1,6 +1,6 @@
 from typing import Coroutine
 
-from pyrift.choreomaps.external import wait
+from pyrift.choreomaps.external import set_text, text, wait
 
 
 # TODO:
@@ -21,22 +21,33 @@ from pyrift.choreomaps.external import wait
 #     await x
 
 
+obj2 = text()
+set_text(obj2, "Hello, World!")
+print(f'created {obj2}')
+
+
+obj = text()
+def display(text: str):
+    print(text)
+    set_text(obj, text)
+
+
 async def foo():
-    print('waiting 1 second...')
+    display('waiting 1 second...')
     await wait(1)
-    print('waiting 2 seconds...')
+    display('waiting 2 seconds...')
     await wait(2)
-    print('waiting 3 seconds...')
+    display('waiting 3 seconds...')
     await wait(3)
-    print('returning!')
+    display('returning!')
     return 96
 
 
 async def wait_for[T](coroutine: Coroutine[None, None, T]) -> T:
-    print(f'waiting on coroutine {coroutine}')
+    display(f'waiting on coroutine {coroutine}')
     x = await coroutine
-    print(f'coroutine {coroutine} returned value {x}')
+    display(f'coroutine {coroutine} returned value {x}')
     return x
 
-print('hi!')
+display('hi!')
 wait_for(foo())

@@ -8,7 +8,6 @@ from ..enum import NumberFormat
 from .condition import Condition
 from .value import Value
 
-
 type String = str | BaseString
 
 class BaseString(JObj):
