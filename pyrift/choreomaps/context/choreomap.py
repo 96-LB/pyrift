@@ -1,14 +1,7 @@
-from abc import ABC, abstractmethod
-from types import TracebackType
-from typing import Self
-
-from ..backend import BaseEvent, Value
-from ..ir import BaseInstruction
-from ..vars import VarType
-from .status import ContextStatus
+from .base import BaseContext
 
 
-class BaseContext(ABC):
+class ChoreomapContext(BaseContext):
     @abstractmethod
     def __init__(self, parent: BaseContext):
         self.parent = parent

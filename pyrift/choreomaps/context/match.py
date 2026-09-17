@@ -28,34 +28,24 @@ class MatchContext(CaseContext):
     
     @override
     def __enter__(self):
-        context = super().__enter__()
-        self.target_context.begin_control_flow()
-        self.tag_index, self.value_index = self.target_context.allocate_temp()
+        super().__enter__()
+        self.parent.begin_control_flow()
+        self.tag_index, self.value_index = self.parent.allocate_temp()
         self.output = (ArrayValue(None, self.tag_index), ArrayValue(None, self.value_index))
-        return context
-
+        return self
+    
     @override
     def __exit__(self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None):
         super().__exit__(exc_type, exc_val, exc_tb)
         for i, (index, condition) in enumerate(self.jumps):
-            jump_index = self.jumps[i + 1][0] if i + 1 < len(self.jumps) else len(self.target_context)
-            self.target_context.replace_event(index, IfEvent(condition, JumpEvent(jump_index), None))
-    
-    def is_tag_possible(self, tag: Tag):
-        if not isinstance(self.value, (Tag, int)):
-            return True
-        return self.value == tag
+            jump_index = self.jumps[i + 1][0] if i + 1 < len(self.jumps) else len(self.parent)
+            self.parent.replace_event(index, IfEvent(condition, JumpEvent(jump_index), None))
     
     @override
     def ensure_fully_matched(self) -> None:
         unmatched_tags = self.possible_tags - self.matched_tags
         if unmatched_tags:
             raise ValueError(f'The following tags were not matched: {', '.join(str(tag) for tag in unmatched_tags)}')
-    
-    @override
-    def return_value(self, tag: Value, value: Value) -> None:
-        self.add_event(SetArrayEvent(None, self.tag_index, tag))
-        self.add_event(SetArrayEvent(None, self.value_index, value))
     
     @override
     def match_tags(self, *tags: Tag) -> list[Tag]:
@@ -68,6 +58,16 @@ class MatchContext(CaseContext):
             # add a jump instruction if this branch succeeded
             conditions = [CompareCondition(self.value, tag, ComparisonMode.NOT_EQUAL) for tag in matched_tags]
             condition = conditions[0] if len(conditions) == 1 else AndCondition(tuple(conditions))
-            self.jumps.append((len(self.target_context), condition))
-            self.target_context.add_event(BaseEvent()) # placeholder jump
+            self.jumps.append((len(self.parent), condition))
+            self.parent.add_event(BaseEvent()) # placeholder jump
         return matched_tags
+    
+    @override
+    def set_output(self, tag: Value, value: Value) -> None:
+        self.add_event(SetArrayEvent(None, self.tag_index, tag))
+        self.add_event(SetArrayEvent(None, self.value_index, value))
+    
+    def is_tag_possible(self, tag: Tag):
+        if not isinstance(self.value, (Tag, int)):
+            return True
+        return self.value == tag

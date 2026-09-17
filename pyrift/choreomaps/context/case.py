@@ -5,82 +5,35 @@ from types import TracebackType
 from typing import override
 
 from ..backend import BaseEvent, Value
-from ..ir import BaseInstruction
 from ..vars import Tag
-from .base import BaseContext
-from .null import NullContext
+from .base import BaseContext, ContextStatus
 
 
 class CaseContext(BaseContext):
     def __init__(self, context: BaseContext):
-        super().__init__()
-        self.target_context = context
-        self.context: BaseContext | None = None
-        self.active_case: tuple[Tag, ...] | None = None
+        super().__init__(context)
         self.matched_tags = set[Tag]()
-        self.entered = False
         self.output: tuple[Value, Value] = (Tag.NONE, 0)
+        self.is_branch_active: bool | None = None # bool = whether current branch matched, None = no branch
     
-    def __enter__(self):
-        if self.entered:
-            raise ValueError('Match context has already been entered.')
-        self.entered = True
-        
-        return self
-    
+    @override
     def __exit__(self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None):
         if exc_val is None:
             self.ensure_fully_matched()
     
-    def ensure_context(self) -> BaseContext:
-        if self.context is None:
-            raise ValueError('Attempted to use match context without specifying a case.')
-        return self.context
-    
-    @override
-    def __len__(self) -> int:
-        return len(self.ensure_context())
-    
-    @property
-    @override
-    def is_async(self) -> bool:
-        return self.ensure_context().is_async
-    
     @override
     def add_event(self, event: BaseEvent):
-        return self.ensure_context().add_event(event)
+        if self.is_branch_active is None:
+            raise ValueError('Attempted to use case context without specifying a case.')
+        elif self.is_branch_active:
+            return super().add_event(event)
     
     @override
     def replace_event(self, index: int, event: BaseEvent):
-        return self.ensure_context().replace_event(index, event)
-    
-    @override
-    def lookup(self, name: str):
-        return self.ensure_context().lookup(name)
-    
-    @override
-    def allocate_temp(self) -> tuple[int, int]:
-        return self.ensure_context().allocate_temp()
-    
-    @override
-    def push_stack(self, instruction: BaseInstruction):
-        return self.ensure_context().push_stack(instruction)
-    
-    @override
-    def pop_stack(self):
-        return self.ensure_context().pop_stack()
-    
-    @override
-    def get_parent_instruction(self):
-        return self.ensure_context().get_parent_instruction()
-    
-    @override
-    def wait(self, seconds: Value) -> None:
-        return self.ensure_context().wait(seconds)
-    
-    @override
-    def begin_control_flow(self) -> None:
-        return self.ensure_context().begin_control_flow()
+        if self.is_branch_active is None:
+            raise ValueError('Attempted to use case context without specifying a case.')
+        elif self.is_branch_active:
+            return super().replace_event(index, event)
     
     @abstractmethod
     def match_tags(self, *tags: Tag) -> Sequence[Tag]:
@@ -90,9 +43,15 @@ class CaseContext(BaseContext):
     def ensure_fully_matched(self):
         ...
     
+    @abstractmethod
+    def set_output(self, tag: Value, value: Value) -> None:
+        ...
+    
     @contextmanager
     def case(self, *tags: Tag):
-        if self.context is not None:
+        if self.status is not ContextStatus.ACTIVE:
+            raise ValueError('Cases can only be matched within a match context.')
+        if self.is_branch_active is not None:
             raise ValueError('Cases cannot be nested.')
         
         matched_tags = self.match_tags(*tags)
@@ -102,9 +61,9 @@ class CaseContext(BaseContext):
             else:
                 self.matched_tags.add(tag)
         
-        self.context = self.target_context if matched_tags else NullContext()
+        self.is_branch_active = len(matched_tags) > 0
         yield
-        self.context = None
+        self.is_branch_active = None
     
     
     @contextmanager

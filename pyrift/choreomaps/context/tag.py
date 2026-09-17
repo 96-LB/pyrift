@@ -12,11 +12,6 @@ class TagContext(CaseContext):
         self.tag = tag
     
     @override
-    def return_value(self, tag: Value, value: Value) -> None:
-        if self.ensure_context() is self.target_context:
-            self.output = (tag, value)
-    
-    @override
     def ensure_fully_matched(self) -> None:
         if self.tag not in self.matched_tags:
             raise ValueError(f'The tag {self.tag} was not matched.')
@@ -26,3 +21,8 @@ class TagContext(CaseContext):
         if self.tag not in tags:
             return ()
         return (self.tag,)
+    
+    @override
+    def set_output(self, tag: Value, value: Value) -> None:
+        if self.is_branch_active:
+            self.output = (tag, value)
