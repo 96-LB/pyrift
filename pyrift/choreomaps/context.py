@@ -1,7 +1,5 @@
-from typing import override
-
-from ..analysis import Scope
-from ..backend import (
+from .analysis import Scope
+from .backend import (
     ArrayValue,
     BaseEvent,
     CompareCondition,
@@ -15,13 +13,12 @@ from ..backend import (
     Value,
     WaitEvent,
 )
-from ..enum import BinaryOperator, ComparisonMode, SystemAttribute
-from ..ir import BaseInstruction
-from ..vars import Tag, VarType
-from .base import BaseContext
+from .enum import BinaryOperator, ComparisonMode, SystemAttribute
+from .ir import BaseInstruction
+from .vars import Tag, VarType
 
 
-class StreamContext(BaseContext):
+class StreamContext:
     def __init__(self, scope: Scope):
         self.scope: Scope = scope
         self.async_ref: Value | None = None
@@ -32,24 +29,19 @@ class StreamContext(BaseContext):
         self.t: float = 0
         self.simple: bool = True
     
-    @override
     def __len__(self) -> int:
         return len(self.events)
     
     @property
-    @override
     def is_async(self) -> bool:
         return self.async_ref is not None
     
-    @override
     def add_event(self, event: BaseEvent):
         self.events.append(EventBackend(self.t, event))
     
-    @override
     def replace_event(self, index: int, event: BaseEvent):
         self.events[index] = EventBackend(self.events[index].t, event)
     
-    @override
     def lookup(self, name: str) -> tuple[int, VarType]:
         index = 0
         for i in range(len(self.scope.vars)):
@@ -60,25 +52,20 @@ class StreamContext(BaseContext):
                 index += 2
         raise ValueError(f'Unknown variable {name}.')
     
-    @override
     def allocate_temp(self) -> tuple[int, int]:
         self.temp_index += 2
         # tag index, value index
         return (self.temp_index - 2, self.temp_index - 1)
     
-    @override
     def push_stack(self, instruction: BaseInstruction) -> None:
         self.stack.append(instruction)
     
-    @override
     def pop_stack(self) -> BaseInstruction:
         return self.stack.pop()
     
-    @override
     def get_parent_instruction(self) -> type[BaseInstruction]:
         return type(self.stack[-2])
     
-    @override
     def wait(self, seconds: Value) -> None:
         if self.simple and isinstance(seconds, (int, float)):
             self.t += seconds
@@ -88,7 +75,6 @@ class StreamContext(BaseContext):
             self.add_event(SetArrayEvent(None, self.t_index, MathValue(t, seconds, BinaryOperator.ADD)))
             self.add_event(WaitEvent(CompareCondition( SystemValue(SystemAttribute.STREAM_TIME), t, ComparisonMode.GREATER_EQUAL)))
     
-    @override
     def begin_control_flow(self) -> None:
         if not self.simple:
             return

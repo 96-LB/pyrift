@@ -18,7 +18,7 @@ from .backend import (
     String,
     Value,
 )
-from .context import BaseContext
+from .context import StreamContext
 from .enum import GraphicType, SpriteStringAttribute
 from .ir import AwaitExpression
 from .vars import Tag
@@ -44,7 +44,8 @@ class ExternalValue(BaseValue, type='$EXTERNAL'):
         raise NotImplementedError('External function cannot be converted to JSON object.')
 
 
-type ExternalFuncType = F[Concatenate[BaseContext, ...], tuple[Value, Value | Condition | String]]
+
+type ExternalFuncType = F[Concatenate[StreamContext, ...], tuple[Value, Value | Condition | String]]
 
 def register_external(func: ExternalFuncType, is_async: bool):
     def decorator[**P, T](stub: F[P, T]) -> F[P, T]:
@@ -70,7 +71,7 @@ def external_func(func: ExternalFuncType):
 
 def external_coroutine(func: ExternalFuncType):
     @wraps(func)
-    def wrapper(ctx: BaseContext, *args: Any, **kwargs: Any):
+    def wrapper(ctx: StreamContext, *args: Any, **kwargs: Any):
         parent = ctx.get_parent_instruction()
         if parent is not AwaitExpression:
             raise ValueError(f'External coroutine can only be used directly inside await expression, but parent is {parent.__name__}.')
@@ -78,7 +79,7 @@ def external_coroutine(func: ExternalFuncType):
     return register_external(wrapper, is_async=True)
 
 
-def print_external(ctx: BaseContext, text: String):
+def print_external(ctx: StreamContext, text: String):
     ctx.add_event(LogEvent(text))
     return Tag.STRING, text
 
@@ -88,7 +89,7 @@ def print[T](text: T) -> T:
     return text
 
 
-def wait_external(ctx: BaseContext, seconds: Value):
+def wait_external(ctx: StreamContext, seconds: Value):
     ctx.wait(seconds)
     return Tag.NONE, 0
 
@@ -98,7 +99,7 @@ async def wait(seconds: float):
 
 
 _counter = 960000 # TODO: change this
-def text_external(ctx: BaseContext):
+def text_external(ctx: StreamContext):
     global _counter
     _counter += 1
     ctx.add_event(
@@ -113,7 +114,7 @@ def text():
     return Text(0)
 
 _counter = 960000 # TODO: change this
-def set_text_external(ctx: BaseContext, id: Value, text: String):
+def set_text_external(ctx: StreamContext, id: Value, text: String):
     ctx.add_event(
         SpriteStringEvent(id, SpriteStringAttribute.TEXT, text)
     )

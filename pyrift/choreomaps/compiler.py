@@ -6,7 +6,7 @@ from typing import Literal
 from pyrift.util.decorators import decorates
 from pyrift.util.typing import F
 
-from .analysis import Analysis, ChoreomapAnalyzer, VarType
+from .analysis import Analysis, ChoreomapAnalyzer, Scope, VarType
 from .backend import (
     AndCondition,
     ArrayString,
@@ -17,6 +17,7 @@ from .backend import (
     BaseValue,
     CompareCondition,
     Condition,
+    IfEvent,
     IfString,
     IfValue,
     JoinString,
@@ -38,7 +39,7 @@ from .backend import (
 )
 from .backend.string import FormatString
 from .choreomap import Choreomap
-from .context import BaseContext, MatchContext, NullContext, StreamContext, TagContext
+from .context import StreamContext
 from .enum import BinaryOperator, ComparisonMode
 from .external import ExternalArgType, ExternalValue
 from .ir import (
@@ -82,27 +83,71 @@ class ChoreomapCompiler:
         self.streams: list[StreamContext] = []
         self.analysis: Analysis = Analysis(())
         self.externals: dict[str, ExternalValue] = {}
-        self.context: BaseContext = NullContext()
+        self.context: StreamContext = StreamContext(Scope((), (), 0))
+        self.active = True # gets set to false while in dynamic match
+        self.match_output: TaggedValue = Tag.NONE, 0 # output of latest match statement
     
     def add_event(self, event: BaseEvent) -> None:
-        self.context.add_event(event)
+        if self.active:
+            self.context.add_event(event)
     
     @contextmanager
-    def match(self, tag: Value):
-        # store old context and make new one
-        old_context = self.context
-        context = TagContext(self.context, Tag(tag)) if isinstance(tag, (Tag, int)) else MatchContext(self.context, tag)
-        self.context = context
+    def match(self, value: Value):
+        simple = isinstance(value, (Tag, int))
         
-        # execute inner code
-        with context:
-            yield context
+        matching = False
+        possible_tags = {value} if simple else {tag for tag in Tag} # TODO: better analysis of what tags are possible
+        matched_tags = set[Tag]()
+        jumps: list[tuple[int, Condition]] = []
         
-        if self.context is not context:
-            raise ValueError('Scope nesting invariant was violated. This should only happen if scopes are being created manually.')
+        @contextmanager
+        def case(*tags: Tag):
+            nonlocal matching
+            
+            if matching:
+                raise ValueError('Cases cannot be nested.')
+            
+            if not tags:
+                tags = tuple(tag for tag in Tag if tag not in matched_tags)
+            
+            for tag in set(tags) & possible_tags:
+                if tag in matched_tags:
+                    raise ValueError(f'Tag {tag} has already been matched.')
+                else:
+                    matched_tags.add(tag)
+            
+            if not simple and matched_tags:
+                # add a jump instruction if this branch succeeded
+                conditions = [CompareCondition(value, tag, ComparisonMode.NOT_EQUAL) for tag in matched_tags]
+                condition = conditions[0] if len(conditions) == 1 else AndCondition(tuple(conditions))
+                jumps.append((len(self.context), condition))
+                self.context.add_event(BaseEvent()) # placeholder jump
+            
+            matching = True
+            old_active = self.active
+            self.active = bool(matched_tags)
+            yield
+            self.active = old_active
+            matching = False
         
-        # finalize stream and restore old values
-        self.context = old_context
+        if simple:
+            yield case
+        else:
+            self.context.begin_control_flow()
+            tag_index, value_index = self.context.allocate_temp()
+            yield case
+            self.match_output = (ArrayValue(None, tag_index), ArrayValue(None, value_index))
+            for i, (index, condition) in enumerate(jumps):
+                jump_index = jumps[i + 1][0] if i + 1 < len(jumps) else len(self.context)
+                self.context.replace_event(index, IfEvent(condition, JumpEvent(jump_index), None))
+        
+        unmatched_tags = possible_tags - matched_tags
+        if unmatched_tags:
+            raise ValueError(f'The following tags were not matched: {', '.join(str(tag) for tag in unmatched_tags)}')
+    
+    def match_return(self, tag: Value, value: Value):
+        if self.active:
+            self.match_output = tag, value
     
     def allocate(self, *values: Value) -> Value:
         ref = VariableValue('$REF')
@@ -396,7 +441,7 @@ class ChoreomapCompiler:
                 # TODO: verify tag
                 tag, ref = self.visit_value(func)
                 
-                if isinstance(ref, ExternalValue):
+                if isinstance(ref, ExternalValue) and self.active:
                     external_args: list[Value | Condition | String] = []
                     if not len(args) == len(ref.args):
                         raise ValueError(f'Argument count mismatch for external function {ref.func.__name__}. Expected {len(ref.args)}, got {len(args)}')
@@ -460,8 +505,8 @@ class ChoreomapCompiler:
                 if isinstance(value, ExternalValue):
                     return tag, value
                 
-                with self.match(tag) as match:
-                    with match.case(Tag.COROUTINE):
+                with self.match(tag) as case:
+                    with case(Tag.COROUTINE):
                         finished = self.deref(value, 0)
                         rtag = self.deref(value, 1)
                         rval = self.deref(value, 2)
@@ -469,12 +514,12 @@ class ChoreomapCompiler:
                         condition = CompareCondition(finished, 0, ComparisonMode.NOT_EQUAL)
                         self.add_event(WaitEvent(condition))
                         self.context.wait(t) # update local timekeeping
-                        match.return_value(rtag, rval)
+                        self.match_return(rtag, rval)
                     
-                    with match.default():
-                        match.return_value(tag, value)
+                    with case():
+                        self.match_return(tag, value)
                 
-                return match.output
+                return self.match_output
             
             case ListExpression(exprs):
                 # TODO: we can probably intern some lists
