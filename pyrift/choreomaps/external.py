@@ -10,16 +10,22 @@ from pyrift.jobj import JList, JObj
 from pyrift.util.typing import F
 
 from .backend import (
+    ArrayValue,
     BaseValue,
     Condition,
     GraphicCreateEvent,
     LogEvent,
+    SetArrayEvent,
+    SetVariableEvent,
+    SpriteEvent,
+    SpriteIDValue,
     SpriteStringEvent,
     String,
     Value,
+    VariableValue,
 )
-from .context import StreamContext
-from .enum import GraphicType, SpriteStringAttribute
+from .context import BinaryOperator, MathValue, StreamContext
+from .enum import GraphicType, SpriteAttribute, SpriteStringAttribute, VisualType
 from .ir import AwaitExpression
 from .vars import Tag
 
@@ -98,14 +104,19 @@ async def wait(seconds: float):
     await sleep(seconds or 0)
 
 
-_counter = 960000 # TODO: change this
 def text_external(ctx: StreamContext):
-    global _counter
-    _counter += 1
-    ctx.add_event(
-        GraphicCreateEvent(_counter, None, GraphicType.CANVAS_TEXT)
-    )
-    return Tag.NUMBER, _counter
+    ref = VariableValue('$GRAPHIC')
+    id = SpriteIDValue(VisualType.GRAPHIC, ref)
+    # increment the heap counter
+    ctx.add_event(SetVariableEvent('$GRAPHIC', MathValue(ref, 1, BinaryOperator.ADD)))
+    # create the text graphic
+    ctx.add_event(GraphicCreateEvent(ref, None, GraphicType.CANVAS_TEXT))
+    ctx.add_event(SpriteEvent(id, SpriteAttribute.POSITION, None, 0, 0, 0, 0))
+    # return a pointer to the text graphic
+    tag_index, value_index = ctx.allocate_temp()
+    ctx.add_event(SetArrayEvent(None, tag_index, Tag.NUMBER))
+    ctx.add_event(SetArrayEvent(None, value_index, id))
+    return ArrayValue(None, tag_index), ArrayValue(None, value_index)
 
 class Text(int): ...
 
@@ -113,11 +124,8 @@ class Text(int): ...
 def text():
     return Text(0)
 
-_counter = 960000 # TODO: change this
 def set_text_external(ctx: StreamContext, id: Value, text: String):
-    ctx.add_event(
-        SpriteStringEvent(id, SpriteStringAttribute.TEXT, text)
-    )
+    ctx.add_event(SpriteStringEvent(id, SpriteStringAttribute.TEXT, text))
     return Tag.NONE, 0
 
 @external_func(set_text_external)

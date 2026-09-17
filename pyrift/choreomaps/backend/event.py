@@ -204,7 +204,7 @@ class SpriteEvent(BaseEvent, type='Sprite'):
     
     id: Value
     attribute: SpriteAttribute
-    operator: BinaryOperator
+    operator: BinaryOperator | None = None
     x: Value | None = None
     y: Value | None = None
     z: Value | None = None

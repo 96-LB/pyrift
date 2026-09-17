@@ -21,11 +21,6 @@ from pyrift.choreomaps.external import set_text, text, wait
 #     await x
 
 
-obj2 = text()
-set_text(obj2, "Hello, World!")
-print(f'created {obj2}')
-
-
 obj = text()
 def display(text: str):
     print(text)
