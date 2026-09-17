@@ -28,6 +28,7 @@ class StreamContext:
         self.t_index: int = 0
         self.t: float = 0
         self.simple: bool = True
+        self.has_waited: bool = False
     
     def __len__(self) -> int:
         return len(self.events)
@@ -67,13 +68,15 @@ class StreamContext:
         return type(self.stack[-2])
     
     def wait(self, seconds: Value) -> None:
+        self.ensure_async_output()
+        
         if self.simple and isinstance(seconds, (int, float)):
             self.t += seconds
         else:
             self.begin_control_flow()
             t = ArrayValue(None, self.t_index)
             self.add_event(SetArrayEvent(None, self.t_index, MathValue(t, seconds, BinaryOperator.ADD)))
-            self.add_event(WaitEvent(CompareCondition( SystemValue(SystemAttribute.STREAM_TIME), t, ComparisonMode.GREATER_EQUAL)))
+            self.add_event(WaitEvent(CompareCondition(SystemValue(SystemAttribute.STREAM_TIME), t, ComparisonMode.GREATER_EQUAL)))
     
     def begin_control_flow(self) -> None:
         if not self.simple:
@@ -89,8 +92,15 @@ class StreamContext:
         if self.async_ref:
             raise ValueError(f'Stream is already async with ref {self.async_ref}.')
         self.async_ref = async_ref
-        self.add_event(SetVariableEvent('$RTAG', Tag.COROUTINE))
-        self.add_event(SetVariableEvent('$RETURN', async_ref))
+    
+    def ensure_async_output(self):
+        if not self.async_ref:
+            raise ValueError('Attempted to use async operation in a synchronous stream.')
+        
+        if not self.has_waited:
+            self.add_event(SetVariableEvent('$RTAG', Tag.COROUTINE))
+            self.add_event(SetVariableEvent('$RETURN', self.async_ref))
+            self.has_waited = True
     
     def return_value(self, tag: Value, value: Value) -> None:
         # async functions need to update their coroutine object
@@ -100,9 +110,8 @@ class StreamContext:
             self.add_event(SetArrayEvent(ref, 1, tag))
             self.add_event(SetArrayEvent(ref, 2, value))
             self.add_event(SetArrayEvent(ref, 3, self.t))
-            tag = Tag.COROUTINE
-            value = self.async_ref
-        else:
-            self.add_event(SetVariableEvent('$RTAG', tag))
-            self.add_event(SetVariableEvent('$RETURN', value))
+            self.ensure_async_output()
+        
+        self.add_event(SetVariableEvent('$RTAG', tag))
+        self.add_event(SetVariableEvent('$RETURN', value))
         self.add_event(StopStreamEvent())

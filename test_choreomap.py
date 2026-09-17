@@ -44,5 +44,7 @@ async def wait_for[T](coroutine: Coroutine[None, None, T]) -> T:
     display(f'coroutine {coroutine} returned value {x}')
     return x
 
-display('hi!')
-wait_for(foo())
+display(f'{foo}')
+yyyy = foo()
+display(f'{yyyy}')
+wait_for(yyyy)

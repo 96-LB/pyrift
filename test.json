@@ -283,7 +283,166 @@
                             },
                             "type": "Number"
                         },
-                        "string": "hi!",
+                        "string": {
+                            "strings": [
+                                {
+                                    "condition": {
+                                        "value1": {
+                                            "name": "TAG$foo",
+                                            "type": "Variable"
+                                        },
+                                        "value2": -6,
+                                        "mode": "Equal",
+                                        "type": "Compare"
+                                    },
+                                    "yes": {
+                                        "text": "<object {0}>",
+                                        "args": [
+                                            {
+                                                "value": {
+                                                    "name": "foo",
+                                                    "type": "Variable"
+                                                },
+                                                "type": "Number"
+                                            }
+                                        ],
+                                        "type": "Format"
+                                    },
+                                    "no": {
+                                        "condition": {
+                                            "value1": {
+                                                "name": "TAG$foo",
+                                                "type": "Variable"
+                                            },
+                                            "value2": -5,
+                                            "mode": "Equal",
+                                            "type": "Compare"
+                                        },
+                                        "yes": {
+                                            "text": "<array {0}>",
+                                            "args": [
+                                                {
+                                                    "value": {
+                                                        "name": "foo",
+                                                        "type": "Variable"
+                                                    },
+                                                    "type": "Number"
+                                                }
+                                            ],
+                                            "type": "Format"
+                                        },
+                                        "no": {
+                                            "condition": {
+                                                "value1": {
+                                                    "name": "TAG$foo",
+                                                    "type": "Variable"
+                                                },
+                                                "value2": -4,
+                                                "mode": "Equal",
+                                                "type": "Compare"
+                                            },
+                                            "yes": {
+                                                "text": "<coroutine {0}>",
+                                                "args": [
+                                                    {
+                                                        "value": {
+                                                            "name": "foo",
+                                                            "type": "Variable"
+                                                        },
+                                                        "type": "Number"
+                                                    }
+                                                ],
+                                                "type": "Format"
+                                            },
+                                            "no": {
+                                                "condition": {
+                                                    "value1": {
+                                                        "name": "TAG$foo",
+                                                        "type": "Variable"
+                                                    },
+                                                    "value2": -3,
+                                                    "mode": "Equal",
+                                                    "type": "Compare"
+                                                },
+                                                "yes": {
+                                                    "text": "<function {0}>",
+                                                    "args": [
+                                                        {
+                                                            "value": {
+                                                                "name": "foo",
+                                                                "type": "Variable"
+                                                            },
+                                                            "type": "Number"
+                                                        }
+                                                    ],
+                                                    "type": "Format"
+                                                },
+                                                "no": {
+                                                    "condition": {
+                                                        "value1": {
+                                                            "name": "TAG$foo",
+                                                            "type": "Variable"
+                                                        },
+                                                        "value2": -2,
+                                                        "mode": "Equal",
+                                                        "type": "Compare"
+                                                    },
+                                                    "yes": {
+                                                        "name": {
+                                                            "value": {
+                                                                "name": "foo",
+                                                                "type": "Variable"
+                                                            },
+                                                            "type": "Number"
+                                                        },
+                                                        "type": "Array"
+                                                    },
+                                                    "no": {
+                                                        "condition": {
+                                                            "value1": {
+                                                                "name": "TAG$foo",
+                                                                "type": "Variable"
+                                                            },
+                                                            "value2": -1,
+                                                            "mode": "Equal",
+                                                            "type": "Compare"
+                                                        },
+                                                        "yes": {
+                                                            "value": {
+                                                                "name": "foo",
+                                                                "type": "Variable"
+                                                            },
+                                                            "type": "Number"
+                                                        },
+                                                        "no": {
+                                                            "condition": {
+                                                                "value1": {
+                                                                    "name": "TAG$foo",
+                                                                    "type": "Variable"
+                                                                },
+                                                                "value2": 0,
+                                                                "mode": "Equal",
+                                                                "type": "Compare"
+                                                            },
+                                                            "yes": "None",
+                                                            "no": "<unknown>",
+                                                            "type": "If"
+                                                        },
+                                                        "type": "If"
+                                                    },
+                                                    "type": "If"
+                                                },
+                                                "type": "If"
+                                            },
+                                            "type": "If"
+                                        },
+                                        "type": "If"
+                                    },
+                                    "type": "If"
+                                }
+                            ],
+                            "type": "Join"
+                        },
                         "ev": "SetArrayString"
                     },
                     {
@@ -408,11 +567,290 @@
                     },
                     {
                         "t": 0,
-                        "name": "$ARGS",
-                        "index": 0,
+                        "name": "TAG$yyyy",
                         "value": {
                             "index": 12,
                             "type": "Array"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "yyyy",
+                        "value": {
+                            "index": 13,
+                            "type": "Array"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$REF",
+                        "value": {
+                            "value1": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "value2": 1,
+                            "operator": "Add",
+                            "type": "Math"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": {
+                            "value": {
+                                "name": "$REF",
+                                "type": "Variable"
+                            },
+                            "type": "Number"
+                        },
+                        "string": {
+                            "strings": [
+                                {
+                                    "condition": {
+                                        "value1": {
+                                            "name": "TAG$yyyy",
+                                            "type": "Variable"
+                                        },
+                                        "value2": -6,
+                                        "mode": "Equal",
+                                        "type": "Compare"
+                                    },
+                                    "yes": {
+                                        "text": "<object {0}>",
+                                        "args": [
+                                            {
+                                                "value": {
+                                                    "name": "yyyy",
+                                                    "type": "Variable"
+                                                },
+                                                "type": "Number"
+                                            }
+                                        ],
+                                        "type": "Format"
+                                    },
+                                    "no": {
+                                        "condition": {
+                                            "value1": {
+                                                "name": "TAG$yyyy",
+                                                "type": "Variable"
+                                            },
+                                            "value2": -5,
+                                            "mode": "Equal",
+                                            "type": "Compare"
+                                        },
+                                        "yes": {
+                                            "text": "<array {0}>",
+                                            "args": [
+                                                {
+                                                    "value": {
+                                                        "name": "yyyy",
+                                                        "type": "Variable"
+                                                    },
+                                                    "type": "Number"
+                                                }
+                                            ],
+                                            "type": "Format"
+                                        },
+                                        "no": {
+                                            "condition": {
+                                                "value1": {
+                                                    "name": "TAG$yyyy",
+                                                    "type": "Variable"
+                                                },
+                                                "value2": -4,
+                                                "mode": "Equal",
+                                                "type": "Compare"
+                                            },
+                                            "yes": {
+                                                "text": "<coroutine {0}>",
+                                                "args": [
+                                                    {
+                                                        "value": {
+                                                            "name": "yyyy",
+                                                            "type": "Variable"
+                                                        },
+                                                        "type": "Number"
+                                                    }
+                                                ],
+                                                "type": "Format"
+                                            },
+                                            "no": {
+                                                "condition": {
+                                                    "value1": {
+                                                        "name": "TAG$yyyy",
+                                                        "type": "Variable"
+                                                    },
+                                                    "value2": -3,
+                                                    "mode": "Equal",
+                                                    "type": "Compare"
+                                                },
+                                                "yes": {
+                                                    "text": "<function {0}>",
+                                                    "args": [
+                                                        {
+                                                            "value": {
+                                                                "name": "yyyy",
+                                                                "type": "Variable"
+                                                            },
+                                                            "type": "Number"
+                                                        }
+                                                    ],
+                                                    "type": "Format"
+                                                },
+                                                "no": {
+                                                    "condition": {
+                                                        "value1": {
+                                                            "name": "TAG$yyyy",
+                                                            "type": "Variable"
+                                                        },
+                                                        "value2": -2,
+                                                        "mode": "Equal",
+                                                        "type": "Compare"
+                                                    },
+                                                    "yes": {
+                                                        "name": {
+                                                            "value": {
+                                                                "name": "yyyy",
+                                                                "type": "Variable"
+                                                            },
+                                                            "type": "Number"
+                                                        },
+                                                        "type": "Array"
+                                                    },
+                                                    "no": {
+                                                        "condition": {
+                                                            "value1": {
+                                                                "name": "TAG$yyyy",
+                                                                "type": "Variable"
+                                                            },
+                                                            "value2": -1,
+                                                            "mode": "Equal",
+                                                            "type": "Compare"
+                                                        },
+                                                        "yes": {
+                                                            "value": {
+                                                                "name": "yyyy",
+                                                                "type": "Variable"
+                                                            },
+                                                            "type": "Number"
+                                                        },
+                                                        "no": {
+                                                            "condition": {
+                                                                "value1": {
+                                                                    "name": "TAG$yyyy",
+                                                                    "type": "Variable"
+                                                                },
+                                                                "value2": 0,
+                                                                "mode": "Equal",
+                                                                "type": "Compare"
+                                                            },
+                                                            "yes": "None",
+                                                            "no": "<unknown>",
+                                                            "type": "If"
+                                                        },
+                                                        "type": "If"
+                                                    },
+                                                    "type": "If"
+                                                },
+                                                "type": "If"
+                                            },
+                                            "type": "If"
+                                        },
+                                        "type": "If"
+                                    },
+                                    "type": "If"
+                                }
+                            ],
+                            "type": "Join"
+                        },
+                        "ev": "SetArrayString"
+                    },
+                    {
+                        "t": 0,
+                        "index": 14,
+                        "value": -2,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 15,
+                        "value": {
+                            "name": "$REF",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$ARGS",
+                        "index": 0,
+                        "value": -2,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$ARGS",
+                        "index": 1,
+                        "value": {
+                            "index": 15,
+                            "type": "Array"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$ENV",
+                        "value": {
+                            "name": "display",
+                            "type": "Variable"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "id": {
+                            "name": {
+                                "value": {
+                                    "name": "display",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 0,
+                            "type": "Array"
+                        },
+                        "refId": 0,
+                        "immediate": true,
+                        "ev": "StartStream"
+                    },
+                    {
+                        "t": 0,
+                        "index": 16,
+                        "value": {
+                            "name": "$RTAG",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 17,
+                        "value": {
+                            "name": "$RETURN",
+                            "type": "Variable"
+                        },
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$ARGS",
+                        "index": 0,
+                        "value": {
+                            "name": "TAG$yyyy",
+                            "type": "Variable"
                         },
                         "ev": "SetArray"
                     },
@@ -421,8 +859,8 @@
                         "name": "$ARGS",
                         "index": 1,
                         "value": {
-                            "index": 13,
-                            "type": "Array"
+                            "name": "yyyy",
+                            "type": "Variable"
                         },
                         "ev": "SetArray"
                     },
@@ -454,7 +892,7 @@
                     },
                     {
                         "t": 0,
-                        "index": 14,
+                        "index": 18,
                         "value": {
                             "name": "$RTAG",
                             "type": "Variable"
@@ -463,7 +901,7 @@
                     },
                     {
                         "t": 0,
-                        "index": 15,
+                        "index": 19,
                         "value": {
                             "name": "$RETURN",
                             "type": "Variable"
@@ -940,21 +1378,6 @@
                     },
                     {
                         "t": 0,
-                        "name": "$RTAG",
-                        "value": -4,
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "t": 0,
-                        "name": "$RETURN",
-                        "value": {
-                            "index": 1,
-                            "type": "Array"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "t": 0,
                         "name": "$REF",
                         "value": {
                             "value1": {
@@ -1054,6 +1477,21 @@
                             "type": "Variable"
                         },
                         "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$RTAG",
+                        "value": -4,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$RETURN",
+                        "value": {
+                            "index": 1,
+                            "type": "Array"
+                        },
+                        "ev": "SetVariable"
                     },
                     {
                         "t": 1,
@@ -1592,6 +2030,18 @@
                     },
                     {
                         "t": 0,
+                        "name": "$RTAG",
+                        "value": -1,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$RETURN",
+                        "value": 96,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
                         "ev": "StopStream"
                     },
                     {
@@ -1645,6 +2095,18 @@
                         "index": 3,
                         "value": 0,
                         "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$RTAG",
+                        "value": 0,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$RETURN",
+                        "value": 0,
+                        "ev": "SetVariable"
                     },
                     {
                         "t": 0,
@@ -1756,21 +2218,6 @@
                             "type": "Variable"
                         },
                         "ev": "SetArray"
-                    },
-                    {
-                        "t": 0,
-                        "name": "$RTAG",
-                        "value": -4,
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "t": 0,
-                        "name": "$RETURN",
-                        "value": {
-                            "index": 3,
-                            "type": "Array"
-                        },
-                        "ev": "SetVariable"
                     },
                     {
                         "t": 0,
@@ -2076,6 +2523,21 @@
                             "type": "Compare"
                         },
                         "ev": "Wait"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$RTAG",
+                        "value": -4,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$RETURN",
+                        "value": {
+                            "index": 3,
+                            "type": "Array"
+                        },
+                        "ev": "SetVariable"
                     },
                     {
                         "t": 0,
@@ -2689,6 +3151,24 @@
                     },
                     {
                         "t": 0,
+                        "name": "$RTAG",
+                        "value": {
+                            "index": 2,
+                            "type": "Array"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$RETURN",
+                        "value": {
+                            "index": 3,
+                            "type": "Array"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
                         "ev": "StopStream"
                     },
                     {
@@ -2742,6 +3222,18 @@
                         "index": 3,
                         "value": 0,
                         "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$RTAG",
+                        "value": 0,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$RETURN",
+                        "value": 0,
+                        "ev": "SetVariable"
                     },
                     {
                         "t": 0,
