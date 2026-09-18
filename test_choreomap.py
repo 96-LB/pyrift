@@ -15,36 +15,16 @@ from pyrift.choreomaps.external import set_text, text, wait
 # 9. type-checking
 
 
-
-# x = 1
-# async def f():
-#     await x
-
-
 obj = text()
-def display(text: str):
-    print(text)
-    set_text(obj, text)
+
+async def display_time(max: float):
+    x = 0
+    while x <= max:
+        print(x)
+        set_text(obj, f'<color=#6df141><b><size=96px>{x} seconds...<sprite=6 color=#416df1>')
+        await wait(0.1)
+        x += 0.1
+    print(x)
 
 
-async def foo():
-    display('waiting 1 second...')
-    await wait(1)
-    display('waiting 2 seconds...')
-    await wait(2)
-    display('waiting 3 seconds...')
-    await wait(3)
-    display('returning!')
-    return 96
-
-
-async def wait_for[T](coroutine: Coroutine[None, None, T]) -> T:
-    display(f'waiting on coroutine {coroutine}')
-    x = await coroutine
-    display(f'coroutine {coroutine} returned value {x}')
-    return x
-
-display(f'{foo}')
-yyyy = foo()
-display(f'{yyyy}')
-wait_for(yyyy)
+display_time(10)

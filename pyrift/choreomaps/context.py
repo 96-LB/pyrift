@@ -1,9 +1,14 @@
+from contextlib import contextmanager
+
 from .analysis import Scope
 from .backend import (
     ArrayValue,
     BaseEvent,
     CompareCondition,
+    Condition,
     EventBackend,
+    IfEvent,
+    JumpEvent,
     MathValue,
     NumberString,
     SetArrayEvent,
@@ -29,6 +34,7 @@ class StreamContext:
         self.t: float = 0
         self.simple: bool = True
         self.has_waited: bool = False
+        self.loops: list[list[int]] = [] # each entry is a start index followed by breakpoints
     
     def __len__(self) -> int:
         return len(self.events)
@@ -37,10 +43,14 @@ class StreamContext:
     def is_async(self) -> bool:
         return self.async_ref is not None
     
-    def add_event(self, event: BaseEvent):
+    def add_event(self, event: BaseEvent) -> int:
         self.events.append(EventBackend(self.t, event))
+        return len(self.events) - 1
     
-    def replace_event(self, index: int, event: BaseEvent):
+    def add_placeholder(self) -> int:
+        return self.add_event(BaseEvent())
+    
+    def replace_event(self, index: int, event: BaseEvent) -> None:
         self.events[index] = EventBackend(self.events[index].t, event)
     
     def lookup(self, name: str) -> tuple[int, VarType]:
@@ -115,3 +125,26 @@ class StreamContext:
         self.add_event(SetVariableEvent('$RTAG', tag))
         self.add_event(SetVariableEvent('$RETURN', value))
         self.add_event(StopStreamEvent())
+    
+    @contextmanager
+    def loop(self, condition: Condition, start_index: int):
+        self.loops.append([start_index])
+        self.begin_control_flow()
+        
+        jump_index = self.add_placeholder()
+        yield
+        self.add_event(JumpEvent(start_index))
+        end = JumpEvent(len(self))
+        self.replace_event(jump_index, IfEvent(condition, None, end))
+        for breakpoint in self.loops.pop()[1:]:
+            self.replace_event(breakpoint, end)
+    
+    def break_loop(self, should_continue: bool):
+        if not self.loops:
+            raise ValueError(f'"{'continue' if should_continue else 'break'}" can only be used inside a loop.')
+        
+        if should_continue:
+            self.add_event(JumpEvent(self.loops[-1][0])) # jump to start
+        else:
+            self.loops[-1].append(len(self))
+            self.add_placeholder()

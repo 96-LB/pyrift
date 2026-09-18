@@ -19,6 +19,10 @@ class IfInstruction(BaseInstruction):
     yes: JList[BaseInstruction]
     no: JList[BaseInstruction]
 
+class WhileInstruction(BaseInstruction):
+    condition: BaseExpression
+    body: JList[BaseInstruction]
+
 class SetVariableInstruction(BaseInstruction):
     name: str
     expr: BaseExpression
@@ -38,3 +42,6 @@ class SetAttributeInstruction(BaseInstruction):
 
 class ReturnInstruction(BaseInstruction):
     expr: BaseExpression
+
+class BreakInstruction(BaseInstruction):
+    should_continue: bool

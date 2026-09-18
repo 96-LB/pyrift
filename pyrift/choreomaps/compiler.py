@@ -49,6 +49,7 @@ from .ir import (
     BaseInstruction,
     BinaryExpression,
     BooleanExpression,
+    BreakInstruction,
     CallExpression,
     CompareExpression,
     DeclareVariablesInstruction,
@@ -66,6 +67,7 @@ from .ir import (
     StringExpression,
     UnaryExpression,
     VariableExpression,
+    WhileInstruction,
 )
 from .vars import Tag
 
@@ -308,13 +310,13 @@ class ChoreomapCompiler:
                 condition = self.visit_condition(condition)
                 
                 self.add_event(BaseEvent()) # placeholder jump
-                yes_index = len(self.context)
+                yes_index = len(self.context) # start of yes branch
                 
                 for inst in yes:
                     self.visit_inst(inst)
                 
                 self.add_event(BaseEvent()) # placeholder jump
-                no_index = len(self.context)
+                no_index = len(self.context) # start of no branch
                 
                 for inst in no:
                     self.visit_inst(inst)
@@ -322,6 +324,17 @@ class ChoreomapCompiler:
                 end_index = len(self.context)
                 self.context.replace_event(yes_index - 1, JumpEvent(IfValue(condition, yes_index, no_index)))
                 self.context.replace_event(no_index - 1, JumpEvent(end_index))
+            
+            case WhileInstruction(condition, body):
+                self.context.begin_control_flow()
+                start_index = len(self.context)
+                condition = self.visit_condition(condition)
+                with self.context.loop(condition, start_index):
+                    for inst in body:
+                        self.visit_inst(inst)
+            
+            case BreakInstruction(should_continue):
+                self.context.break_loop(should_continue)
             
             case ReturnInstruction(expr):
                 tag, value = self.visit_value(expr)

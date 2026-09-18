@@ -26,6 +26,7 @@ from .ir import (
     StringExpression,
     UnaryExpression,
     VariableExpression,
+    WhileInstruction,
 )
 from .vars import VarType
 
@@ -153,7 +154,7 @@ class ChoreomapAnalyzer:
                 self.visit_inst(yes)
                 self.visit_inst(no)
             
-            case FormatExpression(_, args) | JoinExpression(args):
+            case WhileInstruction(_, args) | FormatExpression(_, args) | JoinExpression(args):
                 for arg in args:
                     self.visit_inst(arg)
             

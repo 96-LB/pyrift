@@ -5,6 +5,7 @@ __all__ = (
     'BaseInstruction',
     'BinaryExpression',
     'BooleanExpression',
+    'BreakInstruction',
     'CallExpression',
     'CompareExpression',
     'CreateObjectInstruction',
@@ -27,7 +28,8 @@ __all__ = (
     'SetVariableInstruction',
     'StringExpression',
     'UnaryExpression',
-    'VariableExpression'
+    'VariableExpression',
+    'WhileInstruction'
 )
 
 from .expression import (
@@ -53,6 +55,7 @@ from .expression import (
 )
 from .instruction import (
     BaseInstruction,
+    BreakInstruction,
     CreateObjectInstruction,
     DeclareVariablesInstruction,
     GetAttributeInstruction,
@@ -61,5 +64,6 @@ from .instruction import (
     ReturnInstruction,
     SetAttributeInstruction,
     SetVariableInstruction,
+    WhileInstruction,
 )
 from .script import Script

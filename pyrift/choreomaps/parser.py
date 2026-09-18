@@ -9,6 +9,7 @@ from .ir import (
     BaseInstruction,
     BinaryExpression,
     BooleanExpression,
+    BreakInstruction,
     CallExpression,
     CompareExpression,
     DeclareVariablesInstruction,
@@ -28,6 +29,7 @@ from .ir import (
     StringExpression,
     UnaryExpression,
     VariableExpression,
+    WhileInstruction,
 )
 from .vars import VarType
 
@@ -91,11 +93,16 @@ class ChoreomapParser(ast.NodeVisitor):
         return ReturnInstruction(expr)
     
     @override
+    def visit_While(self, node: ast.While):
+        condition = self.visit_expr(node.test)
+        body = tuple(self.visit_stmt(stmt) for stmt in node.body)
+        return WhileInstruction(condition, body)
+
+    @override
     def visit_If(self, node: ast.If):
         condition = self.visit_expr(node.test)
         yes = tuple(self.visit_stmt(stmt) for stmt in node.body)
         no = tuple(self.visit_stmt(stmt) for stmt in node.orelse)
-        
         return IfInstruction(condition, yes, no)
     
     @override
@@ -137,6 +144,18 @@ class ChoreomapParser(ast.NodeVisitor):
     def visit_Expr(self, node: ast.Expr):
         return self.visit_expr(node.value)
     
+    @override
+    def visit_Pass(self, node: ast.Pass):
+        return NullInstruction()
+    
+    @override
+    def visit_Break(self, node: ast.Break):
+        return BreakInstruction(should_continue=False)
+    
+    @override
+    def visit_Continue(self, node: ast.Continue):
+        return BreakInstruction(should_continue=True)
+
     @override
     def visit_BoolOp(self, node: ast.BoolOp):
         conditions = tuple(self.visit_expr(value) for value in node.values)
