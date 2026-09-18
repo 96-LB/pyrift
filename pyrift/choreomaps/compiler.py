@@ -6,7 +6,7 @@ from typing import Literal
 from pyrift.util.decorators import decorates
 from pyrift.util.typing import F
 
-from .analysis import Analysis, ChoreomapAnalyzer, Scope, VarType
+from .analysis import Analysis, ChoreomapAnalyzer, VarType
 from .backend import (
     AndCondition,
     ArrayString,
@@ -39,7 +39,7 @@ from .backend import (
 )
 from .backend.string import FormatString
 from .choreomap import Choreomap
-from .context import StreamContext
+from .context import DummyContext, StreamContext
 from .enum import BinaryOperator, ComparisonMode
 from .external import ExternalArgType, ExternalValue
 from .ir import (
@@ -85,13 +85,11 @@ class ChoreomapCompiler:
         self.streams: list[StreamContext] = []
         self.analysis: Analysis = Analysis(())
         self.externals: dict[str, ExternalValue] = {}
-        self.context: StreamContext = StreamContext(Scope((), (), 0))
-        self.active = True # gets set to false while in dynamic match
+        self.context: StreamContext = DummyContext()
         self.match_output: TaggedValue = Tag.NONE, 0 # output of latest match statement
     
     def add_event(self, event: BaseEvent) -> None:
-        if self.active:
-            self.context.add_event(event)
+        self.context.add_event(event)
     
     @contextmanager
     def match(self, value: Value):
@@ -126,10 +124,10 @@ class ChoreomapCompiler:
                 self.context.add_event(BaseEvent()) # placeholder jump
             
             matching = True
-            old_active = self.active
-            self.active = bool(matched_tags)
+            old_context = self.context
+            self.context = DummyContext(self.context)
             yield
-            self.active = old_active
+            self.context = old_context
             matching = False
         
         if simple:
@@ -148,7 +146,7 @@ class ChoreomapCompiler:
             raise ValueError(f'The following tags were not matched: {', '.join(str(tag) for tag in unmatched_tags)}')
     
     def match_return(self, tag: Value, value: Value):
-        if self.active:
+        if not isinstance(self.context, DummyContext):
             self.match_output = tag, value
     
     def allocate(self, *values: Value) -> Value:
@@ -454,7 +452,7 @@ class ChoreomapCompiler:
                 # TODO: verify tag
                 tag, ref = self.visit_value(func)
                 
-                if isinstance(ref, ExternalValue) and self.active:
+                if isinstance(ref, ExternalValue):
                     external_args: list[Value | Condition | String] = []
                     if not len(args) == len(ref.args):
                         raise ValueError(f'Argument count mismatch for external function {ref.func.__name__}. Expected {len(ref.args)}, got {len(args)}')

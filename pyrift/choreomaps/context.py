@@ -148,3 +148,9 @@ class StreamContext:
         else:
             self.loops[-1].append(len(self))
             self.add_placeholder()
+
+class DummyContext(StreamContext):
+    def __init__(self, parent: StreamContext | None = None):
+        super().__init__(Scope((), (), 0))
+        if parent:
+            self.async_ref = parent.async_ref
