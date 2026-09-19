@@ -463,7 +463,7 @@ class LogEvent(BaseEvent, type='Log'):
     text: String
 
 
-class EventBackend(JObj):
+class TimedEvent(JObj):
     t: float
     event: BaseEvent
     

@@ -6,7 +6,6 @@ from .backend import (
     BaseEvent,
     CompareCondition,
     Condition,
-    EventBackend,
     IfEvent,
     JumpEvent,
     MathValue,
@@ -15,6 +14,7 @@ from .backend import (
     SetVariableEvent,
     StopStreamEvent,
     SystemValue,
+    TimedEvent,
     Value,
     WaitEvent,
 )
@@ -27,7 +27,7 @@ class StreamContext:
     def __init__(self, scope: Scope):
         self.scope: Scope = scope
         self.async_ref: Value | None = None
-        self.events: list[EventBackend] = []
+        self.events: list[TimedEvent] = []
         self.temp_index: int = 0
         self.stack: list[BaseInstruction] = []
         self.t_index: int = 0
@@ -44,14 +44,14 @@ class StreamContext:
         return self.async_ref is not None
     
     def add_event(self, event: BaseEvent) -> int:
-        self.events.append(EventBackend(self.t, event))
+        self.events.append(TimedEvent(self.t, event))
         return len(self.events) - 1
     
     def add_placeholder(self) -> int:
         return self.add_event(BaseEvent())
     
     def replace_event(self, index: int, event: BaseEvent) -> None:
-        self.events[index] = EventBackend(self.events[index].t, event)
+        self.events[index] = TimedEvent(self.events[index].t, event)
     
     def lookup(self, name: str) -> tuple[int, VarType]:
         index = 0
@@ -83,12 +83,12 @@ class StreamContext:
         if self.simple and isinstance(seconds, (int, float)):
             self.t += seconds
         else:
-            self.begin_control_flow()
+            self.use_dynamic_timing()
             t = ArrayValue(None, self.t_index)
             self.add_event(SetArrayEvent(None, self.t_index, MathValue(t, seconds, BinaryOperator.ADD)))
             self.add_event(WaitEvent(CompareCondition(SystemValue(SystemAttribute.STREAM_TIME), t, ComparisonMode.GREATER_EQUAL)))
     
-    def begin_control_flow(self) -> None:
+    def use_dynamic_timing(self) -> None:
         if not self.simple:
             return
         
@@ -129,7 +129,7 @@ class StreamContext:
     @contextmanager
     def loop(self, condition: Condition, start_index: int):
         self.loops.append([start_index])
-        self.begin_control_flow()
+        self.use_dynamic_timing()
         
         jump_index = self.add_placeholder()
         yield

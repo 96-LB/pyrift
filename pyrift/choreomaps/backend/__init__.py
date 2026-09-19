@@ -15,7 +15,6 @@ __all__ = (
     'EntityAttributeEvent',
     'EntityCondition',
     'EntityValue',
-    'EventBackend',
     'FinishLevelEvent',
     'GraphicCreateEvent',
     'GraphicDestroyEvent',
@@ -60,6 +59,7 @@ __all__ = (
     'SystemEvent',
     'SystemValue',
     'TaggedValue',
+    'TimedEvent',
     'UnaryValue',
     'Value',
     'VariableValue',
@@ -84,7 +84,6 @@ from .event import (
     ComboDropEvent,
     DespawnEvent,
     EntityAttributeEvent,
-    EventBackend,
     FinishLevelEvent,
     GraphicCreateEvent,
     GraphicDestroyEvent,
@@ -111,6 +110,7 @@ from .event import (
     StatusRemoveEvent,
     StopStreamEvent,
     SystemEvent,
+    TimedEvent,
     WaitEvent,
 )
 from .rating import RatingDefinition, RatingStep

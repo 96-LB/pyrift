@@ -133,7 +133,7 @@ class ChoreomapCompiler:
         if simple:
             yield case
         else:
-            self.context.begin_control_flow()
+            self.context.use_dynamic_timing()
             tag_index, value_index = self.context.allocate_temp()
             yield case
             self.match_output = (ArrayValue(None, tag_index), ArrayValue(None, value_index))
@@ -304,7 +304,7 @@ class ChoreomapCompiler:
                         raise NotImplementedError('Setting external variables is unsupported.')
             
             case IfInstruction(condition, yes, no):
-                self.context.begin_control_flow()
+                self.context.use_dynamic_timing()
                 condition = self.visit_condition(condition)
                 
                 self.add_event(BaseEvent()) # placeholder jump
@@ -324,7 +324,7 @@ class ChoreomapCompiler:
                 self.context.replace_event(no_index - 1, JumpEvent(end_index))
             
             case WhileInstruction(condition, body):
-                self.context.begin_control_flow()
+                self.context.use_dynamic_timing()
                 start_index = len(self.context)
                 condition = self.visit_condition(condition)
                 with self.context.loop(condition, start_index):
@@ -423,7 +423,7 @@ class ChoreomapCompiler:
             case IfExpression(condition, yes, no):
                 # since visit_value can add events, we need to use control flow
                 # otherwise, we'd always be evaluating both branches
-                self.context.begin_control_flow()
+                self.context.use_dynamic_timing()
                 tag_index, value_index = self.context.allocate_temp()
                 
                 self.add_event(BaseEvent()) # placeholder jump

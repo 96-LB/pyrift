@@ -1,7 +1,7 @@
 from pyrift.jobj import JList, JObj
 
 from ..enum import TimingMode
-from .event import EventBackend
+from .event import TimedEvent
 
 
 class Stream(JObj):
@@ -13,5 +13,5 @@ class Stream(JObj):
     '''
     
     id: int
-    events: JList[EventBackend]
+    events: JList[TimedEvent]
     timing_mode: TimingMode = TimingMode.STREAM_START
