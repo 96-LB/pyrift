@@ -533,7 +533,7 @@ class ChoreomapCompiler:
                 return self.match_output
             
             case ListExpression(exprs):
-                # TODO: we can probably intern some lists
+                # TODO: we can probably intern some lists -- consider allowing list to be its own compiler-internal primitive?
                 _, ref = self.allocate_array(*(self.visit_value(expr) for expr in exprs))
                 return Tag.ARRAY, ref # TODO: actually handle arrays
             

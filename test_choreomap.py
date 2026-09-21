@@ -15,6 +15,11 @@ from pyrift.choreomaps.external import set_text, text, wait
 # 9. type-checking
 
 
+j = [1, 2, 3]
+k = len(j)
+l = len("123")
+
+
 obj = text()
 
 async def display_time(max: float):

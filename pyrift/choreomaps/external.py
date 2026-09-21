@@ -1,6 +1,5 @@
 import inspect
-from asyncio import sleep
-from builtins import print as builtin_print
+from collections.abc import Sized
 from enum import Enum, auto
 from functools import wraps
 from itertools import islice
@@ -15,6 +14,8 @@ from .backend import (
     Condition,
     GraphicCreateEvent,
     LogEvent,
+    MathValue,
+    NumberString,
     SetArrayEvent,
     SetVariableEvent,
     SpriteEvent,
@@ -24,8 +25,14 @@ from .backend import (
     Value,
     VariableValue,
 )
-from .context import BinaryOperator, MathValue, StreamContext
-from .enum import GraphicType, SpriteAttribute, SpriteStringAttribute, VisualType
+from .context import StreamContext
+from .enum import (
+    BinaryOperator,
+    GraphicType,
+    SpriteAttribute,
+    SpriteStringAttribute,
+    VisualType,
+)
 from .ir import AwaitExpression
 from .vars import Tag
 
@@ -91,8 +98,7 @@ def print_external(ctx: StreamContext, text: String):
 
 @external_func(print_external)
 def print[T](text: T) -> T:
-    builtin_print(text)
-    return text
+    ...
 
 
 def wait_external(ctx: StreamContext, seconds: Value):
@@ -100,9 +106,11 @@ def wait_external(ctx: StreamContext, seconds: Value):
     return Tag.NONE, 0
 
 @external_coroutine(wait_external)
-async def wait(seconds: float):
-    await sleep(seconds or 0)
+async def wait(seconds: float) -> None:
+    ...
 
+
+class Text(int): ...
 
 def text_external(ctx: StreamContext):
     ref = VariableValue('$GRAPHIC')
@@ -118,16 +126,25 @@ def text_external(ctx: StreamContext):
     ctx.add_event(SetArrayEvent(None, value_index, id))
     return ArrayValue(None, tag_index), ArrayValue(None, value_index)
 
-class Text(int): ...
-
 @external_func(text_external)
-def text():
-    return Text(0)
+def text() -> Text:
+    ...
+
 
 def set_text_external(ctx: StreamContext, id: Value, text: String):
     ctx.add_event(SpriteStringEvent(id, SpriteStringAttribute.TEXT, text))
     return Tag.NONE, 0
 
 @external_func(set_text_external)
-def set_text(id: Text, text: String):
-    pass
+def set_text(id: Text, text: String) -> None:
+    ...
+
+
+def len_external(ctx: StreamContext, obj: Value):
+    # TODO: don't want to allocate strings just to get their length
+    # TODO: we need access to .match() here -- requires externals rewrite
+    return Tag.NUMBER, ArrayValue(NumberString(obj))
+
+@external_func(len_external)
+def len(obj: Sized) -> int:
+    ...

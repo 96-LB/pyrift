@@ -16,6 +16,7 @@ from .ir import (
     IfExpression,
     IfInstruction,
     JoinExpression,
+    ListExpression,
     NotExpression,
     NullExpression,
     NullInstruction,
@@ -154,7 +155,7 @@ class ChoreomapAnalyzer:
                 self.visit_inst(yes)
                 self.visit_inst(no)
             
-            case WhileInstruction(_, args) | FormatExpression(_, args) | JoinExpression(args):
+            case WhileInstruction(_, args) | FormatExpression(_, args) | JoinExpression(args) | ListExpression(args):
                 for arg in args:
                     self.visit_inst(arg)
             
