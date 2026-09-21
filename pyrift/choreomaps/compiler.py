@@ -342,9 +342,9 @@ class ChoreomapCompiler:
             case BreakInstruction(should_continue):
                 self.context.break_loop(should_continue)
             
-            case ReturnInstruction(expr):
+            case ReturnInstruction(expr, exception):
                 tag, value = self.visit_value(expr)
-                self.context.return_value(tag, value)
+                self.context.return_value(tag, value, exception)
             
             case _:
                 raise NotImplementedError(f'Unsupported instruction: {type(node)}')

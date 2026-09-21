@@ -90,7 +90,7 @@ class ChoreomapParser(ast.NodeVisitor):
     @override
     def visit_Return(self, node: ast.Return):
         expr = self.visit_expr(node.value) if node.value else NullExpression()
-        return ReturnInstruction(expr)
+        return ReturnInstruction(expr, exception=False)
     
     @override
     def visit_While(self, node: ast.While):
@@ -104,6 +104,15 @@ class ChoreomapParser(ast.NodeVisitor):
         yes = tuple(self.visit_stmt(stmt) for stmt in node.body)
         no = tuple(self.visit_stmt(stmt) for stmt in node.orelse)
         return IfInstruction(condition, yes, no)
+    
+    @override
+    def visit_Raise(self, node: ast.Raise):
+        if not node.exc:
+            raise NotImplementedError('Bare "raise" statements are not yet supported.')
+        if node.cause:
+            raise NotImplementedError('"raise from" statements are not yet supported.')
+        expr = self.visit_expr(node.exc)
+        return ReturnInstruction(expr, exception=True)
     
     @override
     def visit_Assign(self, node: ast.Assign):
@@ -195,7 +204,7 @@ class ChoreomapParser(ast.NodeVisitor):
     def visit_Lambda(self, node: ast.Lambda):
         expr = self.visit_expr(node.body)
         args = tuple(arg.arg for arg in node.args.args)
-        return FunctionExpression(args, (ReturnInstruction(expr),), is_async=False)
+        return FunctionExpression(args, (ReturnInstruction(expr, exception=False),), is_async=False)
     
     @override
     def visit_IfExp(self, node: ast.IfExp):

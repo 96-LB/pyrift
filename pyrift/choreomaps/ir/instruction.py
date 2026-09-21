@@ -42,6 +42,7 @@ class SetAttributeInstruction(BaseInstruction):
 
 class ReturnInstruction(BaseInstruction):
     expr: BaseExpression
+    exception: bool
 
 class BreakInstruction(BaseInstruction):
     should_continue: bool
