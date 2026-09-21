@@ -1,12 +1,4 @@
 {
-    "bpm": 200,
-    "beatDivisions": 2,
-    "name": "_test2_",
-    "coalTrapSpeedUpFactorOverride": 2,
-    "countdownTicks": 4,
-    "countdownBpm": 200,
-    "playbackOffset": -4,
-    "playbackOffsetTime": 0,
     "choreomap": {
         "streams": [
             {
@@ -393,6 +385,27 @@
                     },
                     {
                         "t": 0,
+                        "condition": {
+                            "value1": {
+                                "name": "$EXC",
+                                "type": "Variable"
+                            },
+                            "value2": 0,
+                            "mode": "Equal",
+                            "type": "Compare"
+                        },
+                        "yes": {
+                            "target": 38,
+                            "ev": "Jump"
+                        },
+                        "ev": "If"
+                    },
+                    {
+                        "t": 0,
+                        "ev": "StopStream"
+                    },
+                    {
+                        "t": 0,
                         "index": 8,
                         "value": {
                             "name": "$RTAG",
@@ -419,6 +432,12 @@
                         "t": 0,
                         "name": "$RETURN",
                         "value": 0,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$EXC",
+                        "value": false,
                         "ev": "SetVariable"
                     },
                     {
@@ -565,7 +584,7 @@
                             "type": "Compare"
                         },
                         "no": {
-                            "target": 22,
+                            "target": 23,
                             "ev": "Jump"
                         },
                         "ev": "If"
@@ -917,6 +936,12 @@
                     },
                     {
                         "t": 0,
+                        "name": "$EXC",
+                        "value": 0,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
                         "index": 5,
                         "value": {
                             "value1": {
@@ -1180,18 +1205,6 @@
                         "index": 3,
                         "value": 0,
                         "ev": "SetArray"
-                    },
-                    {
-                        "t": 0,
-                        "name": "$RTAG",
-                        "value": 0,
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "t": 0,
-                        "name": "$RETURN",
-                        "value": 0,
-                        "ev": "SetVariable"
                     },
                     {
                         "t": 0,

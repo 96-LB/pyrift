@@ -1,3 +1,5 @@
+import json
+
 from pyrift.jobj import JObj
 
 from .backend import RatingDefinition, Sound, Stream
@@ -18,3 +20,13 @@ class Choreomap(JObj):
     main_id: int
     miss_id: int | None = None
     sounds: tuple[Sound, ...] = ()
+    
+    def export(self, filename: str):
+        # TODO
+        with open(filename, 'w') as f:
+            json.dump(
+                {'choreomap': self},
+                f,
+                default=lambda x: x.to_json_obj() if hasattr(x, 'to_json_obj') else str(x.value),
+                indent=4,
+            )

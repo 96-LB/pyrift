@@ -22,6 +22,7 @@ from .backend import (
     IfValue,
     JoinString,
     JumpEvent,
+    LogEvent,
     MathValue,
     NumberString,
     OrCondition,
@@ -29,6 +30,7 @@ from .backend import (
     SetArrayStringEvent,
     SetVariableEvent,
     StartStreamEvent,
+    StopStreamEvent,
     Stream,
     String,
     TaggedValue,
@@ -167,6 +169,7 @@ class ChoreomapCompiler:
         return Tag.NONE, ArrayValue(None, value_index)
     
     def allocate_string(self, string: String) -> tuple[Literal[Tag.STRING], Value]:
+        # TODO: intern constant strings by always returning the same ref
         ref = self.allocate()
         tag_index, value_index = self.context.allocate_temp()
         self.add_event(SetArrayStringEvent(NumberString(ref), string))
@@ -186,6 +189,11 @@ class ChoreomapCompiler:
     
     def deref(self, ref: Value, index: Value) -> Value:
         return ArrayValue(NumberString(ref), index)
+    
+    def raise_exception(self, message: String):
+        tag, value = self.allocate_string(message)
+        self.add_event(LogEvent(FormatString('<color=ff0000>Exception: {0}', (message,))))
+        self.context.return_value(tag, value, exception=True)
     
     @contextmanager
     def new_scope(self, is_async: bool) -> Generator[int]:
@@ -482,6 +490,18 @@ class ChoreomapCompiler:
                 stream_id = self.deref(ref, 0)
                 self.add_event(StartStreamEvent(stream_id, 0, immediate=True))
                 
+                jump_index = self.context.add_placeholder()
+                if self.context.async_ref:
+                    self.context.return_value(VariableValue('$RTAG'), VariableValue('$RET'), exception=True)
+                else:
+                    self.add_event(StopStreamEvent())
+                
+                self.context.replace_event(jump_index, IfEvent(
+                    CompareCondition(VariableValue('$EXC'), 0, ComparisonMode.EQUAL),
+                    yes=JumpEvent(len(self.context)),
+                    no=None
+                ))
+                
                 tag_index, value_index = self.context.allocate_temp()
                 self.add_event(SetArrayEvent(None, tag_index, VariableValue('$RTAG')))
                 self.add_event(SetArrayEvent(None, value_index, VariableValue('$RETURN')))
@@ -525,6 +545,15 @@ class ChoreomapCompiler:
                         condition = CompareCondition(finished, 0, ComparisonMode.NOT_EQUAL)
                         self.add_event(WaitEvent(condition))
                         self.context.wait(t) # update local timekeeping
+                        
+                        jump_index = self.context.add_placeholder()
+                        self.context.return_value(rtag, rval, exception=True)
+                        self.context.replace_event(jump_index, IfEvent(
+                            CompareCondition(finished, 0, ComparisonMode.LESS),
+                            yes=None,
+                            no=JumpEvent(len(self.context))
+                        )) # TODO: some sort of context.if() contextmanager
+                        
                         self.match_return(rtag, rval)
                     
                     with case():

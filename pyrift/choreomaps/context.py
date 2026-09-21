@@ -89,7 +89,7 @@ class StreamContext:
             self.add_event(WaitEvent(CompareCondition(SystemValue(SystemAttribute.STREAM_TIME), t, ComparisonMode.GREATER_EQUAL)))
     
     def use_dynamic_timing(self) -> None:
-        if not self.simple:
+        if not self.simple or not self.is_async:
             return
         
         # save a local variable to keep track of timekeeping from now on
@@ -110,20 +110,23 @@ class StreamContext:
         if not self.has_waited:
             self.add_event(SetVariableEvent('$RTAG', Tag.COROUTINE))
             self.add_event(SetVariableEvent('$RETURN', self.async_ref))
+            self.add_event(SetVariableEvent('$EXC', 0))
             self.has_waited = True
     
-    def return_value(self, tag: Value, value: Value) -> None:
+    def return_value(self, tag: Value, value: Value, exception: bool = False) -> None:
         # async functions need to update their coroutine object
         if self.async_ref:
             ref = NumberString(self.async_ref)
-            self.add_event(SetArrayEvent(ref, 0, 1)) # mark as finished
+            status = -1 if exception else 1 # negative numbers mean failure
+            self.add_event(SetArrayEvent(ref, 0, status)) # mark as finished
             self.add_event(SetArrayEvent(ref, 1, tag))
             self.add_event(SetArrayEvent(ref, 2, value))
             self.add_event(SetArrayEvent(ref, 3, self.t))
             self.ensure_async_output()
-        
-        self.add_event(SetVariableEvent('$RTAG', tag))
-        self.add_event(SetVariableEvent('$RETURN', value))
+        else:
+            self.add_event(SetVariableEvent('$RTAG', tag))
+            self.add_event(SetVariableEvent('$RETURN', value))
+            self.add_event(SetVariableEvent('$EXC', exception))
         self.add_event(StopStreamEvent())
     
     @contextmanager
