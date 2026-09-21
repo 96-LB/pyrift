@@ -1,6 +1,5 @@
 import json
 
-import test_choreomap
 from pyrift.choreomaps import compile
 
 with open('test.json', 'w') as f:
@@ -14,7 +13,7 @@ with open('test.json', 'w') as f:
             'countdownBpm': 200,
             'playbackOffset': -4,
             'playbackOffsetTime': 0,
-            'choreomap': compile(test_choreomap)
+            'choreomap': compile('test_choreomap.py')
         },
         f,
         default=lambda x: x.to_json_obj() if hasattr(x, 'to_json_obj') else str(x.value),
