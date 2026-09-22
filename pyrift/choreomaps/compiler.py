@@ -100,7 +100,6 @@ class ChoreomapCompiler:
         matching = False
         possible_tags = {value} if simple else {tag for tag in Tag} # TODO: better analysis of what tags are possible
         matched_tags = set[Tag]()
-        jumps: list[tuple[int, Condition]] = []
         
         @contextmanager
         def case(*tags: Tag):
@@ -118,17 +117,18 @@ class ChoreomapCompiler:
                 else:
                     matched_tags.add(tag)
             
-            if not simple and matched_tags:
-                # add a jump instruction if this branch succeeded
-                conditions = [CompareCondition(value, tag, ComparisonMode.NOT_EQUAL) for tag in matched_tags]
-                condition = conditions[0] if len(conditions) == 1 else AndCondition(tuple(conditions))
-                jumps.append((len(self.context), condition))
-                self.context.add_event(BaseEvent()) # placeholder jump
-            
             matching = True
             old_context = self.context
-            self.context = DummyContext(self.context)
-            yield
+            self.context = self.context if matched_tags else DummyContext(self.context)
+            
+            if not simple and matched_tags:
+                conditions = [CompareCondition(value, tag, ComparisonMode.NOT_EQUAL) for tag in matched_tags]
+                condition = conditions[0] if len(conditions) == 1 else AndCondition(tuple(conditions))
+                with self.context.if_condition(condition):
+                    yield
+            else:
+                yield
+            
             self.context = old_context
             matching = False
         
@@ -139,9 +139,6 @@ class ChoreomapCompiler:
             tag_index, value_index = self.context.allocate_temp()
             yield case
             self.match_output = (ArrayValue(None, tag_index), ArrayValue(None, value_index))
-            for i, (index, condition) in enumerate(jumps):
-                jump_index = jumps[i + 1][0] if i + 1 < len(jumps) else len(self.context)
-                self.context.replace_event(index, IfEvent(condition, JumpEvent(jump_index), None))
         
         unmatched_tags = possible_tags - matched_tags
         if unmatched_tags:
@@ -288,7 +285,7 @@ class ChoreomapCompiler:
                 pass
             
             case BaseExpression():
-                self.visit_expr(node)
+                self.visit_expr(node) # TODO: discard value
             
             case SetVariableInstruction(name, expr):
                 index, var_type = self.context.lookup(name)
@@ -315,21 +312,19 @@ class ChoreomapCompiler:
                 self.context.use_dynamic_timing()
                 condition = self.visit_condition(condition)
                 
-                self.add_event(BaseEvent()) # placeholder jump
-                yes_index = len(self.context) # start of yes branch
+                yes_index = self.context.add_placeholder()
                 
                 for inst in yes:
                     self.visit_inst(inst)
                 
-                self.add_event(BaseEvent()) # placeholder jump
-                no_index = len(self.context) # start of no branch
+                no_index = self.context.add_placeholder()
                 
                 for inst in no:
                     self.visit_inst(inst)
                 
                 end_index = len(self.context)
-                self.context.replace_event(yes_index - 1, JumpEvent(IfValue(condition, yes_index, no_index)))
-                self.context.replace_event(no_index - 1, JumpEvent(end_index))
+                self.context.replace_event(yes_index, IfEvent(condition, None, JumpEvent(no_index + 1)))
+                self.context.replace_event(no_index, JumpEvent(end_index))
             
             case WhileInstruction(condition, body):
                 self.context.use_dynamic_timing()
@@ -434,15 +429,13 @@ class ChoreomapCompiler:
                 self.context.use_dynamic_timing()
                 tag_index, value_index = self.context.allocate_temp()
                 
-                self.add_event(BaseEvent()) # placeholder jump
-                yes_index = len(self.context)
+                yes_index = self.context.add_placeholder()
                 
                 ytag, yes = self.visit_value(yes)
                 self.add_event(SetArrayEvent(None, tag_index, ytag))
                 self.add_event(SetArrayEvent(None, value_index, yes))
                 
-                self.add_event(BaseEvent()) # placeholder jump
-                no_index = len(self.context)
+                no_index = self.context.add_placeholder()
                 
                 ntag, no = self.visit_value(no)
                 self.add_event(SetArrayEvent(None, tag_index, ntag))
@@ -451,8 +444,8 @@ class ChoreomapCompiler:
                 # TODO: we can do these jumps simpler i think
                 end_index = len(self.context)
                 condition = self.visit_condition(condition)
-                self.context.replace_event(yes_index - 1, JumpEvent(IfValue(condition, yes_index, no_index)))
-                self.context.replace_event(no_index - 1, JumpEvent(end_index))
+                self.context.replace_event(yes_index, IfEvent(condition, None, JumpEvent(no_index + 1)))
+                self.context.replace_event(no_index, JumpEvent(end_index))
                 
                 return ArrayValue(None, tag_index), ArrayValue(None, value_index)
             
@@ -490,17 +483,11 @@ class ChoreomapCompiler:
                 stream_id = self.deref(ref, 0)
                 self.add_event(StartStreamEvent(stream_id, 0, immediate=True))
                 
-                jump_index = self.context.add_placeholder()
-                if self.context.async_ref:
-                    self.context.return_value(VariableValue('$RTAG'), VariableValue('$RET'), exception=True)
-                else:
-                    self.add_event(StopStreamEvent())
-                
-                self.context.replace_event(jump_index, IfEvent(
+                self.context.throw_if(
                     CompareCondition(VariableValue('$EXC'), 0, ComparisonMode.EQUAL),
-                    yes=JumpEvent(len(self.context)),
-                    no=None
-                ))
+                    VariableValue('$RTAG'),
+                    VariableValue('$RET')
+                ) # TODO: this can be optimised when the stream is synchronous -- we're copying $RTAG/$RET to themselves
                 
                 tag_index, value_index = self.context.allocate_temp()
                 self.add_event(SetArrayEvent(None, tag_index, VariableValue('$RTAG')))
@@ -546,13 +533,11 @@ class ChoreomapCompiler:
                         self.add_event(WaitEvent(condition))
                         self.context.wait(t) # update local timekeeping
                         
-                        jump_index = self.context.add_placeholder()
-                        self.context.return_value(rtag, rval, exception=True)
-                        self.context.replace_event(jump_index, IfEvent(
+                        self.context.throw_if(
                             CompareCondition(finished, 0, ComparisonMode.LESS),
-                            yes=None,
-                            no=JumpEvent(len(self.context))
-                        )) # TODO: some sort of context.if() contextmanager
+                            rtag,
+                            rval
+                        )
                         
                         self.match_return(rtag, rval)
                     

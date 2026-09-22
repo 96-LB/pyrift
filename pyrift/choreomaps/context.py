@@ -130,6 +130,16 @@ class StreamContext:
         self.add_event(StopStreamEvent())
     
     @contextmanager
+    def if_condition(self, condition: Condition):
+        jump_index = self.add_placeholder()
+        yield
+        self.replace_event(jump_index, IfEvent(condition, yes=None, no=JumpEvent(len(self))))
+    
+    def throw_if(self, condition: Condition, tag: Value, value: Value):
+        with self.if_condition(condition):
+            self.return_value(tag, value, exception=True)
+    
+    @contextmanager
     def loop(self, condition: Condition, start_index: int):
         self.loops.append([start_index])
         self.use_dynamic_timing()
