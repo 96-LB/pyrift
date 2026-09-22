@@ -1,5 +1,3 @@
-from typing import Coroutine
-
 from pyrift.choreomaps.external import set_text, text, wait
 
 

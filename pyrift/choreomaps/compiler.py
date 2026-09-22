@@ -30,7 +30,6 @@ from .backend import (
     SetArrayStringEvent,
     SetVariableEvent,
     StartStreamEvent,
-    StopStreamEvent,
     Stream,
     String,
     TaggedValue,
