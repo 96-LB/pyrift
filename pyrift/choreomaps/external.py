@@ -146,5 +146,5 @@ def len_external(ctx: StreamContext, obj: Value):
     return Tag.NUMBER, ArrayValue(NumberString(obj))
 
 @external_func(len_external)
-def len(obj: Sized) -> int:
+def len(obj: Sized, /) -> int:
     ...

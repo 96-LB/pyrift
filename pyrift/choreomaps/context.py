@@ -32,26 +32,33 @@ class StreamContext:
         self.stack: list[BaseInstruction] = []
         self.t_index: int = 0
         self.t: float = 0
+        self.discard_index: int = 0
         self.simple: bool = True
         self.has_waited: bool = False
         self.loops: list[list[int]] = [] # each entry is a start index followed by breakpoints
     
+    
     def __len__(self) -> int:
         return len(self.events)
+    
     
     @property
     def is_async(self) -> bool:
         return self.async_ref is not None
     
+    
     def add_event(self, event: BaseEvent) -> int:
         self.events.append(TimedEvent(self.t, event))
         return len(self.events) - 1
     
+    
     def add_placeholder(self) -> int:
         return self.add_event(BaseEvent())
     
+    
     def replace_event(self, index: int, event: BaseEvent) -> None:
         self.events[index] = TimedEvent(self.events[index].t, event)
+    
     
     def lookup(self, name: str) -> tuple[int, VarType]:
         index = 0
@@ -63,19 +70,24 @@ class StreamContext:
                 index += 2
         raise ValueError(f'Unknown variable {name}.')
     
+    
     def allocate_temp(self) -> tuple[int, int]:
         self.temp_index += 2
         # tag index, value index
         return (self.temp_index - 2, self.temp_index - 1)
     
+    
     def push_stack(self, instruction: BaseInstruction) -> None:
         self.stack.append(instruction)
+    
     
     def pop_stack(self) -> BaseInstruction:
         return self.stack.pop()
     
+    
     def get_parent_instruction(self) -> type[BaseInstruction]:
         return type(self.stack[-2])
+    
     
     def wait(self, seconds: Value) -> None:
         self.ensure_async_output()
@@ -88,6 +100,7 @@ class StreamContext:
             self.add_event(SetArrayEvent(None, self.t_index, MathValue(t, seconds, BinaryOperator.ADD)))
             self.add_event(WaitEvent(CompareCondition(SystemValue(SystemAttribute.STREAM_TIME), t, ComparisonMode.GREATER_EQUAL)))
     
+    
     def use_dynamic_timing(self) -> None:
         if not self.simple or not self.is_async:
             return
@@ -98,10 +111,12 @@ class StreamContext:
         self.t = 0
         self.simple = False
     
+    
     def make_async(self, async_ref: Value):
         if self.async_ref:
             raise ValueError(f'Stream is already async with ref {self.async_ref}.')
         self.async_ref = async_ref
+    
     
     def ensure_async_output(self):
         if not self.async_ref:
@@ -113,33 +128,64 @@ class StreamContext:
             self.add_event(SetVariableEvent('$EXC', 0))
             self.has_waited = True
     
+    
     def return_value(self, tag: Value, value: Value, exception: bool = False) -> None:
         # async functions need to update their coroutine object
         if self.async_ref:
-            ref = NumberString(self.async_ref)
-            status = -1 if exception else 1 # negative numbers mean failure
-            self.add_event(SetArrayEvent(ref, 0, status)) # mark as finished
-            self.add_event(SetArrayEvent(ref, 1, tag))
-            self.add_event(SetArrayEvent(ref, 2, value))
-            self.add_event(SetArrayEvent(ref, 3, self.t))
-            self.ensure_async_output()
+            condition = CompareCondition(self.async_ref, 0, ComparisonMode.NOT_EQUAL) # TODO: symbolic comparecondition would be nice
+            with self.if_condition(condition):
+                ref = NumberString(self.async_ref)
+                status = -1 if exception else 1 # negative numbers mean failure
+                self.add_event(SetArrayEvent(ref, 0, status)) # mark as finished
+                self.add_event(SetArrayEvent(ref, 1, tag))
+                self.add_event(SetArrayEvent(ref, 2, value))
+                self.add_event(SetArrayEvent(ref, 3, self.t))
+                self.ensure_async_output()
+                /// FINISH THIS
         else:
             self.add_event(SetVariableEvent('$RTAG', tag))
             self.add_event(SetVariableEvent('$RETURN', value))
             self.add_event(SetVariableEvent('$EXC', exception))
         self.add_event(StopStreamEvent())
     
+    
     @contextmanager
     def if_condition(self, condition: Condition, use_dynamic_timing: bool = False):
         if use_dynamic_timing:
             self.use_dynamic_timing()
-        jump_index = self.add_placeholder()
-        yield
-        self.replace_event(jump_index, IfEvent(condition, yes=None, no=JumpEvent(len(self))))
+        
+        condition_index = self.add_placeholder()
+        end_indices = list[int]()
+        elsed = False
+        
+        def elseif(else_condition: Condition | None = None):
+            nonlocal elsed, condition, condition_index
+            
+            if elsed:
+                raise ValueError('Cannot use elseif after using else in dynamic if statement.')
+            
+            end_indices.append(self.add_placeholder())
+            self.replace_event(condition_index, IfEvent(condition, yes=None, no=JumpEvent(len(self))))
+            
+            if else_condition:
+                condition = else_condition
+                condition_index = self.add_placeholder()
+            else:
+                elsed = True
+        
+        yield elseif
+        
+        for end_index in end_indices:
+            self.replace_event(end_index, JumpEvent(len(self)))
+        
+        if not elsed:
+            self.replace_event(condition_index, IfEvent(condition, yes=None, no=JumpEvent(len(self))))
+    
     
     def throw_if(self, condition: Condition, tag: Value, value: Value):
         with self.if_condition(condition):
             self.return_value(tag, value, exception=True)
+    
     
     @contextmanager
     def loop(self, condition: Condition, start_index: int):
@@ -154,6 +200,7 @@ class StreamContext:
         for breakpoint in self.loops.pop()[1:]:
             self.replace_event(breakpoint, end)
     
+    
     def break_loop(self, should_continue: bool):
         if not self.loops:
             raise ValueError(f'"{'continue' if should_continue else 'break'}" can only be used inside a loop.')
@@ -163,6 +210,7 @@ class StreamContext:
         else:
             self.loops[-1].append(len(self))
             self.add_placeholder()
+
 
 class DummyContext(StreamContext):
     def __init__(self, parent: StreamContext | None = None):

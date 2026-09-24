@@ -243,7 +243,13 @@ class ChoreomapCompiler:
         # set default return value to None
         # async functions allocate a coroutine object to store their return value
         if is_async:
-            _, async_pointer = self.allocate_to_temp(0, Tag.NONE, 0, 0)
+            condition = CompareCondition(VariableValue('$_'), 0, ComparisonMode.EQUAL)
+            with context.if_condition(condition) as elseif:
+                _, async_pointer = self.allocate_to_temp(0, Tag.NONE, 0, 0)
+                
+                elseif() # if the discard flag is set to true, we create a detached coroutine
+                
+                async_pointer = 0
             self.context.make_async(async_pointer)
         
         # execute inner code
@@ -284,7 +290,7 @@ class ChoreomapCompiler:
                 pass
             
             case BaseExpression():
-                self.visit_expr(node) # TODO: discard value
+                self.visit_expr(node, discard=True)
             
             case SetVariableInstruction(name, expr):
                 index, var_type = self.context.lookup(name)
@@ -344,7 +350,7 @@ class ChoreomapCompiler:
                 raise NotImplementedError(f'Unsupported instruction: {type(node)}')
     
     @push_stack
-    def visit_expr(self, node: BaseExpression) -> TaggedValue:
+    def visit_expr(self, node: BaseExpression, discard: bool = False) -> TaggedValue:
         match node:
             case NumberExpression(value):
                 return Tag.NUMBER, value
@@ -478,6 +484,9 @@ class ChoreomapCompiler:
                 # set the environment pointer so the function can load the closure
                 self.add_event(SetVariableEvent('$ENV', ref))
                 
+                # set the discard flag so coroutines know if they're detached
+                self.add_event(SetVariableEvent('$_', int(discard)))
+                
                 # synchronous functions don't need a ref_id because they finish instantly
                 stream_id = self.deref(ref, 0)
                 self.add_event(StartStreamEvent(stream_id, 0, immediate=True))
@@ -488,9 +497,11 @@ class ChoreomapCompiler:
                     VariableValue('$RET')
                 ) # TODO: this can be optimised when the stream is synchronous -- we're copying $RTAG/$RET to themselves
                 
-                tag_index, value_index = self.context.allocate_temp()
-                self.add_event(SetArrayEvent(None, tag_index, VariableValue('$RTAG')))
-                self.add_event(SetArrayEvent(None, value_index, VariableValue('$RETURN')))
+                tag_index, value_index = 0, 0
+                if not discard:
+                    tag_index, value_index = self.context.allocate_temp()
+                    self.add_event(SetArrayEvent(None, tag_index, VariableValue('$RTAG')))
+                    self.add_event(SetArrayEvent(None, value_index, VariableValue('$RETURN')))
                 return ArrayValue(None, tag_index), ArrayValue(None, value_index)
             
             case JoinExpression(strings):
