@@ -13,10 +13,10 @@ from pyrift.choreomaps.external import set_text, text, wait
 # 9. type-checking
 
 
-j = [1, 2, 3]
+j = ['1', '2', '3']
 k = len(j)
-l = len("123")
-
+l = len('123')
+print(f'testing {k} and {l}')
 
 obj = text()
 

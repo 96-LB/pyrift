@@ -40,7 +40,7 @@ from .backend import (
 )
 from .backend.string import FormatString
 from .choreomap import Choreomap
-from .context import DummyContext, StreamContext
+from .context import DummyContext, Scope, StreamContext
 from .external import ExternalArgType, ExternalValue
 from .ir import (
     AndExpression,
@@ -82,11 +82,12 @@ def push_stack[**P, T: BaseInstruction, R](func: F[Concatenate[ChoreomapCompiler
 
 class ChoreomapCompiler:
     def __init__(self):
-        self.streams: list[StreamContext] = []
+        self.context: StreamContext = StreamContext(Scope.empty())
+        self.streams: list[StreamContext] = [self.context]
         self.analysis: Analysis = Analysis(())
         self.externals: dict[str, ExternalValue] = {}
-        self.context: StreamContext = DummyContext()
         self.match_output: TaggedValue = Tag.NONE, 0 # output of latest match statement
+        self.string_cache: dict[str, int] = {}
     
     def add_event(self, event: BaseEvent) -> None:
         self.context.add_event(event)
@@ -164,10 +165,16 @@ class ChoreomapCompiler:
         return Tag.NONE, ArrayValue(None, value_index)
     
     def allocate_string(self, string: String) -> tuple[Literal[Tag.STRING], Value]:
-        # TODO: intern constant strings by always returning the same ref
-        ref = self.allocate()
+        if isinstance(string, str):
+            if string not in self.string_cache:
+                self.string_cache[string] = len(self.string_cache) + 1
+                self.streams[0].add_event(SetArrayStringEvent(NumberString(self.string_cache[string]), string))
+            ref = self.string_cache[string]
+        else:
+            ref = self.allocate()
+            self.add_event(SetArrayStringEvent(NumberString(ref), string))
+        
         tag_index, value_index = self.context.allocate_temp()
-        self.add_event(SetArrayStringEvent(NumberString(ref), string))
         self.add_event(SetArrayEvent(None, tag_index, Tag.STRING))
         self.add_event(SetArrayEvent(None, value_index, ref))
         return Tag.STRING, ArrayValue(None, value_index)
@@ -198,7 +205,7 @@ class ChoreomapCompiler:
     def new_scope(self, is_async: bool) -> Generator[int]:
         # store old context and make new one
         old_context = self.context
-        scope = self.analysis.scopes[len(self.streams)]
+        scope = self.analysis.scopes[len(self.streams) - 1]
         context = StreamContext(scope)
         self.context = context
         self.streams.append(context)
@@ -269,14 +276,18 @@ class ChoreomapCompiler:
         self.analysis = analysis
         self.externals = externals
         
-        self.visit_stream(script.instructions, is_async=False)
+        main_id = len(self.streams) # should be 1
+        module_id = self.visit_stream(script.instructions, is_async=False)
+        
+        self.add_event(SetVariableEvent('$REF', len(self.string_cache)))
+        self.add_event(StartStreamEvent(module_id, ref_id=0, immediate=True, locals=()))
         
         # TODO: actually set the properties properly
         streams = tuple(Stream(i + 1, tuple(stream.events)) for i, stream in enumerate(self.streams))
         return Choreomap(
             streams=streams,
             input_rating_definitions=(),
-            main_id=1
+            main_id=main_id
         )
     
     def visit_stream(self, nodes: Iterable[BaseInstruction], is_async: bool):
@@ -365,7 +376,7 @@ class ChoreomapCompiler:
             
             case FunctionExpression(args, instructions, is_async):
                 stream_id = self.visit_stream(instructions, is_async)
-                scope = self.analysis.scopes[stream_id - 1] # stream id's are 1-indexed
+                scope = self.analysis.scopes[stream_id - 2] # stream id is 1-indexed, and the first stream is reserved
                 
                 # copy stream id and captured variables into the closure environment
                 values: list[Value] = [stream_id]
