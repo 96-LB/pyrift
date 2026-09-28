@@ -32,3 +32,4 @@ async def display_time(max: float):
 
 
 display_time(10)
+None

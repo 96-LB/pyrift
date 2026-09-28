@@ -58,6 +58,7 @@ from .ir import (
     IfInstruction,
     JoinExpression,
     ListExpression,
+    NullExpression,
     NullInstruction,
     NumberExpression,
     OrExpression,
@@ -121,8 +122,8 @@ class ChoreomapCompiler:
             self.context = self.context if matched_tags else DummyContext(self.context)
             
             if not simple and matched_tags:
-                conditions = [value != tag for tag in matched_tags]
-                condition = conditions[0] if len(conditions) == 1 else AndCondition(tuple(conditions))
+                conditions = [value == tag for tag in matched_tags]
+                condition = conditions[0] if len(conditions) == 1 else OrCondition(tuple(conditions))
                 with self.context.if_condition(condition):
                     yield
             else:
@@ -258,7 +259,7 @@ class ChoreomapCompiler:
                 
                 elseif() # if the discard flag is set to true, we create a detached coroutine
                 
-                async_pointer = 0
+                async_pointer = 0 #TODO: BUG: THIS ALWAYS OVERRITES ASYNC POINTER
             self.context.make_async(async_pointer)
         
         # execute inner code
@@ -416,10 +417,12 @@ class ChoreomapCompiler:
                 return tag, value
             
             case AndExpression(conditions):
+                # TODO: short circuiting and returning the value
                 conditions = tuple(self.visit_condition(condition) for condition in conditions)
                 return Tag.NUMBER, AndCondition(conditions)
             
             case OrExpression(conditions):
+                # TODO: short circuiting and returning the value
                 conditions = tuple(self.visit_condition(condition) for condition in conditions)
                 return Tag.NUMBER, OrCondition(conditions)
             
@@ -501,14 +504,14 @@ class ChoreomapCompiler:
                 self.add_event(SetVariableEvent('$_', int(discard)))
                 
                 # synchronous functions don't need a ref_id because they finish instantly
+                # TODO: but we call coroutines here too, hmm...
                 stream_id = self.deref(ref, 0)
                 self.add_event(StartStreamEvent(stream_id, 0, immediate=True))
                 
-                x = VariableValue('$EXC').__eq__(VariableValue('$RTAG'))
                 self.context.throw_if(
-                    x,
+                    VariableValue('$EXC') != 0,
                     VariableValue('$RTAG'),
-                    VariableValue('$RET')
+                    VariableValue('$RETURN')
                 ) # TODO: this can be optimised when the stream is synchronous -- we're copying $RTAG/$RET to themselves
                 
                 tag_index, value_index = 0, 0
@@ -568,6 +571,9 @@ class ChoreomapCompiler:
                 # TODO: we can probably intern some lists -- consider allowing list to be its own compiler-internal primitive?
                 _, ref = self.allocate_array(*(self.visit_value(expr) for expr in exprs))
                 return Tag.ARRAY, ref # TODO: actually handle arrays
+            
+            case NullExpression():
+                return Tag.NONE, 0
             
             case _:
                 raise NotImplementedError(f'Unsupported expression: {type(node).__name__}')

@@ -155,11 +155,11 @@ class ChoreomapAnalyzer:
                 self.visit_inst(yes)
                 self.visit_inst(no)
             
-            case WhileInstruction(_, args) | FormatExpression(_, args) | JoinExpression(args) | ListExpression(args):
+            case FormatExpression(_, args) | JoinExpression(args) | ListExpression(args):
                 for arg in args:
                     self.visit_inst(arg)
             
-            case CallExpression(expr, args) | CompareExpression(expr, args):
+            case WhileInstruction(expr, args) | CallExpression(expr, args) | CompareExpression(expr, args):
                 self.visit_inst(expr)
                 for arg in args:
                     self.visit_inst(arg)
