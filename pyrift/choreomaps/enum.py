@@ -165,6 +165,8 @@ class UnaryOperator(Enum):
     LOG = 'Log'
     EXP = 'Exp'
     NOT = 'Not'
+    NEG = 'Neg'
+    INV = 'Inv'
 
 class GraphicType(Enum):
     CANVAS = 'Canvas'

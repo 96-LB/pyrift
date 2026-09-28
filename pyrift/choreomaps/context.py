@@ -4,13 +4,11 @@ from .analysis import Scope
 from .backend import (
     ArrayValue,
     BaseEvent,
-    CompareCondition,
     Condition,
     FinishLevelEvent,
     IfEvent,
     JumpEvent,
     LogEvent,
-    MathValue,
     NumberString,
     SetArrayEvent,
     SetVariableEvent,
@@ -20,7 +18,7 @@ from .backend import (
     Value,
     WaitEvent,
 )
-from .enum import BinaryOperator, ComparisonMode, SystemAttribute
+from .enum import SystemAttribute
 from .ir import BaseInstruction
 from .vars import Tag, VarType
 
@@ -99,8 +97,8 @@ class StreamContext:
         else:
             self.use_dynamic_timing()
             t = ArrayValue(None, self.t_index)
-            self.add_event(SetArrayEvent(None, self.t_index, MathValue(t, seconds, BinaryOperator.ADD)))
-            self.add_event(WaitEvent(CompareCondition(SystemValue(SystemAttribute.STREAM_TIME), t, ComparisonMode.GREATER_EQUAL)))
+            self.add_event(SetArrayEvent(None, self.t_index, t + seconds))
+            self.add_event(WaitEvent(SystemValue(SystemAttribute.STREAM_TIME) >= t))
     
     
     def use_dynamic_timing(self) -> None:
@@ -115,13 +113,13 @@ class StreamContext:
     
     
     def make_async(self, async_ref: Value):
-        if self.async_ref:
+        if self.is_async:
             raise ValueError(f'Stream is already async with ref {self.async_ref}.')
         self.async_ref = async_ref
     
     
     def ensure_async_output(self):
-        if not self.async_ref:
+        if self.async_ref is None:
             raise ValueError('Attempted to use async operation in a synchronous stream.')
         
         if not self.has_waited:
@@ -138,9 +136,8 @@ class StreamContext:
     
     def return_value(self, tag: Value, value: Value, exception: bool = False) -> None:
         # async functions need to update their coroutine object
-        if self.async_ref:
-            condition = CompareCondition(self.async_ref, 0, ComparisonMode.NOT_EQUAL) # TODO: symbolic comparecondition would be nice
-            with self.if_condition(condition) as elseif:
+        if self.async_ref is not None:
+            with self.if_condition(self.async_ref != 0) as elseif:
                 ref = NumberString(self.async_ref)
                 status = -1 if exception else 1 # negative numbers mean failure
                 self.add_event(SetArrayEvent(ref, 0, status)) # mark as finished

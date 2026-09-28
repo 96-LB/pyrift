@@ -27,6 +27,15 @@ class BaseCondition(JObj):
     @override
     def to_dict(self):
         return {**super().to_dict(), 'type': self.TYPE}
+    
+    def __invert__(self) -> NotCondition:
+        return NotCondition(self)
+    
+    def __and__(self, condition: Condition) -> AndCondition:
+        return AndCondition((self, condition))
+    
+    def __or__(self, condition: Condition) -> OrCondition:
+        return OrCondition((self, condition))
 
 
 class AndCondition(BaseCondition, type='And'):

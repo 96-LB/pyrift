@@ -368,6 +368,12 @@
                     },
                     {
                         "t": 0,
+                        "name": "$_",
+                        "value": 1,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
                         "id": {
                             "name": {
                                 "value": {
@@ -385,42 +391,40 @@
                     },
                     {
                         "t": 0,
-                        "condition": {
-                            "value1": {
-                                "name": "$EXC",
-                                "type": "Variable"
-                            },
-                            "value2": 0,
-                            "mode": "Equal",
-                            "type": "Compare"
-                        },
-                        "yes": {
-                            "target": 38,
+                        "condition": false,
+                        "no": {
+                            "target": 42,
                             "ev": "Jump"
                         },
                         "ev": "If"
                     },
                     {
                         "t": 0,
-                        "ev": "StopStream"
-                    },
-                    {
-                        "t": 0,
-                        "index": 8,
+                        "name": "$RTAG",
                         "value": {
                             "name": "$RTAG",
                             "type": "Variable"
                         },
-                        "ev": "SetArray"
+                        "ev": "SetVariable"
                     },
                     {
                         "t": 0,
-                        "index": 9,
+                        "name": "$RETURN",
                         "value": {
-                            "name": "$RETURN",
+                            "name": "$RET",
                             "type": "Variable"
                         },
-                        "ev": "SetArray"
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$EXC",
+                        "value": true,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "ev": "StopStream"
                     },
                     {
                         "t": 0,
@@ -469,6 +473,23 @@
                             "type": "Array"
                         },
                         "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "condition": {
+                            "value1": {
+                                "name": "$_",
+                                "type": "Variable"
+                            },
+                            "value2": 0,
+                            "mode": "Equal",
+                            "type": "Compare"
+                        },
+                        "no": {
+                            "target": 11,
+                            "ev": "Jump"
+                        },
+                        "ev": "If"
                     },
                     {
                         "t": 0,
@@ -553,6 +574,11 @@
                     },
                     {
                         "t": 0,
+                        "target": 11,
+                        "ev": "Jump"
+                    },
+                    {
+                        "t": 0,
                         "index": 2,
                         "value": -1,
                         "ev": "SetArray"
@@ -584,7 +610,7 @@
                             "type": "Compare"
                         },
                         "no": {
-                            "target": 23,
+                            "target": 25,
                             "ev": "Jump"
                         },
                         "ev": "If"
@@ -928,10 +954,7 @@
                     {
                         "t": 0,
                         "name": "$RETURN",
-                        "value": {
-                            "index": 3,
-                            "type": "Array"
-                        },
+                        "value": 0,
                         "ev": "SetVariable"
                     },
                     {
@@ -992,7 +1015,7 @@
                     },
                     {
                         "t": 0,
-                        "target": 12,
+                        "target": 14,
                         "ev": "Jump"
                     },
                     {
@@ -1156,55 +1179,21 @@
                     },
                     {
                         "t": 0,
-                        "name": {
-                            "value": {
-                                "index": 3,
-                                "type": "Array"
-                            },
-                            "type": "Number"
-                        },
-                        "index": 0,
-                        "value": 1,
-                        "ev": "SetArray"
+                        "name": "$RTAG",
+                        "value": 0,
+                        "ev": "SetVariable"
                     },
                     {
                         "t": 0,
-                        "name": {
-                            "value": {
-                                "index": 3,
-                                "type": "Array"
-                            },
-                            "type": "Number"
-                        },
-                        "index": 1,
+                        "name": "$RETURN",
                         "value": 0,
-                        "ev": "SetArray"
+                        "ev": "SetVariable"
                     },
                     {
                         "t": 0,
-                        "name": {
-                            "value": {
-                                "index": 3,
-                                "type": "Array"
-                            },
-                            "type": "Number"
-                        },
-                        "index": 2,
-                        "value": 0,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "t": 0,
-                        "name": {
-                            "value": {
-                                "index": 3,
-                                "type": "Array"
-                            },
-                            "type": "Number"
-                        },
-                        "index": 3,
-                        "value": 0,
-                        "ev": "SetArray"
+                        "name": "$EXC",
+                        "value": false,
+                        "ev": "SetVariable"
                     },
                     {
                         "t": 0,

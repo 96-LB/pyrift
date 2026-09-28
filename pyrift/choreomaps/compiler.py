@@ -41,7 +41,6 @@ from .backend import (
 from .backend.string import FormatString
 from .choreomap import Choreomap
 from .context import DummyContext, StreamContext
-from .enum import BinaryOperator, ComparisonMode
 from .external import ExternalArgType, ExternalValue
 from .ir import (
     AndExpression,
@@ -121,7 +120,7 @@ class ChoreomapCompiler:
             self.context = self.context if matched_tags else DummyContext(self.context)
             
             if not simple and matched_tags:
-                conditions = [CompareCondition(value, tag, ComparisonMode.NOT_EQUAL) for tag in matched_tags]
+                conditions = [value != tag for tag in matched_tags]
                 condition = conditions[0] if len(conditions) == 1 else AndCondition(tuple(conditions))
                 with self.context.if_condition(condition):
                     yield
@@ -151,7 +150,7 @@ class ChoreomapCompiler:
         ref = VariableValue('$REF')
         name = NumberString(ref)
         # increment the heap counter
-        self.add_event(SetVariableEvent('$REF', MathValue(ref, 1, BinaryOperator.ADD)))
+        self.add_event(SetVariableEvent('$REF', ref + 1))
         # copy in each value
         for i, value in enumerate(values):
             self.add_event(SetArrayEvent(name, index=i, value=value))
@@ -247,8 +246,7 @@ class ChoreomapCompiler:
         # set default return value to None
         # async functions allocate a coroutine object to store their return value
         if is_async:
-            condition = CompareCondition(VariableValue('$_'), 0, ComparisonMode.EQUAL)
-            with context.if_condition(condition) as elseif:
+            with context.if_condition(VariableValue('$_') == 0) as elseif:
                 _, async_pointer = self.allocate_to_temp(0, Tag.NONE, 0, 0)
                 
                 elseif() # if the discard flag is set to true, we create a detached coroutine
@@ -495,8 +493,9 @@ class ChoreomapCompiler:
                 stream_id = self.deref(ref, 0)
                 self.add_event(StartStreamEvent(stream_id, 0, immediate=True))
                 
+                x = VariableValue('$EXC').__eq__(VariableValue('$RTAG'))
                 self.context.throw_if(
-                    CompareCondition(VariableValue('$EXC'), 0, ComparisonMode.EQUAL),
+                    x,
                     VariableValue('$RTAG'),
                     VariableValue('$RET')
                 ) # TODO: this can be optimised when the stream is synchronous -- we're copying $RTAG/$RET to themselves
@@ -543,15 +542,9 @@ class ChoreomapCompiler:
                         rtag = self.deref(value, 1)
                         rval = self.deref(value, 2)
                         t = self.deref(value, 3)
-                        condition = CompareCondition(finished, 0, ComparisonMode.NOT_EQUAL)
-                        self.add_event(WaitEvent(condition))
+                        self.add_event(WaitEvent(finished != 0))
                         self.context.wait(t) # update local timekeeping
-                        
-                        self.context.throw_if(
-                            CompareCondition(finished, 0, ComparisonMode.LESS),
-                            rtag,
-                            rval
-                        )
+                        self.context.throw_if(finished < 0, rtag, rval)
                         
                         self.match_return(rtag, rval)
                     
@@ -591,16 +584,16 @@ class ChoreomapCompiler:
             case BaseString():
                 # TODO: we should be interning strings
                 _, ref = self.allocate_string(value)
-                return CompareCondition(ArrayValue(NumberString(ref)), 0, ComparisonMode.NOT_EQUAL)
+                return ArrayValue(NumberString(ref)) != 0
             
             case BaseValue():
                 mapping = {
                     Tag.NONE: False,
-                    Tag.NUMBER: CompareCondition(value, 0, ComparisonMode.NOT_EQUAL),
-                    Tag.STRING: CompareCondition(ArrayValue(NumberString(value)), 0, ComparisonMode.NOT_EQUAL),
+                    Tag.NUMBER: value != 0,
+                    Tag.STRING: ArrayValue(NumberString(value)) != 0,
                     Tag.FUNCTION: True,
                     Tag.COROUTINE: True,
-                    Tag.ARRAY: CompareCondition(ArrayValue(NumberString(value)), 0, ComparisonMode.NOT_EQUAL), # TODO: this is a length check, but arrays not implemented
+                    Tag.ARRAY: ArrayValue(NumberString(value)) != 0, # TODO: this is a length check, but arrays not implemented
                     Tag.OBJECT: True,
                 }
                 
@@ -608,9 +601,9 @@ class ChoreomapCompiler:
                     return mapping.get(tag, False)
                 else:
                     conditions = tuple(
-                        CompareCondition(tag, t, ComparisonMode.EQUAL)
+                        tag == t
                         if mapping[t] is True
-                        else AndCondition((CompareCondition(tag, t, ComparisonMode.EQUAL), mapping[t]))
+                        else AndCondition((tag == t, mapping[t])) # can't use & because both sides could be bool
                         for t in Tag if mapping[t] is not False
                     )
                     return OrCondition(conditions)
@@ -642,7 +635,7 @@ class ChoreomapCompiler:
                     return mapping.get(tag, '<unknown>')
                 else:
                     return reduce(
-                        lambda acc, t: IfString(CompareCondition(tag, t, ComparisonMode.EQUAL), mapping[t], acc),
+                        lambda acc, t: IfString(tag == t, mapping[t], acc),
                         Tag,
                         '<unknown>'
                     )
