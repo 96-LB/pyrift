@@ -1,7 +1,7 @@
 from collections.abc import Generator, Iterable
 from contextlib import contextmanager
 from functools import reduce
-from typing import Literal
+from typing import Concatenate, Literal
 
 from pyrift.util.decorators import decorates
 from pyrift.util.typing import F
@@ -74,10 +74,10 @@ from .vars import Tag
 
 
 @decorates
-def push_stack[T: BaseInstruction, R](func: F[[ChoreomapCompiler, T], R], self: ChoreomapCompiler, inst: T) -> R:
+def push_stack[**P, T: BaseInstruction, R](func: F[Concatenate[ChoreomapCompiler, T, P], R], self: ChoreomapCompiler, inst: T, *args: P.args, **kwargs: P.kwargs) -> R:
     # TODO: i would like this to be a static method but pyright disagrees
     self.context.push_stack(inst)
-    output = func(self, inst)
+    output = func(self, inst, *args, **kwargs)
     self.context.pop_stack()
     return output
 
@@ -189,7 +189,11 @@ class ChoreomapCompiler:
     def raise_exception(self, message: String):
         tag, value = self.allocate_string(message)
         self.add_event(LogEvent(FormatString('<color=ff0000>Exception: {0}', (message,))))
-        self.context.return_value(tag, value, exception=True)
+        
+        if self.context is self.streams[0]: # TODO: better way to tell if we're in main stream?
+            self.context.unhandled_exception()
+        else:
+            self.context.return_value(tag, value, exception=True)
     
     @contextmanager
     def new_scope(self, is_async: bool) -> Generator[int]:

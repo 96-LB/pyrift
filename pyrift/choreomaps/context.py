@@ -6,8 +6,10 @@ from .backend import (
     BaseEvent,
     CompareCondition,
     Condition,
+    FinishLevelEvent,
     IfEvent,
     JumpEvent,
+    LogEvent,
     MathValue,
     NumberString,
     SetArrayEvent,
@@ -129,11 +131,16 @@ class StreamContext:
             self.has_waited = True
     
     
+    def unhandled_exception(self):
+        self.add_event(LogEvent('<color=#ffff00>An unhandled error has occurred.'))
+        self.add_event(FinishLevelEvent(False))
+    
+    
     def return_value(self, tag: Value, value: Value, exception: bool = False) -> None:
         # async functions need to update their coroutine object
         if self.async_ref:
             condition = CompareCondition(self.async_ref, 0, ComparisonMode.NOT_EQUAL) # TODO: symbolic comparecondition would be nice
-            with self.if_condition(condition):
+            with self.if_condition(condition) as elseif:
                 ref = NumberString(self.async_ref)
                 status = -1 if exception else 1 # negative numbers mean failure
                 self.add_event(SetArrayEvent(ref, 0, status)) # mark as finished
@@ -141,7 +148,10 @@ class StreamContext:
                 self.add_event(SetArrayEvent(ref, 2, value))
                 self.add_event(SetArrayEvent(ref, 3, self.t))
                 self.ensure_async_output()
-                /// FINISH THIS
+                
+                if exception:
+                    elseif()
+                    self.unhandled_exception()
         else:
             self.add_event(SetVariableEvent('$RTAG', tag))
             self.add_event(SetVariableEvent('$RETURN', value))
