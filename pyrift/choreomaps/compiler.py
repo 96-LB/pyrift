@@ -22,7 +22,6 @@ from .backend import (
     IfValue,
     JoinString,
     JumpEvent,
-    LogEvent,
     MathValue,
     NumberString,
     OrCondition,
@@ -194,10 +193,8 @@ class ChoreomapCompiler:
     
     def raise_exception(self, message: String):
         tag, value = self.allocate_string(message)
-        self.add_event(LogEvent(FormatString('<color=ff0000>Exception: {0}', (message,))))
-        
         if self.context is self.streams[0]: # TODO: better way to tell if we're in main stream?
-            self.context.unhandled_exception()
+            self.context.unhandled_exception(tag, value)
         else:
             self.context.return_value(tag, value, exception=True)
     

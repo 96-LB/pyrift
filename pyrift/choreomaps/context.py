@@ -129,7 +129,8 @@ class StreamContext:
             self.has_waited = True
     
     
-    def unhandled_exception(self):
+    def unhandled_exception(self, tag: Value, value: Value):
+        # TODO: should somehow print some data about the value here
         self.add_event(LogEvent('<color=#ffff00>An unhandled error has occurred.'))
         self.add_event(FinishLevelEvent(False))
     
@@ -148,7 +149,7 @@ class StreamContext:
                 
                 if exception:
                     elseif()
-                    self.unhandled_exception()
+                    self.unhandled_exception(tag, value)
         else:
             self.add_event(SetVariableEvent('$RTAG', tag))
             self.add_event(SetVariableEvent('$RETURN', value))
