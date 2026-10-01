@@ -29,7 +29,5 @@ async def display_time(max: float):
         x += 0.1
     print(x)
 
-
-
-display_time(10)
-None
+if 1 or 2 and None or False:
+    print(1 or 2 and None or False)

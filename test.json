@@ -738,61 +738,7 @@
                     },
                     {
                         "t": 0,
-                        "name": "$ARGS",
-                        "index": 0,
-                        "value": -1,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "t": 0,
-                        "name": "$ARGS",
-                        "index": 1,
-                        "value": 10,
-                        "ev": "SetArray"
-                    },
-                    {
-                        "t": 0,
-                        "name": "$ENV",
-                        "value": {
-                            "name": "display_time",
-                            "type": "Variable"
-                        },
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "t": 0,
-                        "name": "$_",
-                        "value": 1,
-                        "ev": "SetVariable"
-                    },
-                    {
-                        "t": 0,
-                        "id": {
-                            "name": {
-                                "value": {
-                                    "name": "display_time",
-                                    "type": "Variable"
-                                },
-                                "type": "Number"
-                            },
-                            "index": 0,
-                            "type": "Array"
-                        },
-                        "refId": 0,
-                        "immediate": true,
-                        "ev": "StartStream"
-                    },
-                    {
-                        "t": 0,
-                        "condition": {
-                            "value1": {
-                                "name": "$EXC",
-                                "type": "Variable"
-                            },
-                            "value2": 0,
-                            "mode": "NotEqual",
-                            "type": "Compare"
-                        },
+                        "condition": true,
                         "no": {
                             "target": 47,
                             "ev": "Jump"
@@ -801,31 +747,217 @@
                     },
                     {
                         "t": 0,
-                        "name": "$RTAG",
-                        "value": {
-                            "name": "$RTAG",
-                            "type": "Variable"
+                        "index": 14,
+                        "value": -1,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 15,
+                        "value": 1,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "condition": true,
+                        "yes": {
+                            "target": 44,
+                            "ev": "Jump"
                         },
-                        "ev": "SetVariable"
+                        "ev": "If"
                     },
                     {
                         "t": 0,
-                        "name": "$RETURN",
-                        "value": {
-                            "name": "$RETURN",
-                            "type": "Variable"
+                        "index": 16,
+                        "value": -1,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 17,
+                        "value": 2,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "target": 46,
+                        "ev": "Jump"
+                    },
+                    {
+                        "t": 0,
+                        "index": 16,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 17,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "target": 53,
+                        "ev": "Jump"
+                    },
+                    {
+                        "t": 0,
+                        "condition": true,
+                        "no": {
+                            "target": 51,
+                            "ev": "Jump"
                         },
-                        "ev": "SetVariable"
+                        "ev": "If"
                     },
                     {
                         "t": 0,
-                        "name": "$EXC",
-                        "value": true,
-                        "ev": "SetVariable"
+                        "index": 14,
+                        "value": 16,
+                        "ev": "SetArray"
                     },
                     {
                         "t": 0,
-                        "ev": "StopStream"
+                        "index": 15,
+                        "value": 17,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "target": 53,
+                        "ev": "Jump"
+                    },
+                    {
+                        "t": 0,
+                        "index": 14,
+                        "value": -1,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 15,
+                        "value": false,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "condition": true,
+                        "no": {
+                            "target": 72,
+                            "ev": "Jump"
+                        },
+                        "ev": "If"
+                    },
+                    {
+                        "t": 0,
+                        "condition": true,
+                        "no": {
+                            "target": 64,
+                            "ev": "Jump"
+                        },
+                        "ev": "If"
+                    },
+                    {
+                        "t": 0,
+                        "index": 18,
+                        "value": -1,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 19,
+                        "value": 1,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "condition": true,
+                        "yes": {
+                            "target": 61,
+                            "ev": "Jump"
+                        },
+                        "ev": "If"
+                    },
+                    {
+                        "t": 0,
+                        "index": 20,
+                        "value": -1,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 21,
+                        "value": 2,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "target": 63,
+                        "ev": "Jump"
+                    },
+                    {
+                        "t": 0,
+                        "index": 20,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 21,
+                        "value": 0,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "target": 70,
+                        "ev": "Jump"
+                    },
+                    {
+                        "t": 0,
+                        "condition": true,
+                        "no": {
+                            "target": 68,
+                            "ev": "Jump"
+                        },
+                        "ev": "If"
+                    },
+                    {
+                        "t": 0,
+                        "index": 18,
+                        "value": 20,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 19,
+                        "value": 21,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "target": 70,
+                        "ev": "Jump"
+                    },
+                    {
+                        "t": 0,
+                        "index": 18,
+                        "value": -1,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "index": 19,
+                        "value": false,
+                        "ev": "SetArray"
+                    },
+                    {
+                        "t": 0,
+                        "text": "19",
+                        "ev": "Log"
+                    },
+                    {
+                        "t": 0,
+                        "target": 72,
+                        "ev": "Jump"
                     },
                     {
                         "t": 0,

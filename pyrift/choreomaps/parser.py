@@ -3,7 +3,6 @@ from typing import override
 
 from .enum import BinaryOperator, ComparisonMode, UnaryOperator
 from .ir import (
-    AndExpression,
     AwaitExpression,
     BaseExpression,
     BaseInstruction,
@@ -18,11 +17,11 @@ from .ir import (
     IfInstruction,
     JoinExpression,
     ListExpression,
+    LogicalExpression,
     NotExpression,
     NullExpression,
     NullInstruction,
     NumberExpression,
-    OrExpression,
     ReturnInstruction,
     Script,
     SetVariableInstruction,
@@ -171,9 +170,9 @@ class ChoreomapParser(ast.NodeVisitor):
         
         match node.op:
             case ast.And():
-                return AndExpression(conditions)
+                return LogicalExpression(True, conditions)
             case ast.Or():
-                return OrExpression(conditions)
+                return LogicalExpression(False, conditions)
             case _:
                 raise NotImplementedError(f'Unsupported boolean operator: {type(node.op)}')
     

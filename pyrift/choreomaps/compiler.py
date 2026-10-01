@@ -43,7 +43,6 @@ from .choreomap import Choreomap
 from .context import DummyContext, Scope, StreamContext
 from .external import ExternalArgType, ExternalValue
 from .ir import (
-    AndExpression,
     AwaitExpression,
     BaseExpression,
     BaseInstruction,
@@ -58,10 +57,10 @@ from .ir import (
     IfInstruction,
     JoinExpression,
     ListExpression,
+    LogicalExpression,
     NullExpression,
     NullInstruction,
     NumberExpression,
-    OrExpression,
     ReturnInstruction,
     Script,
     SetVariableInstruction,
@@ -289,6 +288,7 @@ class ChoreomapCompiler:
             main_id=main_id
         )
     
+    
     def visit_stream(self, nodes: Iterable[BaseInstruction], is_async: bool):
         with self.new_scope(is_async) as scope_id:
             for node in nodes:
@@ -414,15 +414,32 @@ class ChoreomapCompiler:
                 
                 return tag, value
             
-            case AndExpression(conditions):
-                # TODO: short circuiting and returning the value
-                conditions = tuple(self.visit_condition(condition) for condition in conditions)
-                return Tag.NUMBER, AndCondition(conditions)
-            
-            case OrExpression(conditions):
-                # TODO: short circuiting and returning the value
-                conditions = tuple(self.visit_condition(condition) for condition in conditions)
-                return Tag.NUMBER, OrCondition(conditions)
+            case LogicalExpression(conjunctive, conditions):
+                #conditions = tuple(self.visit_condition(condition) for condition in conditions)
+                #return Tag.NUMBER, AndCondition(conditions)
+                
+                tag1, value1 = self.visit_value(conditions[0])
+                if len(conditions) == 1:
+                    # in case a degenerate AND is created - shouldn't happen with normal usage
+                    return tag1, value1
+                
+                # store the outputted value in a temporary slot
+                tag, value = self.context.allocate_temp()
+                
+                # we do control flow so we can short circuit on the first truthy/falsy value
+                with self.context.if_condition(self.cast_to_condition(tag1, value1), flip=conjunctive) as elseif:
+                    self.add_event(SetArrayEvent(None, tag, tag1))
+                    self.add_event(SetArrayEvent(None, value, value1))
+                    
+                    for i, condition in enumerate(conditions[1:]):
+                        tagi, valuei = self.visit_value(condition)
+                        condition = self.cast_to_condition(tagi, valuei) if i < len(conditions) - 1 else None
+                        elseif(condition)
+                        
+                        self.add_event(SetArrayEvent(None, tag, tagi))
+                        self.add_event(SetArrayEvent(None, value, valuei))
+                
+                return tag, value
             
             case BinaryExpression(left, operator, right):
                 ltag, left = self.visit_value(left)
@@ -587,9 +604,8 @@ class ChoreomapCompiler:
             case BaseValue() | float() | int():
                 return tag, value
     
-    def visit_condition(self, node: BaseExpression) -> Condition:
-        tag, value = self.visit_expr(node)
-        match value:
+    def cast_to_condition(self, tag: Value, value: Value | Condition | String) -> Condition:
+        match value: # TODO: we probably want to make visit_expr return arbitrary types
             case bool() | float() | int() | str():
                 return bool(value)
             
@@ -622,6 +638,10 @@ class ChoreomapCompiler:
                         for t in Tag if mapping[t] is not False
                     )
                     return OrCondition(conditions)
+    
+    def visit_condition(self, node: BaseExpression) -> Condition:
+        tag, value = self.visit_expr(node)
+        return self.cast_to_condition(tag, value)
     
     def visit_str(self, node: BaseExpression) -> String:
         tag, value = self.visit_expr(node)

@@ -1,5 +1,4 @@
 __all__ = (
-    'AndExpression',
     'AwaitExpression',
     'BaseExpression',
     'BaseInstruction',
@@ -17,11 +16,11 @@ __all__ = (
     'IfInstruction',
     'JoinExpression',
     'ListExpression',
+    'LogicalExpression',
     'NotExpression',
     'NullExpression',
     'NullInstruction',
     'NumberExpression',
-    'OrExpression',
     'ReturnInstruction',
     'Script',
     'SetAttributeInstruction',
@@ -33,7 +32,6 @@ __all__ = (
 )
 
 from .expression import (
-    AndExpression,
     AwaitExpression,
     BaseExpression,
     BinaryExpression,
@@ -45,10 +43,10 @@ from .expression import (
     IfExpression,
     JoinExpression,
     ListExpression,
+    LogicalExpression,
     NotExpression,
     NullExpression,
     NumberExpression,
-    OrExpression,
     StringExpression,
     UnaryExpression,
     VariableExpression,

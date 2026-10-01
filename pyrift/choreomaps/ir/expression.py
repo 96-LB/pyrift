@@ -39,10 +39,8 @@ class CallExpression(BaseExpression):
 class NotExpression(BaseExpression):
     condition: BaseExpression
 
-class AndExpression(BaseExpression):
-    conditions: JList[BaseExpression]
-
-class OrExpression(BaseExpression):
+class LogicalExpression(BaseExpression):
+    conjunctive: bool
     conditions: JList[BaseExpression]
 
 class FormatExpression(BaseExpression):

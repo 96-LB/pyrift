@@ -157,16 +157,19 @@ class StreamContext:
     
     
     @contextmanager
-    def if_condition(self, condition: Condition, use_dynamic_timing: bool = False):
-        if isinstance(condition, bool):
-            raise ValueError('Compiler can evaluate compile-time condition as a boolean—this is probably a mistake.')
-        
+    def if_condition(self, condition: Condition, *, flip: bool = False, use_dynamic_timing: bool = False):
         if use_dynamic_timing:
             self.use_dynamic_timing()
         
         condition_index = self.add_placeholder()
         end_indices = list[int]()
         elsed = False
+        
+        def insert_jump():
+            yes, no = None, JumpEvent(len(self))
+            if flip:
+                yes, no = no, yes
+            self.replace_event(condition_index, IfEvent(condition, yes, no))
         
         def elseif(else_condition: Condition | None = None):
             nonlocal elsed, condition, condition_index
@@ -175,7 +178,7 @@ class StreamContext:
                 raise ValueError('Cannot use elseif after using else in dynamic if statement.')
             
             end_indices.append(self.add_placeholder())
-            self.replace_event(condition_index, IfEvent(condition, yes=None, no=JumpEvent(len(self))))
+            insert_jump()
             
             if else_condition:
                 condition = else_condition
@@ -189,7 +192,7 @@ class StreamContext:
             self.replace_event(end_index, JumpEvent(len(self)))
         
         if not elsed:
-            self.replace_event(condition_index, IfEvent(condition, yes=None, no=JumpEvent(len(self))))
+            insert_jump()
     
     
     def throw_if(self, condition: Condition, tag: Value, value: Value):
