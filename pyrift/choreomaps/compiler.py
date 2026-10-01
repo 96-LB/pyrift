@@ -1,7 +1,7 @@
 from collections.abc import Generator, Iterable
 from contextlib import contextmanager
 from functools import reduce
-from typing import Concatenate, Literal
+from typing import Concatenate
 
 from pyrift.util.decorators import decorates
 from pyrift.util.typing import F
@@ -71,8 +71,16 @@ from .ir import (
 from .vars import Tag
 
 
+type CompilerObject = TaggedValue | String | Condition | None
+
 @decorates
-def push_stack[**P, T: BaseInstruction, R](func: F[Concatenate[ChoreomapCompiler, T, P], R], self: ChoreomapCompiler, inst: T, *args: P.args, **kwargs: P.kwargs) -> R:
+def push_stack[**P, T: BaseInstruction, R](
+    func: F[Concatenate[ChoreomapCompiler, T, P], R],
+    self: ChoreomapCompiler,
+    inst: T,
+    *args: P.args,
+    **kwargs: P.kwargs
+) -> R:
     # TODO: i would like this to be a static method but pyright disagrees
     self.context.push_stack(inst)
     output = func(self, inst, *args, **kwargs)
@@ -85,7 +93,7 @@ class ChoreomapCompiler:
         self.streams: list[StreamContext] = [self.context]
         self.analysis: Analysis = Analysis(())
         self.externals: dict[str, ExternalValue] = {}
-        self.match_output: TaggedValue = Tag.NONE, 0 # output of latest match statement
+        self.match_value: TaggedValue = Tag.NONE, 0 # output of latest match statement
         self.string_cache: dict[str, int] = {}
     
     def add_event(self, event: BaseEvent) -> None:
@@ -136,7 +144,7 @@ class ChoreomapCompiler:
             self.context.use_dynamic_timing()
             tag_index, value_index = self.context.allocate_temp()
             yield case
-            self.match_output = (ArrayValue(None, tag_index), ArrayValue(None, value_index))
+            self.match_value = (ArrayValue(None, tag_index), ArrayValue(None, value_index))
         
         unmatched_tags = possible_tags - matched_tags
         if unmatched_tags:
@@ -144,7 +152,7 @@ class ChoreomapCompiler:
     
     def match_return(self, tag: Value, value: Value):
         if not isinstance(self.context, DummyContext):
-            self.match_output = tag, value
+            self.match_value = tag, value
     
     def allocate(self, *values: Value) -> Value:
         ref = VariableValue('$REF')
@@ -156,14 +164,14 @@ class ChoreomapCompiler:
             self.add_event(SetArrayEvent(name, index=i, value=value))
         return ref
     
-    def allocate_to_temp(self, *values: Value) -> tuple[Literal[Tag.NONE], Value]:
+    def allocate_to_temp(self, *values: Value) -> TaggedValue:
         ref = self.allocate(*values)
         tag_index, value_index = self.context.allocate_temp()
         self.add_event(SetArrayEvent(None, tag_index, Tag.NONE))
         self.add_event(SetArrayEvent(None, value_index, ref))
         return Tag.NONE, ArrayValue(None, value_index)
     
-    def allocate_string(self, string: String) -> tuple[Literal[Tag.STRING], Value]:
+    def allocate_string(self, string: String) -> TaggedValue:
         if isinstance(string, str):
             if string not in self.string_cache:
                 self.string_cache[string] = len(self.string_cache) + 1
@@ -178,7 +186,7 @@ class ChoreomapCompiler:
         self.add_event(SetArrayEvent(None, value_index, ref))
         return Tag.STRING, ArrayValue(None, value_index)
     
-    def allocate_array(self, *tagged_values: tuple[Value, Value]) -> tuple[Literal[Tag.ARRAY], Value]:
+    def allocate_array(self, *tagged_values: TaggedValue) -> TaggedValue:
         # flatten tagged values into a single array
         values = (value for tagged_value in tagged_values for value in tagged_value)
         ref = self.allocate(*values)
@@ -193,7 +201,7 @@ class ChoreomapCompiler:
     
     def raise_exception(self, message: String):
         tag, value = self.allocate_string(message)
-        if self.context is self.streams[0]: # TODO: better way to tell if we're in main stream?
+        if self.context is self.streams[1]: # TODO: better way to tell if we're in main stream?
             self.context.unhandled_exception(tag, value)
         else:
             self.context.return_value(tag, value, exception=True)
@@ -263,7 +271,8 @@ class ChoreomapCompiler:
             raise ValueError('Scope nesting invariant was violated. This should only happen if scopes are being created manually.')
         
         # finalize stream and restore old values
-        context.return_value(Tag.NONE, 0)
+        if context is not self.streams[1]: # TODO: better way to check if we're in main stream
+            context.return_value(Tag.NONE, 0)
         self.context = old_context
     
     def compile(self, script: Script, externals: dict[str, ExternalValue]):
@@ -291,6 +300,7 @@ class ChoreomapCompiler:
             for node in nodes:
                 self.visit_inst(node)
         return scope_id
+    
     
     @push_stack
     def visit_inst(self, node: BaseInstruction) -> None:
@@ -359,7 +369,7 @@ class ChoreomapCompiler:
                 raise NotImplementedError(f'Unsupported instruction: {type(node)}')
     
     @push_stack
-    def visit_expr(self, node: BaseExpression, discard: bool = False) -> TaggedValue:
+    def visit_expr(self, node: BaseExpression, discard: bool = False) -> CompilerObject:
         match node:
             case NumberExpression(value):
                 return Tag.NUMBER, value
@@ -368,7 +378,7 @@ class ChoreomapCompiler:
                 return Tag.NUMBER, value
             
             case StringExpression(value):
-                return Tag.STRING, value
+                return value
             
             case FunctionExpression(args, instructions, is_async):
                 stream_id = self.visit_stream(instructions, is_async)
@@ -424,13 +434,13 @@ class ChoreomapCompiler:
                 tag, value = self.context.allocate_temp()
                 
                 # we do control flow so we can short circuit on the first truthy/falsy value
-                with self.context.if_condition(self.cast_to_condition(tag1, value1), flip=conjunctive) as elseif:
+                with self.context.if_condition(self.cast_to_condition((tag1, value1)), flip=conjunctive) as elseif:
                     self.add_event(SetArrayEvent(None, tag, tag1))
                     self.add_event(SetArrayEvent(None, value, value1))
                     
                     for i, condition in enumerate(conditions[1:]):
                         tagi, valuei = self.visit_value(condition)
-                        condition = self.cast_to_condition(tagi, valuei) if i < len(conditions) - 1 else None
+                        condition = self.cast_to_condition((tagi, valuei)) if i < len(conditions) - 1 else None
                         elseif(condition)
                         
                         self.add_event(SetArrayEvent(None, tag, tagi))
@@ -536,7 +546,7 @@ class ChoreomapCompiler:
             case JoinExpression(strings):
                 # TODO: verify tag
                 strings = tuple(self.visit_str(string) for string in strings)
-                return Tag.STRING, JoinString(strings)
+                return JoinString(strings)
             
             case CompareExpression(first, operands, operators):
                 # TODO: verify tags
@@ -546,13 +556,13 @@ class ChoreomapCompiler:
                 assert len(operands) == len(operators)
                 
                 if len(operators) == 1:
-                    return Tag.NUMBER, CompareCondition(first, operands[0], operators[0])
+                    return CompareCondition(first, operands[0], operators[0])
                 else:
                     conditions = tuple(
                         CompareCondition(first if i == 0 else operands[i - 1], operands[i], operators[i])
                         for i in range(len(operators))
                     )
-                    return Tag.NUMBER, AndCondition(conditions)
+                    return AndCondition(conditions)
             
             case AwaitExpression(expr):
                 if not self.context.is_async:
@@ -577,7 +587,7 @@ class ChoreomapCompiler:
                     with case():
                         self.match_return(tag, value)
                 
-                return self.match_output
+                return self.match_value
             
             case ListExpression(exprs):
                 # TODO: we can probably intern some lists -- consider allowing list to be its own compiler-internal primitive?
@@ -585,43 +595,43 @@ class ChoreomapCompiler:
                 return Tag.ARRAY, ref # TODO: actually handle arrays
             
             case NullExpression():
-                return Tag.NONE, 0
+                return None
             
             case _:
                 raise NotImplementedError(f'Unsupported expression: {type(node).__name__}')
     
-    def visit_value(self, node: BaseExpression) -> tuple[Value, Value]:
-        tag, value = self.visit_expr(node)
-        match value:
-            case BaseCondition():
-                return Tag.NUMBER, IfValue(value, 1, 0)
+    def visit_value(self, node: BaseExpression) -> TaggedValue:
+        obj = self.visit_expr(node)
+        match obj:
+            case BaseCondition() | bool():
+                return Tag.NUMBER, IfValue(obj, 1, 0)
             case BaseString() | str():
-                # TODO: we should be interning strings
-                return self.allocate_string(value)
-            case BaseValue() | float() | int():
+                return self.allocate_string(obj)
+            case BaseValue() | float() | int() as tag, BaseValue() | float() | int() as value:
                 return tag, value
+            case None:
+                return Tag.NONE, 0
     
-    def cast_to_condition(self, tag: Value, value: Value | Condition | String) -> Condition:
-        match value: # TODO: we probably want to make visit_expr return arbitrary types
-            case bool() | float() | int() | str():
-                return bool(value)
+    def cast_to_condition(self, obj: CompilerObject) -> Condition:
+        match obj:
+            case bool() | (_, float()) | (_, int()) | str():
+                return bool(obj)
             
             case BaseCondition():
-                return value
+                return obj
             
             case BaseString():
-                # TODO: we should be interning strings
-                _, ref = self.allocate_string(value)
+                _, ref = self.allocate_string(obj)
                 return ArrayValue(NumberString(ref)) != 0
             
-            case BaseValue():
+            case BaseValue() | float() | int() as tag, BaseValue() | float() | int() as value:
                 mapping = {
                     Tag.NONE: False,
                     Tag.NUMBER: value != 0,
                     Tag.STRING: ArrayValue(NumberString(value)) != 0,
                     Tag.FUNCTION: True,
                     Tag.COROUTINE: True,
-                    Tag.ARRAY: ArrayValue(NumberString(value)) != 0, # TODO: this is a length check, but arrays not implemented
+                    Tag.ARRAY: ArrayValue(NumberString(value)) != 0,
                     Tag.OBJECT: True,
                 }
                 
@@ -635,24 +645,27 @@ class ChoreomapCompiler:
                         for t in Tag if mapping[t] is not False
                     )
                     return OrCondition(conditions)
+            
+            case None:
+                return False
     
     def visit_condition(self, node: BaseExpression) -> Condition:
-        tag, value = self.visit_expr(node)
-        return self.cast_to_condition(tag, value)
+        obj = self.visit_expr(node)
+        return self.cast_to_condition(obj)
     
     def visit_str(self, node: BaseExpression) -> String:
-        tag, value = self.visit_expr(node)
-        match value:
-            case bool() | str() | float() | int():
-                return str(value)
+        obj = self.visit_expr(node)
+        match obj:
+            case bool() | str():
+                return str(obj)
             
             case BaseCondition():
-                return IfString(value, 'True', 'False')
+                return IfString(obj, 'True', 'False')
             
             case BaseString():
-                return value
+                return obj
             
-            case BaseValue():
+            case int() | float() | BaseValue() as tag, int() | float() | BaseValue() as value:
                 mapping = {
                     Tag.NONE: 'None',
                     Tag.NUMBER: NumberString(value),
@@ -671,3 +684,6 @@ class ChoreomapCompiler:
                         Tag,
                         '<unknown>'
                     )
+            
+            case None:
+                return 'None'

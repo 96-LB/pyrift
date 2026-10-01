@@ -58,7 +58,7 @@ class ExternalValue(BaseValue, type='$EXTERNAL'):
 
 
 
-type ExternalFuncType = F[Concatenate[StreamContext, ...], tuple[Value, Value | Condition | String]]
+type ExternalFuncType = F[Concatenate[StreamContext, ...], tuple[Value, Value] | Condition | String]
 
 def register_external(func: ExternalFuncType, is_async: bool):
     def decorator[**P, T](stub: F[P, T]) -> F[P, T]:
@@ -94,7 +94,7 @@ def external_coroutine(func: ExternalFuncType):
 
 def print_external(ctx: StreamContext, text: String):
     ctx.add_event(LogEvent(text))
-    return Tag.STRING, text
+    return text
 
 @external_func(print_external)
 def print[T](text: T) -> T:
