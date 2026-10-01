@@ -789,11 +789,8 @@
                                 "name": "$EXC",
                                 "type": "Variable"
                             },
-                            "value2": {
-                                "name": "$RTAG",
-                                "type": "Variable"
-                            },
-                            "mode": "Equal",
+                            "value2": 0,
+                            "mode": "NotEqual",
                             "type": "Compare"
                         },
                         "no": {
@@ -815,7 +812,7 @@
                         "t": 0,
                         "name": "$RETURN",
                         "value": {
-                            "name": "$RET",
+                            "name": "$RETURN",
                             "type": "Variable"
                         },
                         "ev": "SetVariable"
@@ -978,8 +975,17 @@
                     },
                     {
                         "t": 0,
-                        "target": 11,
+                        "target": 12,
                         "ev": "Jump"
+                    },
+                    {
+                        "t": 0,
+                        "index": {
+                            "index": 3,
+                            "type": "Array"
+                        },
+                        "value": 0,
+                        "ev": "SetArray"
                     },
                     {
                         "t": 0,
@@ -1014,7 +1020,7 @@
                             "type": "Compare"
                         },
                         "no": {
-                            "target": 25,
+                            "target": 26,
                             "ev": "Jump"
                         },
                         "ev": "If"
@@ -1358,7 +1364,10 @@
                     {
                         "t": 0,
                         "name": "$RETURN",
-                        "value": 0,
+                        "value": {
+                            "index": 3,
+                            "type": "Array"
+                        },
                         "ev": "SetVariable"
                     },
                     {
@@ -1419,7 +1428,7 @@
                     },
                     {
                         "t": 0,
-                        "target": 14,
+                        "target": 15,
                         "ev": "Jump"
                     },
                     {
@@ -1583,9 +1592,17 @@
                     },
                     {
                         "t": 0,
-                        "condition": false,
+                        "condition": {
+                            "value1": {
+                                "index": 3,
+                                "type": "Array"
+                            },
+                            "value2": 0,
+                            "mode": "NotEqual",
+                            "type": "Compare"
+                        },
                         "no": {
-                            "target": 31,
+                            "target": 32,
                             "ev": "Jump"
                         },
                         "ev": "If"
@@ -1593,7 +1610,10 @@
                     {
                         "t": 0,
                         "name": {
-                            "value": 0,
+                            "value": {
+                                "index": 3,
+                                "type": "Array"
+                            },
                             "type": "Number"
                         },
                         "index": 0,
@@ -1603,7 +1623,10 @@
                     {
                         "t": 0,
                         "name": {
-                            "value": 0,
+                            "value": {
+                                "index": 3,
+                                "type": "Array"
+                            },
                             "type": "Number"
                         },
                         "index": 1,
@@ -1613,7 +1636,10 @@
                     {
                         "t": 0,
                         "name": {
-                            "value": 0,
+                            "value": {
+                                "index": 3,
+                                "type": "Array"
+                            },
                             "type": "Number"
                         },
                         "index": 2,
@@ -1623,7 +1649,10 @@
                     {
                         "t": 0,
                         "name": {
-                            "value": 0,
+                            "value": {
+                                "index": 3,
+                                "type": "Array"
+                            },
                             "type": "Number"
                         },
                         "index": 3,

@@ -158,6 +158,9 @@ class StreamContext:
     
     @contextmanager
     def if_condition(self, condition: Condition, use_dynamic_timing: bool = False):
+        if isinstance(condition, bool):
+            raise ValueError('Compiler can evaluate compile-time condition as a boolean—this is probably a mistake.')
+        
         if use_dynamic_timing:
             self.use_dynamic_timing()
         

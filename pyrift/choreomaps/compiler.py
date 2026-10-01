@@ -256,10 +256,8 @@ class ChoreomapCompiler:
         if is_async:
             with context.if_condition(VariableValue('$_') == 0) as elseif:
                 _, async_pointer = self.allocate_to_temp(0, Tag.NONE, 0, 0)
-                
                 elseif() # if the discard flag is set to true, we create a detached coroutine
-                
-                async_pointer = 0 #TODO: BUG: THIS ALWAYS OVERRITES ASYNC POINTER
+                self.add_event(SetArrayEvent(None, async_pointer, 0))
             self.context.make_async(async_pointer)
         
         # execute inner code
@@ -512,7 +510,7 @@ class ChoreomapCompiler:
                     VariableValue('$EXC') != 0,
                     VariableValue('$RTAG'),
                     VariableValue('$RETURN')
-                ) # TODO: this can be optimised when the stream is synchronous -- we're copying $RTAG/$RET to themselves
+                ) # TODO: this can be optimised when the stream is synchronous -- we're copying $RTAG/$RETURN to themselves
                 
                 tag_index, value_index = 0, 0
                 if not discard:
