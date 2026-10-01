@@ -80,6 +80,83 @@
                             "type": "Array"
                         },
                         "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$ENV",
+                        "value": {
+                            "name": "f",
+                            "type": "Variable"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$_",
+                        "value": 1,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "id": {
+                            "name": {
+                                "value": {
+                                    "name": "f",
+                                    "type": "Variable"
+                                },
+                                "type": "Number"
+                            },
+                            "index": 0,
+                            "type": "Array"
+                        },
+                        "refId": 0,
+                        "immediate": true,
+                        "ev": "StartStream"
+                    },
+                    {
+                        "t": 0,
+                        "condition": {
+                            "value1": {
+                                "name": "$EXC",
+                                "type": "Variable"
+                            },
+                            "value2": 0,
+                            "mode": "NotEqual",
+                            "type": "Compare"
+                        },
+                        "no": {
+                            "target": 14,
+                            "ev": "Jump"
+                        },
+                        "ev": "If"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$RTAG",
+                        "value": {
+                            "name": "$RTAG",
+                            "type": "Variable"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$RETURN",
+                        "value": {
+                            "name": "$RETURN",
+                            "type": "Variable"
+                        },
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "$EXC",
+                        "value": true,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "ev": "StopStream"
                     }
                 ],
                 "timingMode": "StreamStart"

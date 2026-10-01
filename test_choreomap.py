@@ -17,7 +17,8 @@ def f():
     x = 2
     if x:
         print(x)
-    
+
+f()
 
 
 

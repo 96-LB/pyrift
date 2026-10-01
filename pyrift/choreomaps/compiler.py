@@ -71,7 +71,7 @@ from .ir import (
 from .vars import Tag
 
 
-type CompilerObject = TaggedValue | String | Condition | None
+type CompilerObject = TaggedValue | String | Condition | None | list[CompilerObject]
 
 @decorates
 def push_stack[**P, T: BaseInstruction, R](
@@ -590,9 +590,7 @@ class ChoreomapCompiler:
                 return self.match_value
             
             case ListExpression(exprs):
-                # TODO: we can probably intern some lists -- consider allowing list to be its own compiler-internal primitive?
-                _, ref = self.allocate_array(*(self.visit_value(expr) for expr in exprs))
-                return Tag.ARRAY, ref # TODO: actually handle arrays
+                return [self.visit_value(expr) for expr in exprs]
             
             case NullExpression():
                 return None
@@ -600,8 +598,8 @@ class ChoreomapCompiler:
             case _:
                 raise NotImplementedError(f'Unsupported expression: {type(node).__name__}')
     
-    def visit_value(self, node: BaseExpression) -> TaggedValue:
-        obj = self.visit_expr(node)
+    
+    def cast_to_value(self, obj: CompilerObject) -> TaggedValue:
         match obj:
             case BaseCondition() | bool():
                 return Tag.NUMBER, IfValue(obj, 1, 0)
@@ -611,6 +609,14 @@ class ChoreomapCompiler:
                 return tag, value
             case None:
                 return Tag.NONE, 0
+            case list():
+                # TODO: we can probably intern some lists -- consider allowing list to be its own compiler-internal primitive?
+                _, ref = self.allocate_array(*(self.cast_to_value(elm) for elm in obj))
+                return Tag.ARRAY, ref # TODO: actually handle arrays
+    
+    def visit_value(self, node: BaseExpression) -> TaggedValue:
+        obj = self.visit_expr(node)
+        return self.cast_to_value(obj)
     
     def cast_to_condition(self, obj: CompilerObject) -> Condition:
         match obj:
