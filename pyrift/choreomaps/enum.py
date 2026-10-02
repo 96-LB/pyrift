@@ -228,8 +228,12 @@ class VisualType(Enum):
     HUD_PLAYER_GUITAR = 'HudPlayerGuitar'
     HUD_PLAYER_VIBE_BOLT_A = 'HudPlayerVibeBoltA'
     HUD_PLAYER_VIBE_BOLT_B = 'HudPlayerVibeBoltB'
+    HUD_SONG_INFO_TRACK_CREATOR = 'HudSongInfoTrackCreator'
+    HUD_SONG_INFO_PRACTICE_MODE = 'HudSongInfoPracticeMode'
+    HUD_SONG_INFO_CUSTOM_MUSIC = 'HudSongInfoCustomMusic'
     GRAPHIC = 'Graphic'
     GRAPHIC_MASK = 'GraphicMask'
+    CAMERA = 'Camera'
 
 class NumberFormat(Enum):
     FLOAT = 'Float'
