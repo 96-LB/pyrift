@@ -71,7 +71,7 @@ from .ir import (
 from .vars import Tag
 
 
-type CompilerObject = TaggedValue | String | Condition | None | list[CompilerObject]
+type CompilerObject = TaggedValue | Condition | String | None | list[CompilerObject]
 
 @decorates
 def push_stack[**P, T: BaseInstruction, R](
@@ -601,18 +601,17 @@ class ChoreomapCompiler:
     
     def cast_to_value(self, obj: CompilerObject) -> TaggedValue:
         match obj:
+            case tuple((tag, value)):
+                return tag, value
             case BaseCondition() | bool():
                 return Tag.NUMBER, IfValue(obj, 1, 0)
             case BaseString() | str():
                 return self.allocate_string(obj)
-            case BaseValue() | float() | int() as tag, BaseValue() | float() | int() as value:
-                return tag, value
+            case list():
+                _, ref = self.allocate_array(*(self.cast_to_value(elm) for elm in obj))
+                return Tag.ARRAY, ref
             case None:
                 return Tag.NONE, 0
-            case list():
-                # TODO: we can probably intern some lists -- consider allowing list to be its own compiler-internal primitive?
-                _, ref = self.allocate_array(*(self.cast_to_value(elm) for elm in obj))
-                return Tag.ARRAY, ref # TODO: actually handle arrays
     
     def visit_value(self, node: BaseExpression) -> TaggedValue:
         obj = self.visit_expr(node)
@@ -620,15 +619,8 @@ class ChoreomapCompiler:
     
     def cast_to_condition(self, obj: CompilerObject) -> Condition:
         match obj:
-            case bool() | (_, float()) | (_, int()) | str():
+            case (_, float()) | (_, int()) | bool() | str() | list() | None:
                 return bool(obj)
-            
-            case BaseCondition():
-                return obj
-            
-            case BaseString():
-                _, ref = self.allocate_string(obj)
-                return ArrayValue(NumberString(ref)) != 0
             
             case BaseValue() | float() | int() as tag, BaseValue() | float() | int() as value:
                 mapping = {
@@ -652,26 +644,26 @@ class ChoreomapCompiler:
                     )
                     return OrCondition(conditions)
             
-            case None:
-                return False
+            case BaseCondition():
+                return obj
+            
+            case BaseString():
+                _, ref = self.allocate_string(obj)
+                return ArrayValue(NumberString(ref)) != 0
+    
     
     def visit_condition(self, node: BaseExpression) -> Condition:
         obj = self.visit_expr(node)
         return self.cast_to_condition(obj)
     
+    
     def visit_str(self, node: BaseExpression) -> String:
         obj = self.visit_expr(node)
         match obj:
-            case bool() | str():
+            case (_, float()) | (_, int()) | bool() | str() | list() | None:
                 return str(obj)
             
-            case BaseCondition():
-                return IfString(obj, 'True', 'False')
-            
-            case BaseString():
-                return obj
-            
-            case int() | float() | BaseValue() as tag, int() | float() | BaseValue() as value:
+            case tag, BaseValue() as value:
                 mapping = {
                     Tag.NONE: 'None',
                     Tag.NUMBER: NumberString(value),
@@ -683,7 +675,7 @@ class ChoreomapCompiler:
                 }
                 
                 if isinstance(tag, Tag):
-                    return mapping.get(tag, '<unknown>')
+                    return mapping[tag]
                 else:
                     return reduce(
                         lambda acc, t: IfString(tag == t, mapping[t], acc),
@@ -691,5 +683,8 @@ class ChoreomapCompiler:
                         '<unknown>'
                     )
             
-            case None:
-                return 'None'
+            case BaseCondition():
+                return IfString(obj, 'True', 'False')
+            
+            case BaseString():
+                return obj
