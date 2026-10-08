@@ -5,12 +5,11 @@ from functools import wraps
 from itertools import islice
 from typing import Any, Concatenate, override
 
-from pyrift.jobj import JList, JObj
+from pyrift.jobj import JObj
 from pyrift.util.typing import F
 
 from .backend import (
     ArrayValue,
-    BaseValue,
     Condition,
     GraphicCreateEvent,
     LogEvent,
@@ -36,7 +35,7 @@ from .enum import (
 from .ir import AwaitExpression
 from .vars import Tag
 
-EXTERNALS: dict[str, ExternalValue] = {}
+EXTERNALS: dict[str, ExternalObject] = {}
 
 class ExternalArgType(Enum):
     VALUE = auto()
@@ -47,22 +46,25 @@ class ExternalArg(JObj):
     name: str
     type: ExternalArgType
 
-class ExternalValue(BaseValue, type='$EXTERNAL'):
-    func: ExternalFuncType
-    args: JList[ExternalArg]
-    is_async: bool
+class ExternalObject(JObj):
+    name: str
+    #func: ExternalFuncType
+    #args: JList[ExternalArg]
+    #is_async: bool
     
     @override
     def to_json_obj(self) -> None:
         raise NotImplementedError('External function cannot be converted to JSON object.')
 
+class ExternalCoroutine(ExternalObject):
+    time: Value
 
 
 type ExternalFuncType = F[Concatenate[StreamContext, ...], tuple[Value, Value] | Condition | String]
 
 def register_external(func: ExternalFuncType, is_async: bool):
     def decorator[**P, T](stub: F[P, T]) -> F[P, T]:
-        name = stub.__name__
+        #name = stub.__name__
         sig = inspect.signature(func)
         args: list[ExternalArg] = []
         for arg in islice(sig.parameters.values(), 1, None):
@@ -75,7 +77,7 @@ def register_external(func: ExternalFuncType, is_async: bool):
             if not arg_type:
                 raise ValueError(f'Invalid type for argument "{arg}" of {func.__name__}: {arg.annotation}')
             args.append(ExternalArg(arg.name, arg_type))
-        EXTERNALS[name] = ExternalValue(func, tuple(args), is_async)
+        #EXTERNALS[name] = ExternalValue(func, tuple(args), is_async)
         return stub
     return decorator
 
