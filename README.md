@@ -1,2 +1,3 @@
 # pyrift
-Python library for managing Rift of the NecroDancer charts
+
+Python library for compiling scripts into choreomap charts
