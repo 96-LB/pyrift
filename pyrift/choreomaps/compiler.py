@@ -608,8 +608,8 @@ class ChoreomapCompiler:
     
     def cast_to_condition(self, obj: CompilerObject) -> Condition:
         match obj:
-            case (_, float()) | (_, int()) | bool() | str() | list() | None:
-                return bool(obj) # TODO: this is incorrect for _, float() and _, int()
+            case (_, float(value)) | (_, int(value)) | (bool() | str() | list() | None as value):
+                return bool(value)
             
             case BaseValue() | float() | int() as tag, BaseValue() | float() | int() as value:
                 mapping = {
@@ -652,8 +652,8 @@ class ChoreomapCompiler:
     def visit_str(self, node: BaseExpression) -> String:
         obj = self.visit_expr(node)
         match obj:
-            case (_, float()) | (_, int()) | bool() | str() | list() | None:
-                return str(obj) # TODO: this is incorrect for (_, float()) and (_, int())
+            case (_, float(value)) | (_, int(value)) | (bool() | str() | list() | None as value):
+                return str(value)
             
             case tag, BaseValue() as value:
                 mapping = {
