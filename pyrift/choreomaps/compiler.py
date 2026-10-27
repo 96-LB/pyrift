@@ -37,7 +37,7 @@ from .backend import (
     WaitEvent,
 )
 from .backend.string import FormatString
-from .builtin import Builtin, get_stdlib
+from .builtin import Builtin, converter, get_stdlib
 from .choreomap import Choreomap
 from .context import DummyContext, Scope, StreamContext
 from .ir import (
@@ -606,6 +606,7 @@ class ChoreomapCompiler:
             case Builtin(name):
                 raise ValueError(f'Cannot convert builtin "{name}" to value.')
     
+    @converter(TaggedValue)
     def visit_value(self, node: BaseExpression) -> TaggedValue:
         obj = self.visit_expr(node)
         return self.cast_to_value(obj)
@@ -648,11 +649,13 @@ class ChoreomapCompiler:
                 raise ValueError(f'Cannot convert builtin "{name}" to condition.')
     
     
+    @converter(Condition)
     def visit_condition(self, node: BaseExpression) -> Condition:
         obj = self.visit_expr(node)
         return self.cast_to_condition(obj)
     
     
+    @converter(String)
     def visit_str(self, node: BaseExpression) -> String:
         obj = self.visit_expr(node)
         match obj:

@@ -17,6 +17,9 @@ classifiers = [
 ]
 license = "MIT"
 license-files = ["LICEN[CS]E*"]
+dependencies = [
+    "typing-extensions>=4.16.0",
+]
 
 [project.urls]
 Homepage = "https://github.com/96-LB/pyrift"
