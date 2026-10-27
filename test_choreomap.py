@@ -13,10 +13,8 @@ from pyrift.choreomaps.external import set_text, text, wait
 # 9. type-checking
 
 
-def f():
-    x = 2
-    if x:
-        x = wait(2)
-        print(x)
+async def f():
+    await wait(1122)
+    await wait("lol")
 
 f()

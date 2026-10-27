@@ -3,9 +3,8 @@ from contextlib import contextmanager
 from functools import reduce
 from typing import Concatenate
 
-from pyrift.util.decorators import decorates
-from pyrift.util.typing import F
-
+from ..util.decorators import decorates
+from ..util.typing import F
 from .analysis import Analysis, ChoreomapAnalyzer, VarType
 from .backend import (
     AndCondition,
@@ -38,9 +37,9 @@ from .backend import (
     WaitEvent,
 )
 from .backend.string import FormatString
+from .builtin import Builtin, get_stdlib
 from .choreomap import Choreomap
 from .context import DummyContext, Scope, StreamContext
-from .external import ExternalCoroutine, ExternalObject
 from .ir import (
     AwaitExpression,
     BaseExpression,
@@ -70,8 +69,7 @@ from .ir import (
 )
 from .vars import Tag
 
-
-type CompilerObject = TaggedValue | Condition | String | ExternalObject | list[CompilerObject] | None
+type CompilerObject = TaggedValue | Condition | String | Builtin | list[CompilerObject] | None
 
 @decorates
 def push_stack[**P, T: BaseInstruction, R](
@@ -88,11 +86,11 @@ def push_stack[**P, T: BaseInstruction, R](
     return output
 
 class ChoreomapCompiler:
-    def __init__(self):
+    def __init__(self, builtins: dict[str, Builtin] | None = None):
         self.context: StreamContext = StreamContext(Scope.empty())
         self.streams: list[StreamContext] = [self.context]
         self.analysis: Analysis = Analysis(())
-        #self.externals: dict[str, ExternalObject] = {}
+        self.builtins: dict[str, Builtin] = get_stdlib() if builtins is None else builtins
         self.match_value: TaggedValue = Tag.NONE, 0 # output of latest match statement
         self.string_cache: dict[str, int] = {}
     
@@ -309,8 +307,9 @@ class ChoreomapCompiler:
             
             case BaseExpression():
                 obj = self.visit_expr(node, discard=True)
-                if isinstance(obj, ExternalObject):
-                    self.discard_builtin(obj)
+                if isinstance(obj, Builtin):
+                    if obj.is_async:
+                        raise ValueError(f'Async builtin {obj.name} was never awaited.')
             
             case SetVariableInstruction(name, expr):
                 index, var_type = self.context.lookup(name)
@@ -415,7 +414,9 @@ class ChoreomapCompiler:
                         tag = VariableValue('TAG$' + name)
                         value = VariableValue(name)
                     case VarType.EXTERNAL:
-                        return ExternalObject(name)
+                        if name not in self.builtins:
+                            raise ValueError(f'Unknown builtin {name}.')
+                        return self.builtins[name]
                 
                 return tag, value
             
@@ -493,8 +494,8 @@ class ChoreomapCompiler:
             case CallExpression(func, args):
                 obj = self.visit_expr(func)
                 
-                if isinstance(obj, ExternalObject):
-                    return self.call_builtin(obj, *args)
+                if isinstance(obj, Builtin):
+                    return obj.call(self, *args)
                 
                 # TODO: verify tag
                 _, ref = self.cast_to_value(obj)
@@ -555,8 +556,11 @@ class ChoreomapCompiler:
                     raise ValueError('Await expression encountered in synchronous context.')
                 
                 obj = self.visit_expr(expr)
-                if isinstance(obj, ExternalCoroutine):
-                    return self.await_builtin(obj)
+                if isinstance(obj, Builtin):
+                    if obj.is_async:
+                        return obj.call(self)
+                    else:
+                        raise ValueError(f'Tried to await synchronous builtin {obj.name}.')
                 
                 tag, value = self.cast_to_value(obj)
                 with self.match(tag) as case:
@@ -599,7 +603,7 @@ class ChoreomapCompiler:
                 return Tag.ARRAY, ref
             case None:
                 return Tag.NONE, 0
-            case ExternalObject(name):
+            case Builtin(name):
                 raise ValueError(f'Cannot convert builtin "{name}" to value.')
     
     def visit_value(self, node: BaseExpression) -> TaggedValue:
@@ -640,7 +644,7 @@ class ChoreomapCompiler:
                 _, ref = self.allocate_string(obj)
                 return ArrayValue(NumberString(ref)) != 0
             
-            case ExternalObject(name):
+            case Builtin(name):
                 raise ValueError(f'Cannot convert builtin "{name}" to condition.')
     
     
@@ -681,15 +685,5 @@ class ChoreomapCompiler:
             case BaseString():
                 return obj
             
-            case ExternalObject(name):
+            case Builtin(name):
                 raise ValueError(f'Cannot convert builtin "{name}" to string.')
-    
-    def call_builtin(self, obj: ExternalObject, *args: BaseExpression) -> CompilerObject:
-        raise ValueError(f'Unknown builtin {obj.name}.')
-    
-    def await_builtin(self, obj: ExternalCoroutine) -> CompilerObject:
-        raise ValueError(f'Unknown builtin {obj.name}.')
-    
-    def discard_builtin(self, obj: ExternalObject) -> None:
-        if isinstance(obj, ExternalCoroutine):
-            raise ValueError(f'Builtin coroutine {obj.name} was never awaited.')

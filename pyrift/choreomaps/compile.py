@@ -1,6 +1,6 @@
 import ast
 
-from .builtins import BuiltinsCompiler
+from .compiler import ChoreomapCompiler
 from .parser import ChoreomapParser
 
 
@@ -11,5 +11,5 @@ def compile(filename: str):
         source = file.read()
     tree = ast.parse(source)
     script = ChoreomapParser().visit_Module(tree)
-    choreomap = BuiltinsCompiler().compile(script)
+    choreomap = ChoreomapCompiler().compile(script)
     return choreomap
