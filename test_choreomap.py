@@ -1,4 +1,4 @@
-from pyrift.choreomaps.external import set_text, text, wait
+from pyrift.stubs import set_text, text, wait
 
 
 # TODO:
@@ -13,8 +13,13 @@ from pyrift.choreomaps.external import set_text, text, wait
 # 9. type-checking
 
 
+t1 = text()
+t2 = text()
+set_text(t2, f'<color=#ff0000>                                          hi')
 async def f():
-    await wait(1122)
-    await wait("lol")
+    x = 0
+    while x < 10:
+        set_text(t1, f'<color=#6df141>{x} seconds...')
+        await wait(1)
 
 f()

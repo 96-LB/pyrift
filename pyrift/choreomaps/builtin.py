@@ -10,7 +10,6 @@ from .ir import BaseExpression
 if TYPE_CHECKING:
     from .compiler import ChoreomapCompiler, CompilerObject
 
-type BuiltinF[**P] = F[Concatenate[ChoreomapCompiler, P], CompilerObject]
 class Builtin(JObj):
     name: str
     func: F[Concatenate[ChoreomapCompiler, ...], CompilerObject]
@@ -28,7 +27,7 @@ def converter[T: CompilerObject](type: TypeForm[T]):
         return f
     return decorator
 
-def builtin(f: BuiltinF[...]) -> Builtin:
+def builtin(f: F[Concatenate[ChoreomapCompiler, ...], CompilerObject]) -> Builtin:
     name = f.__name__
     
     sig = signature(f)

@@ -1,6 +1,20 @@
-from .backend import LogEvent, String, TaggedValue
+from .backend import (
+    ArrayValue,
+    GraphicCreateEvent,
+    LogEvent,
+    MathValue,
+    SetArrayEvent,
+    SetVariableEvent,
+    SpriteEvent,
+    SpriteIDValue,
+    SpriteStringEvent,
+    String,
+    TaggedValue,
+    VariableValue,
+)
 from .builtin import Builtin, builtin
 from .compiler import ChoreomapCompiler
+from .enum import BinaryOperator, GraphicType, SpriteAttribute, SpriteStringAttribute, VisualType
 from .vars import Tag
 
 
@@ -18,6 +32,32 @@ def wait(compiler: ChoreomapCompiler, seconds: TaggedValue) -> Builtin:
             pass
         with case():
             # TODO: compile-time error for typechecking
-            compiler.raise_exception("wait() argument must be a number")
+            compiler.raise_exception('wait() argument must be a number.')
     
     return Builtin('wait', wait_seconds, is_async=True)
+
+
+@builtin
+def text(compiler: ChoreomapCompiler) -> TaggedValue:
+    ref = VariableValue('$GRAPHIC')
+    id = SpriteIDValue(VisualType.GRAPHIC, ref)
+    # increment the heap counter
+    compiler.add_event(SetVariableEvent('$GRAPHIC', MathValue(ref, 1, BinaryOperator.ADD)))
+    # create the text graphic
+    compiler.add_event(GraphicCreateEvent(ref, None, GraphicType.CANVAS_TEXT))
+    compiler.add_event(SpriteEvent(id, SpriteAttribute.POSITION, None, 0, 0, 0, 0))
+    # return a pointer to the text graphic
+    tag_index, value_index = compiler.context.allocate_temp()
+    compiler.add_event(SetArrayEvent(None, tag_index, Tag.NUMBER))
+    compiler.add_event(SetArrayEvent(None, value_index, id))
+    return ArrayValue(None, tag_index), ArrayValue(None, value_index)
+
+
+@builtin
+def set_text(compiler: ChoreomapCompiler, id: TaggedValue, text: String) -> None:
+    # TODO: type-checking on id parameter
+    with compiler.match(id[0]) as case:
+        with case(Tag.STRING):
+            compiler.add_event(SpriteStringEvent(id[1], SpriteStringAttribute.TEXT, text))
+        with case():
+            compiler.raise_exception('set_text() argument must be a string.')
