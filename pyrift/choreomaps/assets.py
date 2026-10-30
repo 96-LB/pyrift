@@ -1,5 +1,6 @@
 from ..jobj import JObj
 
+
 class Sprite(JObj):
     path: str
     id: int | None = None

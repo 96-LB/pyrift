@@ -1,5 +1,6 @@
 from .backend import (
     ArrayValue,
+    FinishLevelEvent,
     GraphicCreateEvent,
     JoinString,
     LogEvent,
@@ -84,7 +85,13 @@ def set_sprite(compiler: ChoreomapCompiler, sprite: TaggedValue, texture: String
             compiler.add_event(SpriteEvent(sprite[1], SpriteAttribute.TEXTURE, None, id))
         with case():
             compiler.raise_exception('set_sprite() argument must be a string.')
-    
-    # TODO: textures need to be created and known at compile-time. there needs to be a way to deal with the mapping statically
-    # - could create Texture() builtin that requires constant-input
-    # - could inject a giant static map str -> id (using globals?) **requires loading in init stream
+
+
+@builtin
+def exit(compiler: ChoreomapCompiler) -> None:
+    compiler.add_event(FinishLevelEvent(False))
+
+
+@builtin
+def win(compiler: ChoreomapCompiler) -> None:
+    compiler.add_event(FinishLevelEvent(True))
