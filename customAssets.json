@@ -1,0 +1,41 @@
+{
+    "Sprites": {
+        "BG": {"ID": 1, "Path": "bg.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "BG2": {"ID": 2, "Path": "bg2.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "Border": {"ID": 3, "Path": "border.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+
+        "Red": {"ID": 10, "Path": "red.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "Blue": {"ID": 11, "Path": "blue.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "Orange": {"ID": 12, "Path": "orange.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "DarkBlue": {"ID": 13, "Path": "dblue.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "Pink": {"ID": 14, "Path": "pink.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "Green": {"ID": 15, "Path": "green.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "Yellow": {"ID": 16, "Path": "yellow.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+
+
+        "0": {"ID": 100, "Path": "0.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "1": {"ID": 101, "Path": "1.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "2": {"ID": 102, "Path": "2.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "3": {"ID": 103, "Path": "3.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "4": {"ID": 104, "Path": "4.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "5": {"ID": 105, "Path": "5.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "6": {"ID": 106, "Path": "6.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "7": {"ID": 107, "Path": "7.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "8": {"ID": 108, "Path": "8.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "9": {"ID": 109, "Path": "9.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+
+
+        "c0": {"ID": 110, "Path": "clear_0.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "c1": {"ID": 111, "Path": "clear_1.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "c2": {"ID": 112, "Path": "clear_2.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "c3": {"ID": 113, "Path": "clear_3.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "c4": {"ID": 114, "Path": "clear_4.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "c5": {"ID": 115, "Path": "clear_5.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "c6": {"ID": 116, "Path": "clear_6.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+
+        "perfect": {"ID": 200, "Path": "perfect.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "great": {"ID": 201, "Path": "great.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "good": {"ID": 202, "Path": "good.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1},
+        "ok": {"ID": 203, "Path": "ok.png", "PixelsPerUnit": 32, "PivotX": 0.5, "PivotY": 0.5, "Extrude": 1}
+    }
+}

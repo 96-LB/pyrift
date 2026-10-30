@@ -6,6 +6,7 @@ from typing import Concatenate
 from ..util.decorators import decorates
 from ..util.typing import F
 from .analysis import Analysis, ChoreomapAnalyzer, VarType
+from .assets import Assets
 from .backend import (
     AndCondition,
     ArrayString,
@@ -86,11 +87,12 @@ def push_stack[**P, T: BaseInstruction, R](
     return output
 
 class ChoreomapCompiler:
-    def __init__(self, builtins: dict[str, Builtin] | None = None):
-        self.context: StreamContext = StreamContext(Scope.empty())
-        self.streams: list[StreamContext] = [self.context]
-        self.analysis: Analysis = Analysis(())
-        self.builtins: dict[str, Builtin] = get_stdlib() if builtins is None else builtins
+    def __init__(self, assets: Assets, builtins: dict[str, Builtin] | None = None):
+        self.context = StreamContext(Scope.empty())
+        self.streams = [self.context]
+        self.assets = assets
+        self.analysis = Analysis(())
+        self.builtins = get_stdlib() if builtins is None else builtins
         self.match_value: TaggedValue = Tag.NONE, 0 # output of latest match statement
         self.string_cache: dict[str, int] = {}
     
@@ -281,6 +283,9 @@ class ChoreomapCompiler:
         module_id = self.visit_stream(script.instructions, is_async=False)
         
         self.add_event(SetVariableEvent('$REF', len(self.string_cache)))
+        for name, sprite in self.assets.sprites.items():
+            if sprite.id is not None:
+                self.add_event(SetVariableEvent(f'TEXTURE${name}', sprite.id))
         self.add_event(StartStreamEvent(module_id, ref_id=0, immediate=True, locals=()))
         
         # TODO: actually set the properties properly

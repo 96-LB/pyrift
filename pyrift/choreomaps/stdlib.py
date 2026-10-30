@@ -1,6 +1,7 @@
 from .backend import (
     ArrayValue,
     GraphicCreateEvent,
+    JoinString,
     LogEvent,
     MathValue,
     SetArrayEvent,
@@ -14,7 +15,13 @@ from .backend import (
 )
 from .builtin import Builtin, builtin
 from .compiler import ChoreomapCompiler
-from .enum import BinaryOperator, GraphicType, SpriteAttribute, SpriteStringAttribute, VisualType
+from .enum import (
+    BinaryOperator,
+    GraphicType,
+    SpriteAttribute,
+    SpriteStringAttribute,
+    VisualType,
+)
 from .vars import Tag
 
 
@@ -37,14 +44,13 @@ def wait(compiler: ChoreomapCompiler, seconds: TaggedValue) -> Builtin:
     return Builtin('wait', wait_seconds, is_async=True)
 
 
-@builtin
-def text(compiler: ChoreomapCompiler) -> TaggedValue:
+def create_graphic(compiler: ChoreomapCompiler, type: GraphicType) -> TaggedValue:
     ref = VariableValue('$GRAPHIC')
     id = SpriteIDValue(VisualType.GRAPHIC, ref)
     # increment the heap counter
     compiler.add_event(SetVariableEvent('$GRAPHIC', MathValue(ref, 1, BinaryOperator.ADD)))
     # create the text graphic
-    compiler.add_event(GraphicCreateEvent(ref, None, GraphicType.CANVAS_TEXT))
+    compiler.add_event(GraphicCreateEvent(ref, None, type))
     compiler.add_event(SpriteEvent(id, SpriteAttribute.POSITION, None, 0, 0, 0, 0))
     # return a pointer to the text graphic
     tag_index, value_index = compiler.context.allocate_temp()
@@ -52,6 +58,9 @@ def text(compiler: ChoreomapCompiler) -> TaggedValue:
     compiler.add_event(SetArrayEvent(None, value_index, id))
     return ArrayValue(None, tag_index), ArrayValue(None, value_index)
 
+@builtin
+def text(compiler: ChoreomapCompiler) -> TaggedValue:
+    return create_graphic(compiler, GraphicType.CANVAS_TEXT)
 
 @builtin
 def set_text(compiler: ChoreomapCompiler, id: TaggedValue, text: String) -> None:
@@ -61,3 +70,21 @@ def set_text(compiler: ChoreomapCompiler, id: TaggedValue, text: String) -> None
             compiler.add_event(SpriteStringEvent(id[1], SpriteStringAttribute.TEXT, text))
         with case():
             compiler.raise_exception('set_text() argument must be a string.')
+
+@builtin
+def sprite(compiler: ChoreomapCompiler) -> TaggedValue:
+    return create_graphic(compiler, GraphicType.CANVAS)
+
+@builtin
+def set_sprite(compiler: ChoreomapCompiler, sprite: TaggedValue, texture: String) -> None:
+    # TODO: type-checking on texture parameter
+    with compiler.match(sprite[0]) as case:
+        with case(Tag.STRING):
+            id = VariableValue(JoinString(('TEXTURE$', texture)))
+            compiler.add_event(SpriteEvent(sprite[1], SpriteAttribute.TEXTURE, None, id))
+        with case():
+            compiler.raise_exception('set_sprite() argument must be a string.')
+    
+    # TODO: textures need to be created and known at compile-time. there needs to be a way to deal with the mapping statically
+    # - could create Texture() builtin that requires constant-input
+    # - could inject a giant static map str -> id (using globals?) **requires loading in init stream

@@ -30,6 +30,192 @@
                     },
                     {
                         "t": 0,
+                        "name": "TEXTURE$BG",
+                        "value": 1,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$BG2",
+                        "value": 2,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$Border",
+                        "value": 3,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$Red",
+                        "value": 10,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$Blue",
+                        "value": 11,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$Orange",
+                        "value": 12,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$DarkBlue",
+                        "value": 13,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$Pink",
+                        "value": 14,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$Green",
+                        "value": 15,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$Yellow",
+                        "value": 16,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$0",
+                        "value": 100,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$1",
+                        "value": 101,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$2",
+                        "value": 102,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$3",
+                        "value": 103,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$4",
+                        "value": 104,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$5",
+                        "value": 105,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$6",
+                        "value": 106,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$7",
+                        "value": 107,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$8",
+                        "value": 108,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$9",
+                        "value": 109,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$c0",
+                        "value": 110,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$c1",
+                        "value": 111,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$c2",
+                        "value": 112,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$c3",
+                        "value": 113,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$c4",
+                        "value": 114,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$c5",
+                        "value": 115,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$c6",
+                        "value": 116,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$perfect",
+                        "value": 200,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$great",
+                        "value": 201,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$good",
+                        "value": 202,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
+                        "name": "TEXTURE$ok",
+                        "value": 203,
+                        "ev": "SetVariable"
+                    },
+                    {
+                        "t": 0,
                         "id": 2,
                         "refId": 0,
                         "immediate": true,
