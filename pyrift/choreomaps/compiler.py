@@ -1,10 +1,7 @@
 from collections.abc import Generator, Iterable
 from contextlib import contextmanager
 from functools import reduce
-from typing import Concatenate
 
-from ..util.decorators import decorates
-from ..util.typing import F
 from .analysis import Analysis, ChoreomapAnalyzer, VarType
 from .assets import Assets
 from .backend import (
@@ -70,21 +67,8 @@ from .ir import (
 )
 from .vars import Tag
 
-type CompilerObject = TaggedValue | Condition | String | Builtin | list[CompilerObject] | None
 
-@decorates
-def push_stack[**P, T: BaseInstruction, R](
-    func: F[Concatenate[ChoreomapCompiler, T, P], R],
-    self: ChoreomapCompiler,
-    inst: T,
-    *args: P.args,
-    **kwargs: P.kwargs
-) -> R:
-    # TODO: i would like this to be a static method but pyright disagrees
-    self.context.push_stack(inst)
-    output = func(self, inst, *args, **kwargs)
-    self.context.pop_stack()
-    return output
+type CompilerObject = TaggedValue | Condition | String | Builtin | list[CompilerObject] | None
 
 class ChoreomapCompiler:
     def __init__(self, assets: Assets, builtins: dict[str, Builtin] | None = None):
@@ -304,7 +288,6 @@ class ChoreomapCompiler:
         return scope_id
     
     
-    @push_stack
     def visit_inst(self, node: BaseInstruction) -> None:
         match node:
             case NullInstruction() | DeclareVariablesInstruction():
@@ -373,7 +356,7 @@ class ChoreomapCompiler:
             case _:
                 raise NotImplementedError(f'Unsupported instruction: {type(node)}')
     
-    @push_stack
+    
     def visit_expr(self, node: BaseExpression, discard: bool = False) -> CompilerObject:
         match node:
             case NumberExpression(value):

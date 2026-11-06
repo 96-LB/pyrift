@@ -19,7 +19,6 @@ from .backend import (
     WaitEvent,
 )
 from .enum import SystemAttribute
-from .ir import BaseInstruction
 from .vars import Tag, VarType
 
 
@@ -29,7 +28,6 @@ class StreamContext:
         self.async_ref: Value | None = None
         self.events: list[TimedEvent] = []
         self.temp_index: int = 0
-        self.stack: list[BaseInstruction] = []
         self.t_index: int = 0
         self.t: float = 0
         self.discard_index: int = 0
@@ -75,18 +73,6 @@ class StreamContext:
         self.temp_index += 2
         # tag index, value index
         return (self.temp_index - 2, self.temp_index - 1)
-    
-    
-    def push_stack(self, instruction: BaseInstruction) -> None:
-        self.stack.append(instruction)
-    
-    
-    def pop_stack(self) -> BaseInstruction:
-        return self.stack.pop()
-    
-    
-    def get_parent_instruction(self) -> type[BaseInstruction]:
-        return type(self.stack[-2])
     
     
     def wait(self, seconds: Value) -> None:
