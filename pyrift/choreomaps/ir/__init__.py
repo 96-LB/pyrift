@@ -26,9 +26,10 @@ __all__ = (
     'SetAttributeInstruction',
     'SetVariableInstruction',
     'StringExpression',
+    'SubscriptExpression',
     'UnaryExpression',
     'VariableExpression',
-    'WhileInstruction'
+    'WhileInstruction',
 )
 
 from .expression import (
@@ -48,6 +49,7 @@ from .expression import (
     NullExpression,
     NumberExpression,
     StringExpression,
+    SubscriptExpression,
     UnaryExpression,
     VariableExpression,
 )

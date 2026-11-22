@@ -1,4 +1,4 @@
-from pyrift.stubs import set_text, text, wait
+from pyrift.stubs import set_sprite, set_text, sprite, text, wait
 
 
 # TODO:
@@ -13,6 +13,10 @@ from pyrift.stubs import set_text, text, wait
 # 9. type-checking
 
 
+x = [1, 2]
+x[2::]
+
+
 t1 = text()
 t2 = text()
 set_text(t2, f'<color=#ff0000>                                          hi')
@@ -21,5 +25,15 @@ async def f():
     while x < 10:
         set_text(t1, f'<color=#6df141>{x} seconds...')
         await wait(1)
+    exit()
+
+
+s = sprite()
+async def g():
+    x = 0
+    while True:
+        set_sprite(s, f'{x}')
+        await wait(0)
+        x = (x + 1) % 10
 
 f()

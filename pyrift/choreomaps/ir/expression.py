@@ -69,3 +69,7 @@ class AwaitExpression(BaseExpression):
 
 class ListExpression(BaseExpression):
     exprs: JList[BaseExpression]
+
+class SubscriptExpression(BaseExpression):
+    expr: BaseExpression
+    index: BaseExpression

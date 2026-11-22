@@ -26,6 +26,7 @@ from .ir import (
     Script,
     SetVariableInstruction,
     StringExpression,
+    SubscriptExpression,
     UnaryExpression,
     VariableExpression,
     WhileInstruction,
@@ -267,6 +268,12 @@ class ChoreomapParser(ast.NodeVisitor):
                 return StringExpression(node.value)
             case _:
                 raise ValueError(f'Unsupported constant value: {node.value}')
+    
+    @override
+    def visit_Subscript(self, node: ast.Subscript):
+        value = self.visit_expr(node.value)
+        slice = self.visit_expr(node.slice)
+        return SubscriptExpression(value, slice)
     
     @override
     def visit_Name(self, node: ast.Name):

@@ -61,12 +61,12 @@ from .ir import (
     Script,
     SetVariableInstruction,
     StringExpression,
+    SubscriptExpression,
     UnaryExpression,
     VariableExpression,
     WhileInstruction,
 )
 from .vars import Tag
-
 
 type CompilerObject = TaggedValue | Condition | String | Builtin | list[CompilerObject] | None
 
@@ -570,6 +570,20 @@ class ChoreomapCompiler:
             
             case ListExpression(exprs):
                 return [self.visit_value(expr) for expr in exprs]
+            
+            case SubscriptExpression(expr, index):
+                value = self.visit_expr(expr)
+                index = self.visit_expr(index)
+                
+                match (value, index):
+                    case list(), int():
+                        return value[index]
+                    case list(), (_, float() as i):
+                        TODO
+                        return value[int(i)]
+                    case
+                if isinstance(value, list) and isinstance(index, int):
+                    return value[index]
             
             case NullExpression():
                 return None
